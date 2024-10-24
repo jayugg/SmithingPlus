@@ -1,0 +1,15 @@
+[
+  {
+    "ingredient": { "type": "item", "code": "game:ingot-*", "recipeAttributes": {"nuggetRecipe": true}, "name": "metal", "allowedVariants": [ "copper", "tinbronze", "bismuthbronze", "blackbronze", "iron" ]},
+    "name": "Butcher hook",
+    "pattern": [[
+      "_________",
+      "___##____",
+      "___#_____",
+      "___#_#___",
+      "___###___",
+      "_________"
+    ]],
+    "output": { "type": "item", "code": "butchering:hook-{metal}", "stacksize": 1  }
+  }
+]

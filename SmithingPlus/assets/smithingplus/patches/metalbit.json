@@ -1,0 +1,34 @@
+[
+  {
+    "file": "game:itemtypes/resource/nugget.json",
+    "op": "addmerge",
+    "path": "/attributesByType",
+    "value": {
+      "@*-(nativecopper|nativegold|nativesilver)": {
+          "isPureMetal": true
+      }
+    }
+  },
+  {
+    "file": "game:itemtypes/resource/nugget.json",
+    "op": "addmerge",
+    "path": "/classByType",
+    "value": {
+      "@*-(nativecopper|nativegold|nativesilver)": "ItemWorkableNugget"
+    }
+  },
+  {
+    "file": "game:itemtypes/resource/metalbit.json",
+    "op": "addmerge",
+    "path": "/attributes",
+    "value": {
+      "isPureMetal": true
+    }
+  },
+  {
+    "file": "game:itemtypes/resource/metalbit.json",
+    "op": "replace",
+    "path": "/class",
+    "value": "ItemWorkableNugget"
+  }
+]

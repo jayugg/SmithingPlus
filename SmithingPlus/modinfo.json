@@ -1,0 +1,13 @@
+{
+    "type": "code",
+    "modid": "smithingplus",
+    "name": "SmithingPlus",
+    "authors": [
+        "jayugg"
+    ],
+    "description": "Add bits when smithing and other tweaks",
+    "version": "1.0.0",
+    "dependencies": {
+        "game": ""
+    }
+}

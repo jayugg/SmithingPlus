@@ -1,0 +1,17 @@
+[
+  {
+    "ingredient": { "type": "item", "code": "game:ingot-*", "recipeAttributes": {"nuggetRecipe": true}, "name": "metal" },
+    "pattern": [[
+      "#######",
+      "#######",
+      "#######"
+    ],
+      [
+        "#######",
+        "#######",
+        "#######"
+      ]],
+    "name": "Ingot",
+    "output": { "type": "item", "code": "game:ingot-{metal}"  }
+  }
+]

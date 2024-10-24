@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeBuild", "CakeBuild\CakeBuild.csproj", "{008A5C0F-3196-4E28-B037-07EB18C2EC2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmithingPlus", "SmithingPlus\SmithingPlus.csproj", "{E59ECD07-2CF4-4BAF-B740-149A3676F3EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{008A5C0F-3196-4E28-B037-07EB18C2EC2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{008A5C0F-3196-4E28-B037-07EB18C2EC2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{008A5C0F-3196-4E28-B037-07EB18C2EC2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{008A5C0F-3196-4E28-B037-07EB18C2EC2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E59ECD07-2CF4-4BAF-B740-149A3676F3EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E59ECD07-2CF4-4BAF-B740-149A3676F3EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E59ECD07-2CF4-4BAF-B740-149A3676F3EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E59ECD07-2CF4-4BAF-B740-149A3676F3EF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
