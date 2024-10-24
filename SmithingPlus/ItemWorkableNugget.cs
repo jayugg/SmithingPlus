@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SmithingPlus.Compat;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -55,7 +56,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
 
     public List<SmithingRecipe> GetMatchingRecipes(ItemStack stack)
     {
-        return api.GetSmithingRecipes().Where((System.Func<SmithingRecipe, bool>) (r => r.Ingredient.SatisfiesAsIngredient(GetRecipeStack(stack)) || r.Ingredient.SatisfiesAsIngredient(stack))).OrderBy((System.Func<SmithingRecipe, AssetLocation>) (r => r.Output.ResolvedItemstack.Collectible.Code)).ToList();
+        return api.GetSmithingRecipes().Where((System.Func<SmithingRecipe, bool>) (r => r.Ingredient.SatisfiesAsIngredient(GetRecipeStack(stack)))).OrderBy((System.Func<SmithingRecipe, AssetLocation>) (r => r.Output.ResolvedItemstack.Collectible.Code)).ToList();
     }
 
     public bool CanWork(ItemStack stack)
@@ -79,6 +80,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
         if (beAnvil.WorkItemStack == null)
         {
             CreateVoxelsFromNugget(api, ref beAnvil.Voxels);
+            if (ThriftySmithingCompat.ThriftySmithingLoaded) itemstack.AddToCustomWorkData(beAnvil.Voxels.Cast<byte>().Count(voxel => voxel != 0));
         }
         else
         {
@@ -88,7 +90,13 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
                     ((ICoreClientAPI)api).TriggerIngameError(this, "notequal", Lang.Get("Must be the same metal to add voxels"));
                 return null;
             }
-            if (AddVoxelsFromNugget(api, ref beAnvil.Voxels)) return itemstack;
+
+            var bits = AddVoxelsFromNugget(api, ref beAnvil.Voxels);
+            if (bits != 0)
+            {
+                if (ThriftySmithingCompat.ThriftySmithingLoaded) beAnvil.WorkItemStack.AddToCustomWorkData(bits);
+                return itemstack;
+            }
             if (api.Side == EnumAppSide.Client)
                 ((ICoreClientAPI)api).TriggerIngameError(this, "requireshammering", Lang.Get("Try hammering down before adding additional voxels"));
             return null;
@@ -111,12 +119,12 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
         }
     }
     
-    public static bool AddVoxelsFromNugget(ICoreAPI api, ref byte[,,] voxels)
+    public static int AddVoxelsFromNugget(ICoreAPI api, ref byte[,,] voxels)
     {
         var nuggetConfig = new byte[16, 2, 16];
         CreateVoxelsFromNugget(api, ref nuggetConfig);
         var voxelsCopy = (byte[,,])voxels.Clone();
-        bool canAdd = false;
+        int bits = 0;
 
         for (int x = 0; x < 16; x++)
         {
@@ -130,7 +138,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
 
                 if (y >= 6)
                 {
-                    return false;
+                    return 0;
                 }
                 for (int ny = 0; ny < 2; ny++)
                 {
@@ -138,16 +146,16 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
                     {
                         if (y + ny >= 6)
                         {
-                            return false;
+                            return 0;
                         }
                         voxelsCopy[x, y + ny, z] = nuggetConfig[x, ny, z];
-                        canAdd = true;
+                        if (voxelsCopy[x, y + ny, z] == 1) bits++;
                     }
                 }
             }
         }
         voxels = voxelsCopy;
-        return canAdd;
+        return bits;
     }
 
     public ItemStack GetBaseMaterial(ItemStack stack)

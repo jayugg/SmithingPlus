@@ -7,7 +7,7 @@ using Vintagestory.GameContent;
 namespace SmithingPlus;
 
 [HarmonyPatch]
-public class SmithingPlusModSystem : ModSystem
+public class Core : ModSystem
 {
     public static ILogger Logger;
     public static string ModId;
