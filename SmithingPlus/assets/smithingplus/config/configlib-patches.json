@@ -1,0 +1,157 @@
+{
+  "version": 1,
+  "file": "SmithingPlus.json",
+  "patches": {
+  },
+  "settings": [
+    {
+      "code": "SmithWithBits",
+      "ingui": "smithingplus:setting-smithwithbits",
+      "type": "boolean",
+      "weight": 1.0,
+      "comment": "Can you smith with metal bits?",
+      "default": true
+    },
+    {
+      "code": "BitsTopUp",
+      "ingui": "smithingplus:setting-bitstopup",
+      "type": "boolean",
+      "weight": 0.99,
+      "comment": "Can you top up a work item with bits?",
+      "default": true
+    },
+    {
+      "code": "ExtraVoxelChance",
+      "ingui": "smithingplus:setting-extravoxelchance",
+      "type": "float",
+      "weight": 0.98,
+      "comment": "Chance for an extra voxel when adding bits to an anvil",
+      "default": 0.1,
+      "range": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "code": "EnableToolRecovery",
+      "ingui": "smithingplus:setting-enabletoolrecovery",
+      "type": "boolean",
+      "weight": 0.97,
+      "comment": "Tools drop tool heads that can be repaired",
+      "default": true
+    },
+    {
+      "code": "DurabilityPenaltyPerRepair",
+      "ingui": "smithingplus:setting-durabilitypenaltyperrepair",
+      "type": "float",
+      "weight": 0.96,
+      "comment": "Max durability penalty that accumulates per every tool repair",
+      "default": 0.05,
+      "range": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "code": "BrokenToolVoxelPercent",
+      "ingui": "smithingplus:setting-brokentoolvoxelpercent",
+      "type": "float",
+      "weight": 0.95,
+      "comment": "Percentage of material not lost when a tool breaks",
+      "default": 0.9,
+      "range": {
+        "min": 0.2,
+        "max": 1
+      }
+    },
+    {
+      "code": "RepairableToolSelector",
+      "ingui": "smithingplus:setting-repairabletoolselector",
+      "type": "string",
+      "weight": 0.94,
+      "comment": "Regex selector for tools that can be repaired",
+      "default": "@.*(pickaxe|shovel|saw|axe|hoe|knife|hammer|chisel|shears|sword|spear|bow|shield|sickle|scythe|tongs|wrench|solderingiron|cleaver|prospectingpick|crossbow|pistol|rifle|shotgun).*"
+    },
+    {
+      "code": "ToolHeadSelector",
+      "ingui": "smithingplus:setting-toolheadselector",
+      "type": "string",
+      "weight": 0.93,
+      "comment": "Regex selector for tool heads or blades that can be repaired",
+      "default": "@(.*)(head|blade|boss|barrel|stirrup)(.*)"
+    },
+    {
+      "code": "IngotSelector",
+      "ingui": "smithingplus:setting-ingotselector",
+      "type": "string",
+      "weight": 0.92,
+      "comment": "Regex selector for ingots that can be used in smithing, used to determine repair materials. Is needed only for metal mods with custom naming patterns. If this does not match, the mod will not affect the tool.",
+      "default": "@(.*):ingot-(.*)"
+    },
+    {
+      "code": "WorkItemSelector",
+      "ingui": "smithingplus:setting-workitemselector",
+      "type": "string",
+      "weight": 0.91,
+      "comment": "Regex selector for work items that can be used in smithing, used to determine repair materials. Is needed only for metal mods with custom naming patterns. If this does not match, the mod will not affect the tool.",
+      "default": "@(.*):workitem-(.*)"
+    },
+    {
+      "code": "ShowRepairedCount",
+      "ingui": "smithingplus:setting-showrepairedcount",
+      "type": "boolean",
+      "weight": 0.90,
+      "comment": "Show the number of times a tool has been repaired in the tooltip",
+      "default": true
+    },
+    {
+      "code": "ShowBrokenCount",
+      "ingui": "smithingplus:setting-showbrokencount",
+      "type": "boolean",
+      "weight": 0.899,
+      "comment": "Show the number of times a tool head has broken in the tooltip",
+      "default": true
+    },
+    {
+      "code": "ShowRepairSmithName",
+      "ingui": "smithingplus:setting-showrepairsmithname",
+      "type": "boolean",
+      "weight": 0.89,
+      "comment": "Show the smith name in the repaired item tooltip",
+      "default": false
+    },
+    {
+      "code": "ArrowsDropBits",
+      "ingui": "smithingplus:setting-arrowsdropbits",
+      "type": "boolean",
+      "weight": 0.88,
+      "comment": "Broken arrows drop one metal bit",
+      "default": true
+    },
+    {
+      "code": "ArrowSelector",
+      "ingui": "smithingplus:setting-arrowselector",
+      "type": "string",
+      "weight": 0.87,
+      "comment": "Regex selector for arrows that drop metal bits.",
+      "default": "@(.*)arrow-(.*)"
+    }
+  ],
+  "formatting": [
+    {
+      "type": "separator",
+      "title": "Smithing with bits",
+      "weight": 1.05
+    },
+    {
+      "type": "separator",
+      "title": "Tool recovery",
+      "weight": 0.975
+    },
+    {
+      "type": "separator",
+      "title": "Recyclable arrows",
+      "weight": 0.875
+    }
+  ]
+}

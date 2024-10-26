@@ -1,3 +1,25 @@
 {
-    "game:itemcraftdesc-ingot-*": "The basic of all metalworking."
+    "game:itemcraftdesc-ingot-*": "The basic of all metalworking.",
+    "material:blistersteel": "Blister Steel",
+    
+    "setting-smithwithbits": "Smith with bits",
+    "setting-bitstopup": "Bits top up",
+    "setting-extravoxelchance": "Extra voxel chance",
+    "setting-enabletoolrecovery": "Enable tool recovery",
+    "setting-durabilitypenaltyperrepair": "Durability penalty per repair",
+    "setting-brokentoolvoxelpercent": "Broken tool voxel percent",
+    "setting-repairabletoolselector": "Repairable tool selector",
+    "setting-toolheadselector": "Tool head selector",
+    "setting-ingotselector": "Ingot selector",
+    "setting-workitemselector": "Work item selector",
+    "setting-showrepairedcount": "Show repaired count",
+    "setting-showbrokencount": "Show broken count",
+    "setting-showrepairsmithname": "Show repair smith name",
+    "setting-arrowsdropbits": "Arrows drop bits",
+    "setting-arrowselector": "Arrow selector",
+    
+    "game:Last repaired by {0}": "Last repaired by {0}",
+    "game:Broken {0} times": "Broken {0} times",
+    "game:Repaired {0} times": "Repaired {0} times",
+    "game:Unknown broken tool part": "Unknown broken tool part"
 }

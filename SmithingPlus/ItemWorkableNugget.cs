@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SmithingPlus.Compat;
+using SmithingPlus.ToolRecovery;
+using Vintagestory;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -13,8 +15,10 @@ namespace SmithingPlus;
 public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
 {
     public Item BaseMaterial => CombustibleProps?.SmeltedStack?.ResolvedItemstack?.Collectible as Item ?? this;
-    public string MetalVariant => CombustibleProps?.SmeltedStack?.ResolvedItemstack?.Collectible is Item ? CombustibleProps.SmeltedStack.ResolvedItemstack.Collectible.Variant["metal"] : Variant["metal"];
-    
+    public string MetalVariant => BaseMaterial.Variant["metal"];
+    // Support for ExtraCode mod
+    public bool IsBlisterSteelLike => IsBlisterSteel || Attributes["blisterSteelLike"].AsBool();
+    private bool IsBlisterSteel => BaseMaterial.Variant["metal"] == "blistersteel" && BaseMaterial.Code.Domain == "game";
     public override void OnCreatedByCrafting(
         ItemSlot[] allInputslots,
         ItemSlot outputSlot,
@@ -79,18 +83,20 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
         itemstack.Collectible.SetTemperature(api.World, itemstack, stack.Collectible.GetTemperature(api.World, stack));
         if (beAnvil.WorkItemStack == null)
         {
+            if (!Core.Config.SmithWithBits) return null;
             CreateVoxelsFromNugget(api, ref beAnvil.Voxels);
             if (ThriftySmithingCompat.ThriftySmithingLoaded) itemstack.AddToCustomWorkData(beAnvil.Voxels.Cast<byte>().Count(voxel => voxel != 0));
         }
         else
         {
-            if (!string.Equals(beAnvil.WorkItemStack.Collectible.Variant["metal"], MetalVariant))
+            if (!Core.Config.BitsTopUp) return null;
+            Core.Logger.VerboseDebug("[ItemWorkableNugget#TryPlaceOn] nugget base material: {0}, workItem base material: {1}", stack.GetBaseMaterial().Collectible.Code, beAnvil.WorkItemStack.GetBaseMaterial().Collectible.Code);
+            if (!beAnvil.WorkItemStack.GetBaseMaterial().CodeMatches(stack.GetBaseMaterial()))
             {
                 if (api.Side == EnumAppSide.Client)
                     ((ICoreClientAPI)api).TriggerIngameError(this, "notequal", Lang.Get("Must be the same metal to add voxels"));
                 return null;
             }
-
             var bits = AddVoxelsFromNugget(api, ref beAnvil.Voxels);
             if (bits != 0)
             {
@@ -113,7 +119,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
 
         voxels[8, 0, 7] = 1;
         voxels[8, 0, 8] = 1;
-        if (random.NextDouble() < 0.1)
+        if (random.NextDouble() < Core.Config.ExtraVoxelChance)
         {
             voxels[8, 1, 7] = 1;
         }
@@ -160,7 +166,15 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
 
     public ItemStack GetBaseMaterial(ItemStack stack)
     {
-        return new ItemStack(BaseMaterial);
+        Core.Logger.VerboseDebug("[ItemWorkableNugget#GetBaseMaterial] {0}", BaseMaterial.Code);
+        if (stack.Collectible is ItemWorkableNugget workableNugget)
+        {
+            if (!IsBlisterSteelLike) return new ItemStack(BaseMaterial);
+            var refinedVariant = BaseMaterial.Attributes["refinedVariant"].AsString("steel");
+            return new ItemStack(BaseMaterial.ItemWithVariant("metal", refinedVariant));
+        }
+        Core.Logger.Warning("[ItemWorkableNugget#GetBaseMaterial] Item {0} is not a workable nugget", stack.Collectible.Code);
+        return stack;
     }
 
     public EnumHelveWorkableMode GetHelveWorkableMode(ItemStack stack, BlockEntityAnvil beAnvil)
