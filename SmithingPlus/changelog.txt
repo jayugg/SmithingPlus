@@ -1,0 +1,5 @@
+- Tools drop tool heads when broken
+- Broken tool heads can be repaired on an anvil
+- Full feature configuration and configlib compatibility
+- Arrows drop 1 bit when broken
+- Single arrowhead recipe

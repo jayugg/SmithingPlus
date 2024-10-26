@@ -1,6 +1,6 @@
 [
   {
-    "ingredient": { "type": "item", "code": "ingot-*", "recipeAttributes": {"nuggetRecipe": true}, "name": "metal",
+    "ingredient": { "type": "item", "code": "game:ingot-*", "recipeAttributes": {"nuggetRecipe": true}, "name": "metal",
       "allowedVariants": ["copper", "tinbronze", "bismuthbronze", "blackbronze", "silver", "gold", "iron", "meteoriciron", "steel"] },
     "pattern": [[
       "___##___",

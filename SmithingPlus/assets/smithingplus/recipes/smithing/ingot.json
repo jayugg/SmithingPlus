@@ -1,6 +1,6 @@
 [
   {
-    "ingredient": { "type": "item", "code": "game:ingot-*", "recipeAttributes": {"nuggetRecipe": true}, "name": "metal" },
+    "ingredient": { "type": "item", "code": "game:ingot-*", "recipeAttributes": {"nuggetRecipe": true}, "name": "metal", "skipVariants": ["blistersteel"] },
     "pattern": [[
       "#######",
       "#######",
