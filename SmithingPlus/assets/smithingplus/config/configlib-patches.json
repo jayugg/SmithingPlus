@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "file": "SmithingPlus.json",
   "patches": {
   },
@@ -53,6 +53,18 @@
       }
     },
     {
+      "code": "RepairableToolDurabilityMultiplier",
+      "ingui": "smithingplus:setting-repairabletooldurabilitymultiplier",
+      "type": "float",
+      "weight": 0.959,
+      "comment": "Adjust the durability of repairable tools for balance",
+      "default": 1.0,
+      "range": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
       "code": "BrokenToolVoxelPercent",
       "ingui": "smithingplus:setting-brokentoolvoxelpercent",
       "type": "float",
@@ -60,7 +72,7 @@
       "comment": "Percentage of material not lost when a tool breaks",
       "default": 0.9,
       "range": {
-        "min": 0.2,
+        "min": 0,
         "max": 1
       }
     },

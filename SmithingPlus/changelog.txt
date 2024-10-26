@@ -1,5 +1,2 @@
-- Tools drop tool heads when broken
-- Broken tool heads can be repaired on an anvil
-- Full feature configuration and configlib compatibility
-- Arrows drop 1 bit when broken
-- Single arrowhead recipe
+- Fixed tools dropping heads whenever they lose durability (debug feature wasn't disabled)
+- Add configurable durability multiplier for repairable tools to adjust balance, default as vanilla (does not apply retroactively)

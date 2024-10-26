@@ -7,6 +7,7 @@ public class ServerConfig
     public float ExtraVoxelChance { get; set; } = 0.1f;
     public bool EnableToolRecovery { get; set; } = true;
     public float DurabilityPenaltyPerRepair { get; set; } = 0.05f;
+    public float RepairableToolDurabilityMultiplier { get; set; } = 1.0f;
     public float BrokenToolVoxelChance { get; set; } = 0.8f;
     public string RepairableToolSelector { get; set; } = "@.*(pickaxe|shovel|saw|axe|hoe|knife|hammer|chisel|shears|sword|spear|bow|shield|sickle|scythe|tongs|wrench|solderingiron|cleaver|prospectingpick|crossbow|pistol|rifle|shotgun).*"; 
     public string ToolHeadSelector { get; set; } = "@(.*)(head|blade|boss|barrel|stirrup)(.*)";

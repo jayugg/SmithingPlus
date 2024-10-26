@@ -7,6 +7,7 @@
     "setting-extravoxelchance": "Extra voxel chance",
     "setting-enabletoolrecovery": "Enable tool recovery",
     "setting-durabilitypenaltyperrepair": "Durability penalty per repair",
+    "setting-repairabletooldurabilitymultiplier": "Tool durability multiplier",
     "setting-brokentoolvoxelpercent": "Broken tool voxel percent",
     "setting-repairabletoolselector": "Repairable tool selector",
     "setting-toolheadselector": "Tool head selector",

@@ -22,7 +22,8 @@ public class ToolHeadRepairPatches
         {
             __result = itemstack.Attributes.GetInt("maxdurability");
         }
-        var reducedDurability = (int) (__result * (1 - brokenCount * Core.Config.DurabilityPenaltyPerRepair));
+        var multiplier = itemstack.Collectible.IsRepairableTool() ? Core.Config.RepairableToolDurabilityMultiplier : 1;
+        var reducedDurability = (int) (__result * multiplier * (1 - brokenCount * Core.Config.DurabilityPenaltyPerRepair));
         __result = Math.Max(reducedDurability, 1);
     }
 
