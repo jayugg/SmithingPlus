@@ -25,7 +25,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
         GridRecipe byRecipe)
     {
         ItemSlot itemSlot = allInputslots.FirstOrDefault((System.Func<ItemSlot, bool>) (slot => slot.Itemstack?.Collectible is ItemWorkItem));
-        if (itemSlot != null)
+        if (itemSlot != null && outputSlot.Itemstack != null)
         {
             var voxels = BlockEntityAnvil.deserializeVoxels(itemSlot.Itemstack.Attributes.GetBytes("voxels"));
             var voxelCount = voxels.Cast<byte>().Count(voxel => voxel != 0);

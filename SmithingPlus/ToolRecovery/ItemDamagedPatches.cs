@@ -6,6 +6,7 @@ using SmithingPlus.Compat;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
@@ -16,19 +17,27 @@ namespace SmithingPlus.ToolRecovery;
 public class ItemDamagedPatches
 {
     [HarmonyPostfix]
-    [HarmonyPatch(nameof(CollectibleObject.OnCreatedByCrafting))]
+    [HarmonyPatch(nameof(CollectibleObject.OnCreatedByCrafting)), HarmonyPriority(Priority.Last)]
     public static void Postfix_OnCreatedByCrafting(
         ItemSlot[] allInputslots,
         ItemSlot outputSlot,
         GridRecipe byRecipe)
     {
+        if (outputSlot.Itemstack == null) return;
         var brokenStack = allInputslots.FirstOrDefault(slot => slot.Itemstack?.GetBrokenCount() > 0)?.Itemstack;
-        var brokenCount = brokenStack?.GetBrokenCount();
+        if (brokenStack == null) return;
+        var brokenCount = brokenStack.GetBrokenCount();
         if (!(brokenCount > 0)) return;
         var repairedStack = brokenStack.GetRepairedToolStack();
-        repairedStack?.Attributes.RemoveAttribute("durability");
         if (repairedStack == null) return;
-        outputSlot.Itemstack = repairedStack;
+        repairedStack.Attributes?.RemoveAttribute("durability");
+        repairedStack.Attributes?.RemoveAttribute("maxRepair"); // From necessaries mod grindstone
+        var repairedAttributes = repairedStack.Attributes ?? new TreeAttribute();
+        var outputAttributes = outputSlot.Itemstack.Attributes;
+        foreach (var attribute in repairedAttributes)
+        {
+            outputAttributes[attribute.Key] = attribute.Value;
+        }
     }
 
     [HarmonyPrefix]
@@ -95,6 +104,13 @@ public class ItemDamagedPatches
 
     private static SmithingRecipe GetHeadSmithingRecipe(IWorldAccessor world, ItemStack itemStack)
     {
+        var toolHead = GetToolHead(world, itemStack);
+        var smithingRecipe = toolHead.GetSmithingRecipe(world);
+        return smithingRecipe;
+    }
+
+    private static ItemStack GetToolHead(IWorldAccessor world, ItemStack itemStack)
+    {
         var toolRecipe = world.GridRecipes
             .FirstOrDefault(r =>
                 r.Output.ResolvedItemstack.StackSize == 1 &&
@@ -105,14 +121,8 @@ public class ItemDamagedPatches
             toolHead = itemStack;
             Core.Logger.VerboseDebug("Tool head not found for: {0}", itemStack);
         }
-
         Core.Logger.VerboseDebug("Tool head: {0}", toolHead);
-
-        var smithingRecipe = world.Api.ModLoader
-            .GetModSystem<RecipeRegistrySystem>()
-            .SmithingRecipes
-            .FirstOrDefault(r => r.Output.ResolvedItemstack.Collectible.Code.Equals(toolHead.Collectible.Code));
-        return smithingRecipe;
+        return toolHead;
     }
 
     public static string GetMetalOrMaterial(ItemStack itemStack)

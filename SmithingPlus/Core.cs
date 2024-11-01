@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
+using SmithingPlus.ClientTweaks;
 using SmithingPlus.Config;
+using SmithingPlus.Extra;
 using SmithingPlus.ToolRecovery;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -14,20 +16,15 @@ namespace SmithingPlus;
 
 [HarmonyPatch]
 [HarmonyPatchCategory(SmithingBitsCategory)]
-public class Core : ModSystem
+public partial class Core : ModSystem
 {
     public static ILogger Logger;
     public static string ModId;
     public static ICoreAPI Api;
     public static Harmony HarmonyInstance;
     internal static readonly string ConfigName = "SmithingPlus.json";
-    public static ServerConfig Config; 
-    internal const string ToolRecoveryCategory = "toolRecovery";
-    internal const string SmithingBitsCategory = "smithingBits";
-    
-    public static readonly string RecipeOutputNameCacheKey = "smithingplus:recipeOutputName";
-    public static readonly string ToolToRecipeCacheKey= "smithingplus:toolToRecipe";
-    public static readonly string RecipeVoxelCountCacheKey = "smithingplus:recipeVoxelCount";
+    public static ServerConfig Config;
+
     public static Dictionary<int, string> RecipeOutputNameCache => ObjectCacheUtil.GetOrCreate(Api, RecipeOutputNameCacheKey, () => new Dictionary<int, string>());
     public static Dictionary<string, SmithingRecipe> ToolToRecipeCache => ObjectCacheUtil.GetOrCreate(Api, ToolToRecipeCacheKey, () => new Dictionary<string, SmithingRecipe>());
     public static Dictionary<int, int> RecipeVoxelCountCache => ObjectCacheUtil.GetOrCreate(Core.Api, RecipeVoxelCountCacheKey, () => new Dictionary<int, int>());
@@ -55,7 +52,10 @@ public class Core : ModSystem
         api.RegisterItemClass("ItemWorkableNugget", typeof(ItemWorkableNugget));
         api.RegisterCollectibleBehaviorClass($"{ModId}:BrokenTool", typeof(CollectibleBehaviorBrokenTool));
         api.RegisterCollectibleBehaviorClass($"{ModId}:BrokenToolHead", typeof(CollectibleBehaviorBrokenToolHead));
+        api.RegisterCollectibleBehaviorClass($"{ModId}:AnvilWorkable", typeof(CollectibleBehaviorAnvilWorkable));
         api.RegisterEntityBehaviorClass($"{ModId}:RecyclableArrow", typeof(RecyclableArrowBehavior));
+        api.RegisterItemClass($"{ModId}:ItemStoneHammer", typeof(ItemStoneHammer));
+        api.RegisterBlockEntityClass($"{ModId}:StoneAnvil", typeof(BlockEntityStoneAnvil));
         Patch();
     }
     
@@ -96,7 +96,9 @@ public class Core : ModSystem
         
         foreach (var collObj in api.World.Collectibles.Where(c => c?.Code != null))
         {
-            if ((collObj.Tool != null || collObj.IsRepairableTool()) && collObj.HasMetalMaterial(api)) collObj.AddBehavior<CollectibleBehaviorBrokenTool>();
+            if (Config.ShowWorkableTemperature && collObj is IAnvilWorkable) collObj.AddBehavior<CollectibleBehaviorAnvilWorkable>();
+            
+            if ((collObj.Tool != null || collObj.IsRepairableTool(false)) && collObj.HasMetalMaterial(api)) collObj.AddBehavior<CollectibleBehaviorBrokenTool>();
             else if (WildcardUtil.Match(Config.ToolHeadSelector,collObj.Code.ToString())) collObj.AddBehavior<CollectibleBehaviorBrokenTool>();
             else if (WildcardUtil.Match(Config.WorkItemSelector, collObj.Code.ToString())) collObj.AddBehavior<CollectibleBehaviorBrokenToolHead>();
             
@@ -123,6 +125,25 @@ public class Core : ModSystem
             HarmonyInstance.PatchCategory(ToolRecoveryCategory);
             Logger.VerboseDebug("Patched ToolRecovery...");
         }
+        
+        /*
+        if (Config.StoneSmithing)
+        {
+            HarmonyInstance.PatchCategory(StoneSmithingCategory);
+            Logger.VerboseDebug("Patched StoneSmithing...");
+        }
+        */
+        
+        if (Config.RememberHammerToolMode)
+        {
+            HarmonyInstance.PatchCategory(ClientTweaksCategories.RememberHammerToolMode);
+            Logger.VerboseDebug("Patched RememberHammerToolMode...");
+        }
+        if (Config.AnvilShowRecipeVoxels)
+        {
+            HarmonyInstance.PatchCategory(ClientTweaksCategories.AnvilShowRecipeVoxels);
+            Logger.VerboseDebug("Patched AnvilShowRecipeVoxels...");
+        }
 
         if (!Config.SmithWithBits && !Config.BitsTopUp) return;
         HarmonyInstance.PatchCategory(SmithingBitsCategory);
@@ -131,7 +152,7 @@ public class Core : ModSystem
     
     public static void Unpatch()
     {
-        Logger.VerboseDebug("Unpatching...");
+        Logger?.VerboseDebug("Unpatching...");
         HarmonyInstance?.UnpatchAll();
         HarmonyInstance = null;
     }

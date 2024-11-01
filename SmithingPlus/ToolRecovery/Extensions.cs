@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
@@ -35,7 +36,7 @@ public static class Extensions
     
     internal static ItemStack GetRepairedToolStack(this ItemStack itemStack)
     {
-        return itemStack.Attributes.GetItemstack("repairedToolStack");
+        return itemStack.Attributes?.GetItemstack("repairedToolStack");
     }
     
     internal static string GetRepairSmith(this ItemStack itemStack)
@@ -102,10 +103,10 @@ public static class Extensions
         return collObj.GetMetalMaterial(api) != null;
     }
     
-    public static bool IsRepairableTool(this CollectibleObject collObj)
+    public static bool IsRepairableTool(this CollectibleObject collObj, bool verbose = true)
     {
         var repairable = WildcardUtil.Match(Core.Config.RepairableToolSelector, collObj.Code.ToString());
-        if (!repairable) Core.Logger.VerboseDebug("Not a repairable tool: {0}", collObj.Code);
+        if (verbose && !repairable) Core.Logger.VerboseDebug("Not a repairable tool: {0}", collObj.Code);
         return repairable;
     }
     
@@ -114,5 +115,21 @@ public static class Extensions
         var repairable = WildcardUtil.Match(Core.Config.ToolHeadSelector, collObj.Code.ToString());
         if (!repairable) Core.Logger.VerboseDebug("Not a repairable tool head: {0}", collObj.Code);
         return repairable;
+    }
+    
+    public static float GetWorkableTemperature(this ItemStack stack)
+    {
+        float meltingPoint = stack.Collectible.CombustibleProps?.MeltingPoint ?? 0.0f;
+        var defaultTemperature = meltingPoint / 2f;
+        return stack.ItemAttributes?["workableTemperature"]?.AsFloat(defaultTemperature) ?? defaultTemperature;
+    }
+    
+    public static SmithingRecipe GetSmithingRecipe(this ItemStack toolHead, IWorldAccessor world)
+    {
+        var smithingRecipe = world.Api.ModLoader
+            .GetModSystem<RecipeRegistrySystem>()
+            .SmithingRecipes
+            .FirstOrDefault(r => r.Output.ResolvedItemstack.Collectible.Code.Equals(toolHead.Collectible.Code));
+        return smithingRecipe;
     }
 }

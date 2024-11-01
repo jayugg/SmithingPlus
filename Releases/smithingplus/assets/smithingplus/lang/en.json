@@ -1,5 +1,5 @@
 {
-    "game:itemcraftdesc-ingot-*": "The basic of all metalworking.",
+    "game:itemcraftdesc-ingot-*": "The basic of all metalworking",
     "material:blistersteel": "Blister Steel",
     
     "setting-smithwithbits": "Smith with bits",
@@ -18,9 +18,16 @@
     "setting-showrepairsmithname": "Show repair smith name",
     "setting-arrowsdropbits": "Arrows drop bits",
     "setting-arrowselector": "Arrow selector",
+    "setting-anvilshowrecipevoxels": "Show recipe voxel count",
+    "setting-rememberhammertooldmode": "Remember hammer tool mode",
+    "setting-showworkabletemperature": "Show workable temperature",
     
     "game:Last repaired by {0}": "Last repaired by {0}",
     "game:Broken {0} times": "Broken {0} times",
     "game:Repaired {0} times": "Repaired {0} times",
-    "game:Unknown broken tool part": "Unknown broken tool part"
+    "game:Unknown broken tool part": "Unknown broken tool part",
+    "game:Unknown repaired tool part": "Unknown repaired tool part",
+    "game:Workable Temperature: {0}": "Workable Temperature: {0}",
+    "itemdesc-temp-always": "Always",
+    "blockdesc-voxelcount": "Material: {0}/{1}"
 }

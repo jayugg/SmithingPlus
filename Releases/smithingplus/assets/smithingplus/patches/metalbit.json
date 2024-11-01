@@ -4,7 +4,7 @@
     "op": "addmerge",
     "path": "/attributesByType",
     "value": {
-      "@*-(nativecopper|nativegold|nativesilver)": {
+      "@*-(nativecopper|nativegold|nativesilver|nativeplatinum)": {
           "isPureMetal": true
       }
     },
@@ -15,7 +15,7 @@
     "op": "addmerge",
     "path": "/classByType",
     "value": {
-      "@*-(nativecopper|nativegold|nativesilver)": "ItemWorkableNugget"
+      "@*-(nativecopper|nativegold|nativesilver|nativeplatinum)": "ItemWorkableNugget"
     },
     "side": "Server"
   },

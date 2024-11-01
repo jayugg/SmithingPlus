@@ -2,14 +2,14 @@
   "profiles": {
     "Client": {
       "commandName": "Executable",
-      "executablePath": "bash",
-      "commandLineArgs": "-c \"for dir in $(ProjectDir)/bin/$(Configuration)/Mods/*; do rsync -a --delete ${dir%/}/ $(VINTAGE_STORY)/Mods/$(basename $dir); done && $(VINTAGE_STORY)/Vintagestory --tracelog\"",
+      "executablePath": "$(VINTAGE_STORY)/Vintagestory",
+      "commandLineArgs": "--tracelog --addModPath \"$(ProjectDir)/bin/$(Configuration)/Mods\"",
       "workingDirectory": "$(VINTAGE_STORY)"
     },
     "Server": {
       "commandName": "Executable",
-      "executablePath": "bash",
-      "commandLineArgs": "-c \"for dir in $(ProjectDir)/bin/$(Configuration)/Mods/*; do rsync -a --delete ${dir%/}/ $(VINTAGE_STORY)/Mods/$(basename $dir); done && $(VINTAGE_STORY)/VintagestoryServer --tracelog\"",
+      "executablePath": "$(VINTAGE_STORY)/VintagestoryServer",
+      "commandLineArgs": "--tracelog --addModPath \"$(ProjectDir)/bin/$(Configuration)/Mods\"",
       "workingDirectory": "$(VINTAGE_STORY)"
     }
   }

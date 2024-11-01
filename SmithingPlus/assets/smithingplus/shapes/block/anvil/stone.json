@@ -1,0 +1,49 @@
+{
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+		"0": [16, 16]
+	},
+	"textures": {
+		"0": "block/metal/anvil/copper"
+	},
+	"elements": [
+		{
+			"name": "Layer_1",
+			"from": [2.75, 0, 5.25],
+			"to": [12.25, 10, 10.75],
+			"rotationOrigin": [0, 0, 0],
+			"faces": {
+				"north": {
+					"texture": "#null",
+					"uv": [0, 0, 9.5, 10]
+				},
+				"east": {
+					"texture": "#null",
+					"uv": [0, 0, 5.5, 10]
+				},
+				"south": {
+					"texture": "#null",
+					"uv": [0, 0, 9.5, 10]
+				},
+				"west": {
+					"texture": "#null",
+					"uv": [0, 0, 5.5, 10]
+				},
+				"up": {
+					"texture": "#null",
+					"uv": [0, 0, 9.5, 5.5]
+				},
+				"down": {
+					"texture": "#null",
+					"uv": [0, 0, 9.5, 5.5]
+				}
+			},
+			"children": [],
+			"rotationX": 0,
+			"rotationY": 0,
+			"rotationZ": 0
+		}
+	],
+	"animations": []
+}

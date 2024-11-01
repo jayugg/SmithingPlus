@@ -18,4 +18,8 @@ public class ServerConfig
     public bool ShowRepairSmithName { get; set; } = false;
     public bool ArrowsDropBits { get; set; } = true;
     public string ArrowSelector { get; set; } = "@(.*):arrow-(.*)";
+    public bool AnvilShowRecipeVoxels { get; set; } = true;
+    public bool RememberHammerToolMode { get; set; } = true;
+    public bool ShowWorkableTemperature{ get; set; } = true;
+    // public bool StoneSmithing { get; set; } = false;
 }

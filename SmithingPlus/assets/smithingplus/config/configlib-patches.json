@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "file": "SmithingPlus.json",
   "patches": {
   },
@@ -145,8 +145,32 @@
       "ingui": "smithingplus:setting-arrowselector",
       "type": "string",
       "weight": 0.87,
-      "comment": "Regex selector for arrows that drop metal bits.",
+      "comment": "Regex selector for arrows that drop metal bits",
       "default": "@(.*)arrow-(.*)"
+    },
+    {
+      "code": "AnvilShowRecipeVoxels",
+      "ingui": "smithingplus:setting-anvilshowrecipevoxels",
+      "type": "boolean",
+      "weight": 0.86,
+      "comment": "Show the recipe voxel count in the anvil block info",
+      "default": true
+    },
+    {
+      "code": "RememberHammerToolMode",
+      "ingui": "smithingplus:setting-rememberhammertooldmode",
+      "type": "boolean",
+      "weight": 0.85,
+      "comment": "Remember the last tool mode used with any hammer",
+      "default": true
+    },
+    {
+      "code": "ShowWorkableTemperature",
+      "ingui": "smithingplus:setting-showworkabletemperature",
+      "type": "boolean",
+      "weight": 0.84,
+      "comment": "Show the workable temperature in the tooltip of workable items",
+      "default": true
     }
   ],
   "formatting": [
@@ -164,6 +188,11 @@
       "type": "separator",
       "title": "Recyclable arrows",
       "weight": 0.875
+    },
+    {
+      "type": "separator",
+      "title": "Client tweaks",
+      "weight": 0.865
     }
   ]
 }

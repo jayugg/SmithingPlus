@@ -1,2 +1,6 @@
-- Fixed tools dropping heads whenever they lose durability (debug feature wasn't disabled)
-- Add configurable durability multiplier for repairable tools to adjust balance, default as vanilla (does not apply retroactively)
+- [Feature] Add workable temperature display to workable items
+- [Feature] Remember used hammer tool mode
+- [Feature] Display current recipe voxel count in anvil info
+- [Compat] Add native platinum (from Geology Additions) to workable nuggets
+- [Compat] Alchemy mod 1 hook recipe for nuggets
+- [Fix] Better compatibility of tool repair module with XSkills and other mods that modify item attributes on crafting
