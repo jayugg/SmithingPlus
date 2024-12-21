@@ -13,6 +13,7 @@ public class ServerConfig
     public string ToolHeadSelector { get; set; } = "@(.*)(head|blade|boss|barrel|stirrup)(.*)";
     public string IngotSelector { get; set; } = "@(.*):ingot-(.*)";
     public string WorkItemSelector { get; set; } = "@(.*):workitem-(.*)";
+    public bool DontRepairBrokenToolHeads { get; set; } = false;
     public bool ShowRepairedCount { get; set; } = true;
     public bool ShowBrokenCount { get; set; } = true;
     public bool ShowRepairSmithName { get; set; } = false;

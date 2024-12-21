@@ -53,9 +53,9 @@ public class ItemDamagedPatches
           return;
         Core.Logger.VerboseDebug("Prefix_DamageItem: {0} by {1}", __instance.Code, amount);
         Core.Logger.VerboseDebug("InventoryID: {0}, Class: {1}", itemslot?.Inventory?.InventoryID, itemslot?.Inventory?.ClassName);
-        var durability = itemslot?.Itemstack.GetDurability();
+        var durability = itemslot?.Itemstack?.GetDurability();
         Core.Logger.VerboseDebug("Durability: {0}", durability);
-        if (!durability.HasValue || durability > amount) return;
+        //if (!durability.HasValue || durability > amount) return;
         if (itemslot?.Itemstack.Collectible.IsRepairableTool() != true) return;
         var entityPlayer = byEntity as EntityPlayer;
         var itemStack = itemslot?.Itemstack;

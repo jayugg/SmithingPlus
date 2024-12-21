@@ -21,6 +21,7 @@
     "setting-anvilshowrecipevoxels": "Show recipe voxel count",
     "setting-rememberhammertooldmode": "Remember hammer tool mode",
     "setting-showworkabletemperature": "Show workable temperature",
+    "setting-dontrepairbrokentoolheads": "Don't repair broken tool heads",
     
     "game:Last repaired by {0}": "Last repaired by {0}",
     "game:Broken {0} times": "Broken {0} times",
@@ -29,5 +30,6 @@
     "game:Unknown repaired tool part": "Unknown repaired tool part",
     "game:Workable Temperature: {0}": "Workable Temperature: {0}",
     "itemdesc-temp-always": "Always",
-    "blockdesc-voxelcount": "Material: {0}/{1}"
+    "blockdesc-voxelcount": "Material: {0}/{1}",
+    "itemdesc-needschiseling": "Chisel to recover bits"
 }

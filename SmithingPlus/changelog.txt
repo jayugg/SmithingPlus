@@ -1,6 +1,2 @@
-- [Feature] Add workable temperature display to workable items
-- [Feature] Remember used hammer tool mode
-- [Feature] Display current recipe voxel count in anvil info
-- [Compat] Add native platinum (from Geology Additions) to workable nuggets
-- [Compat] Alchemy mod 1 hook recipe for nuggets
-- [Fix] Better compatibility of tool repair module with XSkills and other mods that modify item attributes on crafting
+- [Fix] Fixed crashes with sieve and other single durability tools (like pans with Wild Farming Revival)
+- [Feature] Config option to make broken tool heads unrepairable, default is false
