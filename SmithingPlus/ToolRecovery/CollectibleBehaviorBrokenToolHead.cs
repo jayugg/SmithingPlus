@@ -54,6 +54,7 @@ public class CollectibleBehaviorBrokenToolHead : CollectibleBehaviorBrokenTool
         var brokenCount = inSlot.Itemstack.GetBrokenCount();
         if (brokenCount <= 0) return;
         if (Core.Config.ShowBrokenCount) dsc.AppendLine(Lang.Get($"{LangKey} {{0}} times", brokenCount));
+        if (Core.Config.DontRepairBrokenToolHeads) dsc.AppendLine(Lang.Get($"{Core.ModId}:itemdesc-needschiseling"));
     }
 
     [HarmonyPostfix]

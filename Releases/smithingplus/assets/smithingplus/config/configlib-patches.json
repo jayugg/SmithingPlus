@@ -109,6 +109,14 @@
       "default": "@(.*):workitem-(.*)"
     },
     {
+      "code": "DontRepairBrokenToolHeads",
+      "ingui": "smithingplus:setting-dontrepairbrokentoolheads",
+      "type": "boolean",
+      "weight": 0.905,
+      "comment": "Make broken tool heads not repairable on an anvil",
+      "default": false
+    },
+    {
       "code": "ShowRepairedCount",
       "ingui": "smithingplus:setting-showrepairedcount",
       "type": "boolean",
