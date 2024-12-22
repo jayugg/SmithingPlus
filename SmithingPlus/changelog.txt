@@ -1,2 +1,1 @@
-- [Fix] Fixed crashes with sieve and other single durability tools (like pans with Wild Farming Revival)
-- [Feature] Config option to make broken tool heads unrepairable, default is false
+- [Fix] Fix broken head dropping on any tool use (sorry about that)
