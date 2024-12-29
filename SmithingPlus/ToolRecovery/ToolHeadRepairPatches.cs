@@ -30,6 +30,7 @@ public class ToolHeadRepairPatches
     public static void ModifyBrokenCount(BlockEntityAnvil instance, ItemStack itemstack)
     {
         Core.Logger.VerboseDebug("ModifyBrokenCount: {0} by {1}", itemstack.Collectible.Code, instance.WorkItemStack);
+        if (itemstack.GetBrokenCount() == 0) return;
         itemstack.CloneBrokenCount(instance.WorkItemStack);
         itemstack.CloneRepairedToolStack(instance.WorkItemStack);
     }

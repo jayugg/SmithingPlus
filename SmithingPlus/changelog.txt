@@ -1,1 +1,1 @@
-- [Fix] Fix broken head dropping on any tool use (sorry about that)
+- [Fix] Bits recycled from broken heads now stack properly

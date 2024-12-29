@@ -13,7 +13,7 @@ public static class Extensions
     {
         if (itemStack?.Attributes == null)
             return new int?();
-        return itemStack.Attributes.HasAttribute("durability") ? itemStack.Attributes.GetInt("durability", itemStack.Item.Durability) : new int?();
+        return itemStack.Attributes.HasAttribute("durability") ? itemStack.Attributes.GetInt("durability", itemStack.Item?.Durability ?? 1) : new int?();
     }
 
     internal static void SetDurability(this ItemStack itemStack, int number)

@@ -28,6 +28,7 @@ public class ItemDamagedPatches
         if (brokenStack == null) return;
         var brokenCount = brokenStack.GetBrokenCount();
         if (!(brokenCount > 0)) return;
+        if (!brokenStack.Item.IsRepairableTool()) return;
         var repairedStack = brokenStack.GetRepairedToolStack();
         if (repairedStack == null) return;
         repairedStack.Attributes?.RemoveAttribute("durability");
@@ -115,7 +116,7 @@ public class ItemDamagedPatches
             .FirstOrDefault(r =>
                 r.Output.ResolvedItemstack.StackSize == 1 &&
                 r.Output.ResolvedItemstack.Collectible.Code.Equals(itemStack?.Collectible.Code));
-        var toolHead = toolRecipe?.Ingredients.Values.FirstOrDefault(k => k.ResolvedItemstack.Collectible.IsRepairableToolHead())?.ResolvedItemstack;
+        var toolHead = toolRecipe?.Ingredients?.Values.FirstOrDefault(k => k?.ResolvedItemstack?.Collectible?.IsRepairableToolHead() ?? false)?.ResolvedItemstack;
         if (toolHead == null)
         {
             toolHead = itemStack;
