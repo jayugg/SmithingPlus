@@ -115,7 +115,7 @@ public class ItemDamagedPatches
             .FirstOrDefault(r =>
                 r.Output.ResolvedItemstack.StackSize == 1 &&
                 r.Output.ResolvedItemstack.Collectible.Code.Equals(itemStack?.Collectible.Code));
-        var toolHead = toolRecipe?.Ingredients.Values.FirstOrDefault(k => k.ResolvedItemstack.Collectible.IsRepairableToolHead())?.ResolvedItemstack;
+        var toolHead = toolRecipe?.resolvedIngredients.FirstOrDefault(k => k.ResolvedItemstack.Collectible.IsRepairableToolHead())?.ResolvedItemstack;
         if (toolHead == null)
         {
             toolHead = itemStack;
