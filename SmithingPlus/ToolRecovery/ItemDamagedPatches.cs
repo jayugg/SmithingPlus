@@ -57,7 +57,7 @@ public class ItemDamagedPatches
         var durability = itemslot?.Itemstack?.GetDurability();
         Core.Logger.VerboseDebug("Durability: {0}", durability);
         if (!durability.HasValue || durability > amount) return;
-        if (itemslot?.Itemstack.Collectible.IsRepairableTool() != true) return;
+        if (itemslot.Itemstack?.Collectible.IsRepairableTool() != true) return;
         var entityPlayer = byEntity as EntityPlayer;
         var itemStack = itemslot?.Itemstack;
         var toolCode = itemStack?.Collectible.Code.ToString();
@@ -116,7 +116,7 @@ public class ItemDamagedPatches
             .FirstOrDefault(r =>
                 r.Output.ResolvedItemstack.StackSize == 1 &&
                 r.Output.ResolvedItemstack.Collectible.Code.Equals(itemStack?.Collectible.Code));
-        var toolHead = toolRecipe?.Ingredients?.Values.FirstOrDefault(k => k?.ResolvedItemstack?.Collectible?.IsRepairableToolHead() ?? false)?.ResolvedItemstack;
+        var toolHead = toolRecipe?.resolvedIngredients.FirstOrDefault(k => k?.ResolvedItemstack?.Collectible?.IsRepairableToolHead() ?? false)?.ResolvedItemstack;
         if (toolHead == null)
         {
             toolHead = itemStack;

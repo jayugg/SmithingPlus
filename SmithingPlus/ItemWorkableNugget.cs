@@ -60,7 +60,12 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
 
     public List<SmithingRecipe> GetMatchingRecipes(ItemStack stack)
     {
-        return api.GetSmithingRecipes().Where((System.Func<SmithingRecipe, bool>) (r => r.Ingredient.SatisfiesAsIngredient(GetRecipeStack(stack)))).OrderBy((System.Func<SmithingRecipe, AssetLocation>) (r => r.Output.ResolvedItemstack.Collectible.Code)).ToList();
+        
+        return api.GetSmithingRecipes().Where((System.Func<SmithingRecipe, bool>) (
+            r => r.Ingredient.SatisfiesAsIngredient(GetRecipeStack(stack))
+            && !(r.Ingredient.RecipeAttributes?["repairOnly"]?.AsBool() ?? false)
+            ))
+            .OrderBy((System.Func<SmithingRecipe, AssetLocation>) (r => r.Output.ResolvedItemstack.Collectible.Code)).ToList();
     }
 
     public bool CanWork(ItemStack stack)

@@ -1,1 +1,1 @@
-- [Fix] Bits recycled from broken heads now stack properly
+- [Fix] Tool durability modifiers not working

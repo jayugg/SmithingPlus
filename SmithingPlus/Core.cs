@@ -22,7 +22,6 @@ public partial class Core : ModSystem
     public static string ModId;
     public static ICoreAPI Api;
     public static Harmony HarmonyInstance;
-    internal static readonly string ConfigName = "SmithingPlus.json";
     public static ServerConfig Config;
 
     public static Dictionary<int, string> RecipeOutputNameCache => ObjectCacheUtil.GetOrCreate(Api, RecipeOutputNameCacheKey, () => new Dictionary<int, string>());
@@ -34,17 +33,7 @@ public partial class Core : ModSystem
         Logger = Mod.Logger;
         ModId = Mod.Info.ModID;
         Api = api;
-        try
-        {
-            Config = api.LoadModConfig<ServerConfig>(ConfigName);
-            if (Config != null) return;
-            Config = new ServerConfig();
-            Logger.VerboseDebug("Config file not found, creating a new one...");
-            api.StoreModConfig(Config, ConfigName);
-        } catch (Exception e) {
-            Logger.Error("Failed to load config, you probably made a typo: {0}", e);
-            Config = new ServerConfig();
-        }
+        Config = ConfigSystem.Config;
     }
 
     public override void Start(ICoreAPI api)
@@ -79,6 +68,7 @@ public partial class Core : ModSystem
         __result = Api.GetSmithingRecipes().Where((System.Func<SmithingRecipe, bool>) (
             r => r.Ingredient.SatisfiesAsIngredient(stack)
             && !(r.Ingredient.RecipeAttributes?["nuggetRecipe"]?.AsBool() ?? false)
+            && !(r.Ingredient.RecipeAttributes?["repairOnly"]?.AsBool() ?? false)
             )).OrderBy((System.Func<SmithingRecipe, AssetLocation>) (
             r => r.Output.ResolvedItemstack.Collectible.Code)
             ).ToList();

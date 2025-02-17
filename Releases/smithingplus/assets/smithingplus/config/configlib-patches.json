@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "file": "SmithingPlus.json",
   "patches": {
   },
@@ -115,6 +115,14 @@
       "weight": 0.905,
       "comment": "Make broken tool heads not repairable on an anvil",
       "default": false
+    },
+    {
+      "code": "CanRepairForlornHopeEstoc",
+      "ingui": "smithingplus:setting-canrepairforlornhopeestoc",
+      "type": "boolean",
+      "weight": 0.904,
+      "comment": "Allow the repair of the Forlorn Hope estoc",
+      "default": true
     },
     {
       "code": "ShowRepairedCount",

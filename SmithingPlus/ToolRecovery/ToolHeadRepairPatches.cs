@@ -17,13 +17,19 @@ public class ToolHeadRepairPatches
     public static void Postfix_GetMaxDurability(ref int __result, ItemStack itemstack)
     {
         var brokenCount = itemstack.GetBrokenCount();
-        if (brokenCount <= 0) return;
+        if (brokenCount < 0) return;
         if (itemstack.Attributes.HasAttribute("maxdurability"))
         {
             __result = itemstack.Attributes.GetInt("maxdurability");
         }
         var multiplier = itemstack.Collectible.IsRepairableTool() ? Core.Config.RepairableToolDurabilityMultiplier : 1;
+        Core.Logger.VerboseDebug("Multiplier: {0}", multiplier);
         var reducedDurability = (int) (__result * multiplier * (1 - brokenCount * Core.Config.DurabilityPenaltyPerRepair));
+        if (itemstack.Attributes.HasAttribute("durability"))
+        {
+            var durability = itemstack.Attributes.GetInt("durability");
+            itemstack.Attributes.SetInt("durability", Math.Min(durability, reducedDurability));
+        }
         __result = Math.Max(reducedDurability, 1);
     }
 

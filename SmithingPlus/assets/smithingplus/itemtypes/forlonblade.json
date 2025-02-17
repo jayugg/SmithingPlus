@@ -1,0 +1,36 @@
+{
+	"code": "forlornblade",
+	"variantgroups": [
+		{ "code": "metal", "states": ["meteoriciron" ] }
+	],
+	"heldTpUseAnimation": "interactstatic", "maxstacksize": 4,
+	"shape": { "base": "item/tool/blades/forlorn" },
+	"textures": {
+		"blade": {"base": "game:block/metal/armor-generic/{metal}"},
+		"swordforlorn": {"base": "game:block/transparent"}
+	},
+	"creativeinventory": { "general": ["*"], "items": ["*"] },
+	"guiTransform": {
+		"translation": { "x": 0, "y": 0, "z": 0 },
+		"rotation": { "x": -89, "y": 47, "z": 34 },
+		"origin": { "x": 1.07, "y": 0, "z": 0.43 },
+		"scale": 1.53
+	},
+	"fpHandTransform": {
+		"translation": { "x": -0.2, "y": -0.3, "z": 0.4 },
+		"rotation": { "x": -59, "y": 15, "z": 90 },
+		"scale": 2.84
+	},
+	"groundTransform": {
+		"translation": { "x": 0, "y": 0, "z": 0 },
+		"rotation": { "x": 0, "y": 0, "z": 0 },
+		"origin": { "x": 0.5, "y": 0, "z": 0.5 },
+		"scale": 3.4
+	},
+	"tpHandTransform": {
+		"translation": { "x": -0.67, "y": 0, "z": -0.69 },
+		"rotation": { "x": 90, "y": 0, "z": 0 },
+		"origin": { "x": 0.5, "y": 0, "z": 0.5 },
+		"scale": 0.8
+	}
+}

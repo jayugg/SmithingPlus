@@ -33,6 +33,6 @@ public class RecyclableArrowBehavior : EntityBehavior
     
     public static bool IsRecyclableArrow(EntityProjectile projectile)
     {
-        return WildcardUtil.Match(Core.Config.ArrowSelector, projectile.ProjectileStack?.Collectible.Code.ToString());
+        return WildcardUtil.Match(Core.Config.ArrowSelector, projectile?.ProjectileStack?.Collectible.Code.ToString());
     }
 }

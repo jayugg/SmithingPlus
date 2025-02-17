@@ -22,6 +22,7 @@
     "setting-rememberhammertooldmode": "Remember hammer tool mode",
     "setting-showworkabletemperature": "Show workable temperature",
     "setting-dontrepairbrokentoolheads": "Don't repair broken tool heads",
+    "setting-canrepairforlornhopeestoc": "Can repair Forlorn Hope estoc",
     
     "game:Last repaired by {0}": "Last repaired by {0}",
     "game:Broken {0} times": "Broken {0} times",
@@ -31,5 +32,9 @@
     "game:Workable Temperature: {0}": "Workable Temperature: {0}",
     "itemdesc-temp-always": "Always",
     "blockdesc-voxelcount": "Material: {0}/{1}",
-    "itemdesc-needschiseling": "Chisel to recover bits"
+    "itemdesc-needschiseling": "Chisel to recover bits",
+
+    "item-forlornblade-meteoriciron": "Estoc blade",
+    "itemdesc-item-forlornblade-meteoriciron": "This recipe should not be visible, blade can only be repaired",
+    "itemcraftdesc-item-forlornblade-meteoriciron": "This recipe should not be visible, blade can only be repaired"
 }
