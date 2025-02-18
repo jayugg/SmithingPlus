@@ -56,7 +56,8 @@ public partial class Core : ModSystem
 
     private void AddEntityBehaviors(Entity entity)
     {
-        if (!Config.ArrowsDropBits || entity is not EntityProjectile) return;
+        if (!Config.ArrowsDropBits || entity is not EntityProjectile projectile) return;
+        if (!RecyclableArrowBehavior.IsRecyclableArrow(projectile)) return;
         Logger.VerboseDebug("Adding RecyclableArrowBehavior to {0}", entity.Code);
         entity.AddBehavior(new RecyclableArrowBehavior(entity));
     }

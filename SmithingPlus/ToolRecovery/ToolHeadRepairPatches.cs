@@ -16,14 +16,14 @@ public class ToolHeadRepairPatches
     [HarmonyPatch(typeof(CollectibleObject), nameof(CollectibleObject.GetMaxDurability)), HarmonyPriority(-1)]
     public static void Postfix_GetMaxDurability(ref int __result, ItemStack itemstack)
     {
+        if (!itemstack.Collectible.IsRepairableTool(verbose: false)) return;
         var brokenCount = itemstack.GetBrokenCount();
         if (brokenCount < 0) return;
         if (itemstack.Attributes.HasAttribute("maxdurability"))
         {
             __result = itemstack.Attributes.GetInt("maxdurability");
         }
-        var multiplier = itemstack.Collectible.IsRepairableTool() ? Core.Config.RepairableToolDurabilityMultiplier : 1;
-        Core.Logger.VerboseDebug("Multiplier: {0}", multiplier);
+        var multiplier = Core.Config.RepairableToolDurabilityMultiplier;
         var reducedDurability = (int) (__result * multiplier * (1 - brokenCount * Core.Config.DurabilityPenaltyPerRepair));
         if (itemstack.Attributes.HasAttribute("durability"))
         {
@@ -36,7 +36,7 @@ public class ToolHeadRepairPatches
     public static void ModifyBrokenCount(BlockEntityAnvil instance, ItemStack itemstack)
     {
         Core.Logger.VerboseDebug("ModifyBrokenCount: {0} by {1}", itemstack.Collectible.Code, instance.WorkItemStack);
-        if (itemstack.GetBrokenCount() == 0) return;
+        if (instance.WorkItemStack.GetBrokenCount() == 0) return;
         itemstack.CloneBrokenCount(instance.WorkItemStack);
         itemstack.CloneRepairedToolStack(instance.WorkItemStack);
     }

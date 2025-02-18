@@ -101,6 +101,7 @@ public class ItemDamagedPatches
         var gaveStack = false;
         if (entityPlayer != null) gaveStack = entityPlayer.TryGiveItemStack(wItemStack);
         if (!gaveStack) world.SpawnItemEntity(wItemStack, byEntity.Pos.XYZ);
+        Core.Logger.VerboseDebug(gaveStack ? "Gave work item {0} to player {1}" : "Dropped work item {0} to player {1}", wItemStack.Collectible.Code, entityPlayer?.Player.PlayerName);
     }
 
     private static SmithingRecipe GetHeadSmithingRecipe(IWorldAccessor world, ItemStack itemStack)
@@ -138,9 +139,10 @@ public class ItemDamagedPatches
         float removableVoxelCount = 0;
         if (stackSize > 1) removableVoxelCount = CacheHelper.GetOrAdd(Core.RecipeVoxelCountCache, recipe.RecipeId,
             () => {
-                Core.Logger.VerboseDebug("Calculating voxel count for: {0}", recipe.RecipeId);
+                Core.Logger.VerboseDebug("Calculating voxel count for recipe {0}", recipe.RecipeId);
                 return recipeVoxels.Cast<bool>().Count(voxel => voxel);
             });
+        if (Core.Config.BrokenToolVoxelPercent <= 0) Core.Logger.VerboseDebug("Error: please fix the config value BrokenToolVoxelPercent, value must be greater than 0");
         removableVoxelCount /= stackSize;
         var byteVoxels = new byte[recipeVoxels.GetLength(0), recipeVoxels.GetLength(1), recipeVoxels.GetLength(2)];
         for (int x = 0; x < recipeVoxels.GetLength(0); x++)
@@ -154,7 +156,7 @@ public class ItemDamagedPatches
                         removableVoxelCount--;
                         continue;
                     }
-                    if (random.NextDouble() < Core.Config.BrokenToolVoxelChance)
+                    if (random.NextDouble() < Core.Config.BrokenToolVoxelPercent)
                     {
                         byteVoxels[x, y, z] = recipeVoxels[x, y, z] ? (byte)1 : (byte)0;
                     }

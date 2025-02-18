@@ -37,7 +37,7 @@ public class CollectibleBehaviorBrokenToolHead : CollectibleBehaviorBrokenTool
             recipeId,
             () =>
             {
-                Core.Logger.VerboseDebug("Storing recipe output name: {0}", itemStack.Collectible.Code);
+                Core.Logger.VerboseDebug("Storing recipe output name: {0}", recipeId);
                 return Core.Api.GetSmithingRecipes().FirstOrDefault(r => r.RecipeId == recipeId)?.Output
                     .ResolvedItemstack.GetName();
             });

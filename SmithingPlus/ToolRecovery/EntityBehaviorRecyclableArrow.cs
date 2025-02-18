@@ -33,6 +33,9 @@ public class RecyclableArrowBehavior : EntityBehavior
     
     public static bool IsRecyclableArrow(EntityProjectile projectile)
     {
-        return WildcardUtil.Match(Core.Config.ArrowSelector, projectile?.ProjectileStack?.Collectible.Code.ToString());
+        var projectileItem = projectile.ProjectileStack?.Collectible;
+        if (projectileItem == null) return false;
+        Core.Logger.VerboseDebug("Testing recyclable arrow: {0}", projectileItem.Code);
+        return WildcardUtil.Match(Core.Config.ArrowSelector, projectile.ProjectileStack?.Collectible.Code.ToString());
     }
 }

@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "file": "SmithingPlus.json",
   "patches": {
   },
@@ -70,7 +70,7 @@
       "type": "float",
       "weight": 0.95,
       "comment": "Percentage of material not lost when a tool breaks",
-      "default": 0.9,
+      "default": 0.8,
       "range": {
         "min": 0,
         "max": 1
