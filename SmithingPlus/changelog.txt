@@ -1,2 +1,1 @@
-- [Tweak] Support steel bits recovery from blister steel
-- [Fix] Balanced config default for bits returned to vanilla voxel to bits value
+- [Fix] Fixed durability override of other mods (Item Rarity, XSkills)

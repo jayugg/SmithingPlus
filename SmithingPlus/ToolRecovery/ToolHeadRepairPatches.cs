@@ -13,16 +13,12 @@ namespace SmithingPlus.ToolRecovery;
 public class ToolHeadRepairPatches
 {
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(CollectibleObject), nameof(CollectibleObject.GetMaxDurability)), HarmonyPriority(-1)]
+    [HarmonyPatch(typeof(CollectibleObject), nameof(CollectibleObject.GetMaxDurability)), HarmonyPriority(-int.MaxValue)]
     public static void Postfix_GetMaxDurability(ref int __result, ItemStack itemstack)
     {
         if (!itemstack.Collectible.IsRepairableTool(verbose: false)) return;
         var brokenCount = itemstack.GetBrokenCount();
         if (brokenCount < 0) return;
-        if (itemstack.Attributes.HasAttribute("maxdurability"))
-        {
-            __result = itemstack.Attributes.GetInt("maxdurability");
-        }
         var multiplier = Core.Config.RepairableToolDurabilityMultiplier;
         var reducedDurability = (int) (__result * multiplier * (1 - brokenCount * Core.Config.DurabilityPenaltyPerRepair));
         if (itemstack.Attributes.HasAttribute("durability"))
