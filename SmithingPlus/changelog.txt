@@ -1,5 +1,2 @@
-- [Fix] BrokenToolVoxelPercent config option was wrongly named BrokenToolVoxelChance and did not work with configlib
-- [Compatibility] KRPG enchantment projectile fix
-- [Fix] 1.20 broke attributes carrying over to repaired tools. This fixes that. (Should fix a bunch of related bugs)
-- [Tweak] Round workable temperature in tooltip
-- [Fix] Log spam
+- [Tweak] Support steel bits recovery from blister steel
+- [Fix] Balanced config default for bits returned to vanilla voxel to bits value

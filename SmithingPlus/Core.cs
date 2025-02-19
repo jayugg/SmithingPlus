@@ -135,6 +135,12 @@ public partial class Core : ModSystem
             HarmonyInstance.PatchCategory(ClientTweaksCategories.AnvilShowRecipeVoxels);
             Logger.VerboseDebug("Patched AnvilShowRecipeVoxels...");
         }
+        
+        if (Config.RecoverBitsOnSplit)
+        {
+            HarmonyInstance.PatchCategory(BitsRecoveryCategory);
+            Logger.VerboseDebug("Patched BitsRecovery...");
+        }
 
         if (!Config.SmithWithBits && !Config.BitsTopUp) return;
         HarmonyInstance.PatchCategory(SmithingBitsCategory);

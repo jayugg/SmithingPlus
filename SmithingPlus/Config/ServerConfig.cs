@@ -2,6 +2,8 @@ namespace SmithingPlus.Config;
 
 public class ServerConfig
 {
+    public bool RecoverBitsOnSplit{ get; set; } = true;
+    public float BitsRecoveryChance { get; set; } = 0.47619f;
     public bool SmithWithBits { get; set; } = true;
     public bool BitsTopUp { get; set; } = true;
     public float ExtraVoxelChance { get; set; } = 0.1f;

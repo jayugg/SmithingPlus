@@ -5,6 +5,7 @@ public partial class Core
     internal const string ToolRecoveryCategory = "toolRecovery";
     internal const string SmithingBitsCategory = "smithingBits";
     internal const string StoneSmithingCategory = "stoneSmithing";
+    internal const string BitsRecoveryCategory = "bitsRecovery";
 
     public static class ClientTweaksCategories
     {

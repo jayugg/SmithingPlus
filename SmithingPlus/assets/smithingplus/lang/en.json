@@ -1,7 +1,9 @@
 {
     "game:itemcraftdesc-ingot-*": "The basic of all metalworking",
     "material:blistersteel": "Blister Steel",
-    
+
+    "setting-recoverbitsonsplit": "Recover bits on split",
+    "setting-bitsrecoverychance": "Bits recovery chance",
     "setting-smithwithbits": "Smith with bits",
     "setting-bitstopup": "Bits top up",
     "setting-extravoxelchance": "Extra voxel chance",
