@@ -124,7 +124,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
 
         voxels[8, 0, 7] = 1;
         voxels[8, 0, 8] = 1;
-        if (random.NextDouble() < Core.Config.ExtraVoxelChance)
+        if (random.NextDouble() < Math.Max(Core.Config.VoxelsPerBit - 2.0, 0))
         {
             voxels[8, 1, 7] = 1;
         }

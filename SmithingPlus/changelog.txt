@@ -1,1 +1,2 @@
-- [Fix] Fixed durability override of other mods (Item Rarity, XSkills)
+- [Rebalance] Rebalanced bits recovery and altered functionality slightly (config settings have been reworked to fit this)
+- [Client Tweak] Display temperature in green when item on forge or anvil is workable

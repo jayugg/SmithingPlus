@@ -11,6 +11,7 @@ public partial class Core
     {
         public const string AnvilShowRecipeVoxels = "anvilShowRecipeVoxels";
         public const string RememberHammerToolMode = "rememberHammerToolMode";
+        public const string ShowWorkablePatches = "showWorkablePatches";
     }
 
     internal const string ThriftySmithingCompatCategory = "thriftySmithingCompat";

@@ -1,3 +1,4 @@
+using System;
 using HarmonyLib;
 using SmithingPlus.ToolRecovery;
 using Vintagestory.API.Common;
@@ -22,11 +23,16 @@ public class BitsRecoveryPatches
     
         int toolMode = activeHotbarSlot.Itemstack.Collectible.GetToolMode(activeHotbarSlot, byPlayer, blockSel);
         if (toolMode != 5) return;  // 5 is the split mode
-        if (byPlayer.Entity.World.Rand.NextDouble() > Core.Config.BitsRecoveryChance)
+        var splitCount = activeHotbarSlot.Itemstack.GetSplitCount();
+        var bitsPerVoxel = 1f/Core.Config.VoxelsPerBit;
+        splitCount += bitsPerVoxel;
+        if (splitCount < 1)
         {
             Core.Logger.VerboseDebug("[BitsRecovery] Failed to recover bits from {0}", workItemStack);
+            activeHotbarSlot.Itemstack.SetSplitCount(splitCount);
             return;
         }
+        activeHotbarSlot.Itemstack.SetSplitCount(Math.Max(splitCount - 1, 0));
         Core.Logger.VerboseDebug("[BitsRecovery] Attempting to recover bits from {0}", workItemStack);
         var metalVariant = ItemDamagedPatches.GetMetalOrMaterial(workItemStack);
         if (metalVariant == "blistersteel") {metalVariant = "steel";}

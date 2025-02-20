@@ -24,7 +24,7 @@ public class ToolHeadRepairPatches
         if (itemstack.Attributes.HasAttribute("durability"))
         {
             var durability = itemstack.Attributes.GetInt("durability");
-            itemstack.Attributes.SetInt("durability", Math.Min(durability, reducedDurability));
+            itemstack.SetDurability(Math.Min(durability, reducedDurability));
         }
         __result = Math.Max(reducedDurability, 1);
     }

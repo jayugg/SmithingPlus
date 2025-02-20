@@ -136,6 +136,12 @@ public partial class Core : ModSystem
             Logger.VerboseDebug("Patched AnvilShowRecipeVoxels...");
         }
         
+        if (Config.ShowWorkableTemperature)
+        {
+            HarmonyInstance.PatchCategory(ClientTweaksCategories.ShowWorkablePatches);
+            Logger.VerboseDebug("Patched ShowWorkableTemperature...");
+        }
+        
         if (Config.RecoverBitsOnSplit)
         {
             HarmonyInstance.PatchCategory(BitsRecoveryCategory);

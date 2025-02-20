@@ -58,7 +58,7 @@ public static class Extensions
     internal static int GetBrokenCount(this ItemStack itemStack)
     {
         var repairedStack = itemStack.GetRepairedToolStack();
-        return repairedStack?.GetBrokenCount() ?? itemStack.Attributes.GetInt("brokenCount");
+        return repairedStack?.GetBrokenCount() ?? (itemStack.Attributes?.GetInt("brokenCount") ?? 0);
     }
     
     public static Item ItemWithVariant(this Item item, string key, string value)
@@ -131,5 +131,16 @@ public static class Extensions
             .SmithingRecipes
             .FirstOrDefault(r => r.Output.ResolvedItemstack.Collectible.Code.Equals(toolHead.Collectible.Code));
         return smithingRecipe;
+    }
+    
+    public static float GetSplitCount(this ItemStack stack)
+    {
+        var splitCount = stack.TempAttributes.GetFloat("sp:splitCount");
+        return splitCount;
+    }
+    
+    public static void SetSplitCount(this ItemStack stack, float count)
+    {
+        stack.TempAttributes.SetFloat("sp:splitCount", count);
     }
 }

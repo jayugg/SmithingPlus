@@ -1,13 +1,11 @@
 using System;
 using System.Linq;
-using System.Reflection;
 using HarmonyLib;
 using SmithingPlus.Compat;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
-using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
 namespace SmithingPlus.ToolRecovery;
@@ -23,12 +21,13 @@ public class ItemDamagedPatches
         ItemSlot outputSlot,
         GridRecipe byRecipe)
     {
-        if (outputSlot.Itemstack == null) return;
+        Core.Logger.Warning("Postfix_OnCreatedByCrafting: {0}", byRecipe.Name);
+        if (outputSlot?.Itemstack == null) return;
         var brokenStack = allInputslots.FirstOrDefault(slot => slot.Itemstack?.GetBrokenCount() > 0)?.Itemstack;
         if (brokenStack == null) return;
         var brokenCount = brokenStack.GetBrokenCount();
         if (!(brokenCount > 0)) return;
-        if (!brokenStack.Item.IsRepairableTool()) return;
+        if (brokenStack.Item?.IsRepairableTool() is not true) return;
         var repairedStack = brokenStack.GetRepairedToolStack();
         if (repairedStack == null) return;
         repairedStack.Attributes?.RemoveAttribute("durability");
@@ -59,7 +58,7 @@ public class ItemDamagedPatches
         if (!durability.HasValue || durability > amount) return;
         if (itemslot.Itemstack?.Collectible.IsRepairableTool() != true) return;
         var entityPlayer = byEntity as EntityPlayer;
-        var itemStack = itemslot?.Itemstack;
+        var itemStack = itemslot.Itemstack;
         var toolCode = itemStack?.Collectible.Code.ToString();
         var smithingRecipe = CacheHelper.GetOrAdd(Core.ToolToRecipeCache, toolCode, () => GetHeadSmithingRecipe(world, itemStack));
 
