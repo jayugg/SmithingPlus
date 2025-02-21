@@ -13,7 +13,7 @@ public class ItemWorkItemPatches
     public static void Postfix_CanWork(ItemStack stack, BlockEntityAnvil beAnvil, ref ItemStack __result)
     {
         if (__result == null || !Core.Config.DontRepairBrokenToolHeads) return;
-        if (stack?.Collectible?.HasBehavior<CollectibleBehaviorBrokenToolHead>() != true) return;
+        if (stack?.Collectible?.HasBehavior<CollectibleBehaviorRepairableToolHead>() != true) return;
         if (CollectibleBehaviorBrokenToolHead.IsBrokenToolHead(stack)) {__result = null;}
     }
     

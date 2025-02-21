@@ -6,7 +6,7 @@
         "jayugg"
     ],
     "description": "Add bits when smithing and other tweaks",
-    "version": "1.2.3",
+    "version": "1.2.5",
     "dependencies": {
         "game": ""
     }

@@ -21,7 +21,6 @@ public class ItemDamagedPatches
         ItemSlot outputSlot,
         GridRecipe byRecipe)
     {
-        Core.Logger.Warning("Postfix_OnCreatedByCrafting: {0}", byRecipe.Name);
         if (outputSlot?.Itemstack == null) return;
         var brokenStack = allInputslots.FirstOrDefault(slot => slot.Itemstack?.GetBrokenCount() > 0)?.Itemstack;
         if (brokenStack == null) return;
@@ -51,23 +50,19 @@ public class ItemDamagedPatches
     {
         if (world.Api.Side.IsClient())
           return;
-        Core.Logger.VerboseDebug("Prefix_DamageItem: {0} by {1}", __instance.Code, amount);
-        Core.Logger.VerboseDebug("InventoryID: {0}, Class: {1}", itemslot?.Inventory?.InventoryID, itemslot?.Inventory?.ClassName);
         var durability = itemslot?.Itemstack?.GetDurability();
-        //Core.Logger.VerboseDebug("Durability: {0}", durability);
         if (!durability.HasValue || durability > amount) return;
-        if (itemslot.Itemstack?.Collectible.IsRepairableTool() != true) return;
+        if (itemslot.Itemstack?.Collectible.HasBehavior<CollectibleBehaviorRepairableTool>() != true) return;
+        Core.Logger.VerboseDebug("Broken tool in InventoryID: {0}, Entity: {1}", itemslot?.Inventory?.InventoryID, byEntity.GetName());
         var entityPlayer = byEntity as EntityPlayer;
         var itemStack = itemslot.Itemstack;
         var toolCode = itemStack?.Collectible.Code.ToString();
         var smithingRecipe = CacheHelper.GetOrAdd(Core.ToolToRecipeCache, toolCode, () => GetHeadSmithingRecipe(world, itemStack));
-
         if (smithingRecipe == null)
         {
             Core.Logger.VerboseDebug("Head or tool smithing recipe not found for: {0}", toolCode);
             return;
         }
-
         var metal = smithingRecipe.Output.ResolvedItemstack.Collectible.GetMetalOrMaterial();
         var workItemCode = new AssetLocation(itemStack?.Collectible.Code.Domain,$"workitem-{metal}");
         var workItem = world.GetItem(workItemCode);
@@ -116,7 +111,10 @@ public class ItemDamagedPatches
             .FirstOrDefault(r =>
                 r.Output.ResolvedItemstack.StackSize == 1 &&
                 r.Output.ResolvedItemstack.Collectible.Code.Equals(itemStack?.Collectible.Code));
-        var toolHead = toolRecipe?.resolvedIngredients.FirstOrDefault(k => k?.ResolvedItemstack?.Collectible?.IsRepairableToolHead() ?? false)?.ResolvedItemstack;
+        var toolHead = toolRecipe?.resolvedIngredients
+            .FirstOrDefault(k => 
+                k?.ResolvedItemstack?.Collectible?.HasBehavior<CollectibleBehaviorRepairableToolHead>() ?? false)
+            ?.ResolvedItemstack;
         if (toolHead == null)
         {
             toolHead = itemStack;

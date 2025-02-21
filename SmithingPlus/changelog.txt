@@ -1,2 +1,3 @@
-- [Rebalance] Rebalanced bits recovery and altered functionality slightly (config settings have been reworked to fit this)
-- [Client Tweak] Display temperature in green when item on forge or anvil is workable
+- [Tweak] Better bits recovery memory handling
+- [Tweak] Recover bits from blistersteel or iron bloom or even modded analogues of such items
+- [Tweak] Performance improvements

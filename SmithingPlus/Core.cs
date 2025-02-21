@@ -39,7 +39,8 @@ public partial class Core : ModSystem
     public override void Start(ICoreAPI api)
     {
         api.RegisterItemClass("ItemWorkableNugget", typeof(ItemWorkableNugget));
-        api.RegisterCollectibleBehaviorClass($"{ModId}:BrokenTool", typeof(CollectibleBehaviorBrokenTool));
+        api.RegisterCollectibleBehaviorClass($"{ModId}:RepairableTool", typeof(CollectibleBehaviorRepairableTool));
+        api.RegisterCollectibleBehaviorClass($"{ModId}:RepairableToolHead", typeof(CollectibleBehaviorRepairableToolHead));
         api.RegisterCollectibleBehaviorClass($"{ModId}:BrokenToolHead", typeof(CollectibleBehaviorBrokenToolHead));
         api.RegisterCollectibleBehaviorClass($"{ModId}:AnvilWorkable", typeof(CollectibleBehaviorAnvilWorkable));
         api.RegisterEntityBehaviorClass($"{ModId}:RecyclableArrow", typeof(RecyclableArrowBehavior));
@@ -89,8 +90,8 @@ public partial class Core : ModSystem
         {
             if (Config.ShowWorkableTemperature && collObj is IAnvilWorkable) collObj.AddBehavior<CollectibleBehaviorAnvilWorkable>();
             
-            if ((collObj.Tool != null || collObj.IsRepairableTool(false)) && collObj.HasMetalMaterial(api)) collObj.AddBehavior<CollectibleBehaviorBrokenTool>();
-            else if (WildcardUtil.Match(Config.ToolHeadSelector,collObj.Code.ToString())) collObj.AddBehavior<CollectibleBehaviorBrokenTool>();
+            if ((collObj.Tool != null || collObj.IsRepairableTool() && !collObj.IsRepairableToolHead()) && collObj.HasMetalMaterial(api)) collObj.AddBehavior<CollectibleBehaviorRepairableTool>();
+            else if (collObj.IsRepairableToolHead()) collObj.AddBehavior<CollectibleBehaviorRepairableToolHead>();
             else if (WildcardUtil.Match(Config.WorkItemSelector, collObj.Code.ToString())) collObj.AddBehavior<CollectibleBehaviorBrokenToolHead>();
             
             if (ingotRecipe == null) continue;

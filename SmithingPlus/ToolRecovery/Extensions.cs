@@ -103,17 +103,23 @@ public static class Extensions
         return collObj.GetMetalMaterial(api) != null;
     }
     
-    public static bool IsRepairableTool(this CollectibleObject collObj, bool verbose = true)
+    /*
+     Regex matching is slow.
+     Only use when first assigning behaviors.
+     On runtime, check for CollectibleBehaviorRepairableTool instead.
+    */
+    public static bool IsRepairableTool(this CollectibleObject collObj, bool verbose = false)
     {
         var repairable = WildcardUtil.Match(Core.Config.RepairableToolSelector, collObj.Code.ToString());
         if (verbose && !repairable) Core.Logger.VerboseDebug("Not a repairable tool: {0}", collObj.Code);
         return repairable;
     }
     
-    public static bool IsRepairableToolHead(this CollectibleObject collObj)
+    // Same as above, use CollectibleBehaviorRepairableToolHead instead
+    public static bool IsRepairableToolHead(this CollectibleObject collObj, bool verbose = false)
     {
         var repairable = WildcardUtil.Match(Core.Config.ToolHeadSelector, collObj.Code.ToString());
-        if (!repairable) Core.Logger.VerboseDebug("Not a repairable tool head: {0}", collObj.Code);
+        if (verbose && !repairable) Core.Logger.VerboseDebug("Not a repairable tool head: {0}", collObj.Code);
         return repairable;
     }
     

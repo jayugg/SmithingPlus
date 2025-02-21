@@ -12,7 +12,7 @@ namespace SmithingPlus.ToolRecovery;
 
 [HarmonyPatch(typeof(ItemWorkItem))]
 [HarmonyPatchCategory(Core.ToolRecoveryCategory)]
-public class CollectibleBehaviorBrokenToolHead : CollectibleBehaviorBrokenTool
+public class CollectibleBehaviorBrokenToolHead : CollectibleBehaviorRepairableTool
 {
     protected override string LangKey => "Broken";
 
