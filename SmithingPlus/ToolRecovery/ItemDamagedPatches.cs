@@ -22,7 +22,11 @@ public class ItemDamagedPatches
         GridRecipe byRecipe)
     {
         if (outputSlot?.Itemstack == null) return;
-        var brokenStack = allInputslots.FirstOrDefault(slot => slot.Itemstack?.GetBrokenCount() > 0)?.Itemstack;
+        var brokenStack = allInputslots.FirstOrDefault(slot =>
+            slot.Itemstack?.GetBrokenCount() > 0 &&
+            slot.Itemstack?.Collectible.HasBehavior<CollectibleBehaviorRepairableToolHead>() == true &&
+            slot.Itemstack?.Collectible.Code == outputSlot.Itemstack?.Collectible.Code
+            )?.Itemstack;
         if (brokenStack == null) return;
         var brokenCount = brokenStack.GetBrokenCount();
         if (!(brokenCount > 0)) return;
@@ -30,7 +34,10 @@ public class ItemDamagedPatches
         var repairedStack = brokenStack.GetRepairedToolStack();
         if (repairedStack == null) return;
         repairedStack.Attributes?.RemoveAttribute("durability");
-        repairedStack.Attributes?.RemoveAttribute("maxRepair"); // From necessaries mod grindstone
+        foreach (var attributeKey in Core.Config.GetToolRepairForgettableAttributes)
+        {
+            repairedStack.Attributes?.RemoveAttribute(attributeKey);
+        }
         var repairedAttributes = repairedStack.Attributes ?? new TreeAttribute();
         var outputAttributes = outputSlot.Itemstack.Attributes;
         foreach (var attribute in repairedAttributes)
@@ -67,7 +74,7 @@ public class ItemDamagedPatches
         var workItemCode = new AssetLocation(itemStack?.Collectible.Code.Domain,$"workitem-{metal}");
         var workItem = world.GetItem(workItemCode);
         workItem ??= world.GetItem(new AssetLocation("game:workitem-" + metal));
-        if (workItem is not { })
+        if (workItem is null)
         {
             Core.Logger.VerboseDebug("Work item not found: {0}, {1}", workItemCode, "game:workitem-" + metal);
             return;

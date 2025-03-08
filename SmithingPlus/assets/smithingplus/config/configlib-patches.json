@@ -61,10 +61,18 @@
       }
     },
     {
+      "code": "ToolRepairForgettableAttributes",
+      "ingui": "smithingplus:setting-toolrepairforgettableattributes",
+      "type": "string",
+      "weight": 0.959,
+      "comment": "Attrribute keys of attributes that are forgotten when a tool is repaired, separated by commas",
+      "default": "quality,maxRepair"
+    },
+    {
       "code": "RepairableToolDurabilityMultiplier",
       "ingui": "smithingplus:setting-repairabletooldurabilitymultiplier",
       "type": "float",
-      "weight": 0.959,
+      "weight": 0.951,
       "comment": "Adjust the durability of repairable tools for balance",
       "default": 1.0,
       "range": {

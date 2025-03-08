@@ -25,12 +25,14 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
         GridRecipe byRecipe)
     {
         ItemSlot itemSlot = allInputslots.FirstOrDefault((System.Func<ItemSlot, bool>) (slot => slot.Itemstack?.Collectible is ItemWorkItem));
-        if (itemSlot != null && outputSlot.Itemstack != null)
+        if (itemSlot != null && outputSlot.Itemstack is not null)
         {
             var voxels = BlockEntityAnvil.deserializeVoxels(itemSlot.Itemstack.Attributes.GetBytes("voxels"));
             var voxelCount = voxels.Cast<byte>().Count(voxel => voxel != 0);
             var ratio = 2f + 0.1*(voxelCount / 42f);
             outputSlot.Itemstack.StackSize = Math.Max((int)(voxelCount/ratio), 1);
+            var temperature = outputSlot.Itemstack.Collectible.GetTemperature(api.World, itemSlot.Itemstack);
+            outputSlot.Itemstack.Collectible.SetTemperature(api.World, outputSlot.Itemstack, temperature);
         }
         base.OnCreatedByCrafting(allInputslots, outputSlot, byRecipe);
     }
@@ -79,7 +81,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
 
     public ItemStack TryPlaceOn(ItemStack stack, BlockEntityAnvil beAnvil)
     {
-        if (!CanWork(stack))
+        if (!CanWork(stack) || (beAnvil.WorkItemStack != null && !beAnvil.CanWorkCurrent))
             return null;
         Item obj = api.World.GetItem(new AssetLocation("workitem-" + MetalVariant));
         if (obj == null)

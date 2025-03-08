@@ -8,6 +8,7 @@ public class ServerConfig
     public bool BitsTopUp { get; set; } = true;
     public bool EnableToolRecovery { get; set; } = true;
     public float DurabilityPenaltyPerRepair { get; set; } = 0.05f;
+    public string ToolRepairForgettableAttributes { get; set; } = "quality,maxRepair";
     public float RepairableToolDurabilityMultiplier { get; set; } = 1.0f;
     public float BrokenToolVoxelPercent { get; set; } = 0.8f;
     public string RepairableToolSelector { get; set; } = "@.*(pickaxe|shovel|saw|axe|hoe|knife|hammer|chisel|shears|sword|spear|bow|shield|sickle|scythe|tongs|wrench|solderingiron|cleaver|prospectingpick|crossbow|pistol|rifle|shotgun|blade).*"; 
@@ -25,4 +26,5 @@ public class ServerConfig
     public bool RememberHammerToolMode { get; set; } = true;
     public bool ShowWorkableTemperature{ get; set; } = true;
     // public bool StoneSmithing { get; set; } = false;
+    public string[] GetToolRepairForgettableAttributes => ToolRepairForgettableAttributes.Split(",");
 }
