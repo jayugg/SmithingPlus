@@ -1,3 +1,1 @@
-- [Fix] Attributes NOT carrying over when crafting repaired items (was broken by last update)
-- [Feature] Added traits that modify tool repair penalties: Smith (positive) and Clumsy Repairman (negative),
-these can be added to vanilla or modded classes by mods. Additionally, the sp:toolRepairPenalty player stat can be modified by other mods to alter the penalty. See mod description for guidance on how to patch vanilla classes to have these traits.
+- [Fix] Actually fixed attributes NOT carrying over when crafting repaired items (was broken two updates ago)

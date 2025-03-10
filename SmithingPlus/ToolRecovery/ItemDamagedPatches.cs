@@ -15,23 +15,27 @@ namespace SmithingPlus.ToolRecovery;
 public class ItemDamagedPatches
 {
     [HarmonyPostfix]
-    [HarmonyPatch(nameof(CollectibleObject.OnCreatedByCrafting)), HarmonyPriority(Priority.Last)]
+    [HarmonyPatch(nameof(CollectibleObject.OnCreatedByCrafting)), HarmonyPriority(-int.MaxValue)]
     public static void Postfix_OnCreatedByCrafting(
         ItemSlot[] allInputslots,
         ItemSlot outputSlot,
         GridRecipe byRecipe)
     {
-        if (outputSlot?.Itemstack == null) return;
+        if (outputSlot.Itemstack == null) return;
         var brokenStack = allInputslots.FirstOrDefault(slot =>
             slot.Itemstack?.GetBrokenCount() > 0 &&
             slot.Itemstack?.Collectible.HasBehavior<CollectibleBehaviorRepairableToolHead>() == true
             )?.Itemstack;
         if (brokenStack == null) return;
         var brokenCount = brokenStack.GetBrokenCount();
-        if (!(brokenCount > 0)) return;
+        if (brokenCount <= 0) return;
         if (brokenStack.Item?.IsRepairableTool() is not true) return;
         var repairedStack = brokenStack.GetRepairedToolStack();
-        if (repairedStack == null || repairedStack.Collectible.Code != outputSlot.Itemstack.Collectible.Code) return;
+        if (repairedStack == null) return;
+        Core.Logger.Warning(outputSlot.Inventory.Api.Side.ToString());
+        Core.Logger.Warning(brokenStack.GetRepairedToolStack().ToString());
+        Core.Logger.Warning(byRecipe.Output.ResolvedItemstack.ToString());
+        if (brokenStack.GetRepairedToolStack().Id != byRecipe.Output.ResolvedItemstack.Id) return;
         repairedStack.Attributes?.RemoveAttribute("durability");
         foreach (var attributeKey in Core.Config.GetToolRepairForgettableAttributes)
         {
@@ -45,7 +49,7 @@ public class ItemDamagedPatches
             repairedStack.Attributes?.SetFloat("sp:toolRepairPenaltyModifier", toolRepairPenaltyModifier);
         }
         var repairedAttributes = repairedStack.Attributes ?? new TreeAttribute();
-        var outputAttributes = outputSlot.Itemstack.Attributes;
+        var outputAttributes = outputSlot.Itemstack?.Attributes;
         foreach (var attribute in repairedAttributes)
         {
             outputAttributes[attribute.Key] = attribute.Value;
