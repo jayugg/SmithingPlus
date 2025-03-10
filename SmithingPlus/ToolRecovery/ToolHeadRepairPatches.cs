@@ -20,7 +20,9 @@ public class ToolHeadRepairPatches
         var brokenCount = itemstack.GetBrokenCount();
         if (brokenCount < 0) return;
         var multiplier = Core.Config.RepairableToolDurabilityMultiplier;
-        var reducedDurability = (int) (__result * multiplier * (1 - brokenCount * Core.Config.DurabilityPenaltyPerRepair));
+        var toolRepairPenaltyReduction = itemstack.Attributes.GetFloat("sp:toolRepairPenaltyReduction");
+        var toolRepairPenalty = brokenCount * Core.Config.DurabilityPenaltyPerRepair * (1 - toolRepairPenaltyReduction);
+        var reducedDurability = (int) (__result * multiplier * (1 - toolRepairPenalty));
         if (itemstack.Attributes.HasAttribute("durability"))
         {
             var durability = itemstack.Attributes.GetInt("durability");
@@ -29,12 +31,18 @@ public class ToolHeadRepairPatches
         __result = Math.Max(reducedDurability, 1);
     }
 
-    public static void ModifyBrokenCount(BlockEntityAnvil instance, ItemStack itemstack)
+    public static void ModifyBrokenCount(BlockEntityAnvil instance, ItemStack itemstack, IPlayer byPlayer)
     {
         Core.Logger.VerboseDebug("ModifyBrokenCount: {0} by {1}", itemstack.Collectible.Code, instance.WorkItemStack);
         if (instance.WorkItemStack.GetBrokenCount() == 0) return;
         itemstack.CloneBrokenCount(instance.WorkItemStack);
         itemstack.CloneRepairedToolStack(instance.WorkItemStack);
+        itemstack.SetRepairSmith(byPlayer.PlayerName);
+        var toolRepairPenaltyStat = byPlayer.Entity.Stats.GetBlended("sp:toolRepairPenalty");
+        if (toolRepairPenaltyStat != 0)
+        {
+            itemstack.Attributes.SetFloat("sp:toolRepairPenaltyModifier", toolRepairPenaltyStat - 1);
+        }
     }
 
     [HarmonyTranspiler]
@@ -57,6 +65,7 @@ public class ToolHeadRepairPatches
             Core.Logger.VerboseDebug("Found target method call at index {0}", i);
             yield return new CodeInstruction(OpCodes.Ldarg_0); // Load 'this' (instance)
             yield return new CodeInstruction(OpCodes.Ldloc_0); // Load itemstack (local variable at index 0)
+            yield return new CodeInstruction(OpCodes.Ldarg_1); // Load player (first argument)
             yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(ToolHeadRepairPatches), nameof(ModifyBrokenCount)));
         }
     }
