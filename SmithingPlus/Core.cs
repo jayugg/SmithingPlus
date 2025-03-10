@@ -8,6 +8,7 @@ using SmithingPlus.Extra;
 using SmithingPlus.ToolRecovery;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.Common;
@@ -28,7 +29,6 @@ public partial class Core : ModSystem
     public static Dictionary<int, string> RecipeOutputNameCache => ObjectCacheUtil.GetOrCreate(Api, RecipeOutputNameCacheKey, () => new Dictionary<int, string>());
     public static Dictionary<string, SmithingRecipe> ToolToRecipeCache => ObjectCacheUtil.GetOrCreate(Api, ToolToRecipeCacheKey, () => new Dictionary<string, SmithingRecipe>());
     public static Dictionary<int, int> RecipeVoxelCountCache => ObjectCacheUtil.GetOrCreate(Core.Api, RecipeVoxelCountCacheKey, () => new Dictionary<int, int>());
-
     public override void StartPre(ICoreAPI api)
     {
         Logger = Mod.Logger;
@@ -58,29 +58,27 @@ public partial class Core : ModSystem
             .Create("setHeldTemp")
             .WithDescription("Set the temperature of held item.")
             .RequiresPrivilege("controlserver")
-            .WithArgs(api.ChatCommands.Parsers.Float("temperature"))
-            .WithArgs(api.ChatCommands.Parsers.OptionalWord("playerName"))
-            .HandleWith((args) => OnSetHeldTempCommand(api, args));
+            .WithArgs(api.ChatCommands.Parsers.Float("temperature"), api.ChatCommands.Parsers.OptionalWord("playerName"))
+            .HandleWith(args => OnSetHeldTempCommand(api, args));
         api.ChatCommands
             .Create("getSmithingQuality")
             .WithDescription("Get the smithing quality of player.")
             .RequiresPrivilege("controlserver")
             .WithArgs(api.ChatCommands.Parsers.OptionalWord("playerName"))
-            .HandleWith((args) => OnGetSmithingQualityCommand(api, args));
+            .HandleWith(args => OnGetSmithingQualityCommand(api, args));
     }
 
     private TextCommandResult OnSetHeldTempCommand(ICoreServerAPI api, TextCommandCallingArgs args)
     {
         var temperature = args[0] as float? ?? 0;
-        string playerName = null;
+        string playerName = args[1] as string;
         IServerPlayer targetPlayer;
-        if (args.ArgCount == 1)
+        if (string.IsNullOrEmpty(playerName))
         {
             targetPlayer = args.Caller.Player as IServerPlayer;
         }
         else
         {
-            playerName = args[1] as string;
             targetPlayer = GetPlayerByName(api, playerName);
             if (targetPlayer == null)
             {
@@ -91,7 +89,7 @@ public partial class Core : ModSystem
         var heldStack = targetPlayer.InventoryManager.ActiveHotbarSlot.Itemstack;
         if (heldStack == null)
         {
-            return TextCommandResult.Error($"Player '{targetPlayer?.PlayerName}' has no held item.");
+            return TextCommandResult.Error($"Player '{targetPlayer.PlayerName}' has no held item.");
         }
         heldStack.Collectible.SetTemperature(targetPlayer.Entity.World, heldStack, temperature);
         targetPlayer.InventoryManager.ActiveHotbarSlot.MarkDirty();
