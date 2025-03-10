@@ -20,6 +20,7 @@ public class ServerConfig
     public bool ShowRepairedCount { get; set; } = true;
     public bool ShowBrokenCount { get; set; } = true;
     public bool ShowRepairSmithName { get; set; } = false;
+    public float HelveHammerSmithingQualityModifier{ get; set; } = 1;
     public bool ArrowsDropBits { get; set; } = true;
     public string ArrowSelector { get; set; } = "@(.*):arrow-(.*)";
     public bool AnvilShowRecipeVoxels { get; set; } = true;

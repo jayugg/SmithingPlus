@@ -1,5 +1,5 @@
 {
-  "version": 7,
+  "version": 8,
   "file": "SmithingPlus.json",
   "patches": {
   },
@@ -163,6 +163,18 @@
       "weight": 0.89,
       "comment": "Show the smith name in the repaired item tooltip",
       "default": false
+    },
+    {
+      "code": "HelveHammerSmithingQualityModifier",
+      "ingui": "smithingplus:setting-helvehammersmithingqualitymodifier",
+      "type": "float",
+      "weight": 0.899,
+      "comment": "Smithing quality modifier for helve hammers",
+      "default": 1.0,
+      "range": {
+        "min": 0.1,
+        "max": 2
+      }
     },
     {
       "code": "ArrowsDropBits",

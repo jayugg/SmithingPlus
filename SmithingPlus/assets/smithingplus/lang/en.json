@@ -19,6 +19,7 @@
     "setting-showrepairedcount": "Show repaired count",
     "setting-showbrokencount": "Show broken count",
     "setting-showrepairsmithname": "Show repair smith name",
+    "setting-helvehammersmithingqualitymodifier": "Helve hammer smithing quality modifier",
     "setting-arrowsdropbits": "Arrows drop bits",
     "setting-arrowselector": "Arrow selector",
     "setting-anvilshowrecipevoxels": "Show recipe voxel count",
@@ -39,5 +40,5 @@
 
     "item-forlornblade-meteoriciron": "Estoc blade",
     "itemdesc-item-forlornblade-meteoriciron": "This recipe should not be visible, blade can only be repaired",
-    "itemcraftdesc-item-forlornblade-meteoriciron": "This recipe should not be visible, blade can only be repaired",
+    "itemcraftdesc-item-forlornblade-meteoriciron": "This recipe should not be visible, blade can only be repaired"
 }

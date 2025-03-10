@@ -31,9 +31,9 @@ public class ToolHeadRepairPatches
         __result = Math.Max(reducedDurability, 1);
     }
 
-    public static void ModifyBrokenCount(BlockEntityAnvil instance, ItemStack itemstack, IPlayer byPlayer)
+    public static void OnSmithingFinished(BlockEntityAnvil instance, ItemStack itemstack, IPlayer byPlayer)
     {
-        var smithingQuality = byPlayer.Entity.Stats.GetBlended("sp:smithingQuality");
+        var smithingQuality = byPlayer?.Entity.Stats.GetBlended("sp:smithingQuality") ?? Core.Config.HelveHammerSmithingQualityModifier;
         if (Math.Abs(smithingQuality - 1) > 1E-3)
         {
             itemstack.Attributes.SetFloat("sp:smithingQuality", smithingQuality);
@@ -71,7 +71,7 @@ public class ToolHeadRepairPatches
             yield return new CodeInstruction(OpCodes.Ldarg_0); // Load 'this' (instance)
             yield return new CodeInstruction(OpCodes.Ldloc_0); // Load itemstack (local variable at index 0)
             yield return new CodeInstruction(OpCodes.Ldarg_1); // Load player (first argument)
-            yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(ToolHeadRepairPatches), nameof(ModifyBrokenCount)));
+            yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(ToolHeadRepairPatches), nameof(OnSmithingFinished)));
         }
     }
 }
