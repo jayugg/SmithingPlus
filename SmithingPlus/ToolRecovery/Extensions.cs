@@ -43,6 +43,7 @@ public static class Extensions
         itemStack.Attributes.SetItemstack("repairedToolStack", fromStack);
     }
     
+    // Note: On server itemstack needs to be resolved!
     internal static ItemStack GetRepairedToolStack(this ItemStack itemStack)
     {
         return itemStack.Attributes?.GetItemstack("repairedToolStack");

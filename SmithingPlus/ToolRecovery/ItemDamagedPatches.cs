@@ -32,10 +32,8 @@ public class ItemDamagedPatches
         if (brokenStack.Item?.IsRepairableTool() is not true) return;
         var repairedStack = brokenStack.GetRepairedToolStack();
         if (repairedStack == null) return;
-        Core.Logger.Warning(outputSlot.Inventory.Api.Side.ToString());
-        Core.Logger.Warning(brokenStack.GetRepairedToolStack().ToString());
-        Core.Logger.Warning(byRecipe.Output.ResolvedItemstack.ToString());
-        if (brokenStack.GetRepairedToolStack().Id != byRecipe.Output.ResolvedItemstack.Id) return;
+        repairedStack.ResolveBlockOrItem(outputSlot.Inventory.Api.World);   // To compare codes, would need to resolve the repaired stack on the server
+        if (repairedStack.Collectible.Code != byRecipe.Output.ResolvedItemstack.Collectible.Code) return;
         repairedStack.Attributes?.RemoveAttribute("durability");
         foreach (var attributeKey in Core.Config.GetToolRepairForgettableAttributes)
         {
@@ -49,7 +47,7 @@ public class ItemDamagedPatches
             repairedStack.Attributes?.SetFloat("sp:toolRepairPenaltyModifier", toolRepairPenaltyModifier);
         }
         var repairedAttributes = repairedStack.Attributes ?? new TreeAttribute();
-        var outputAttributes = outputSlot.Itemstack?.Attributes;
+        var outputAttributes = outputSlot.Itemstack.Attributes;
         foreach (var attribute in repairedAttributes)
         {
             outputAttributes[attribute.Key] = attribute.Value;

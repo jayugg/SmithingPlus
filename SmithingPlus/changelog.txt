@@ -1,1 +1,4 @@
-- [Fix] Actually fixed attributes NOT carrying over when crafting repaired items (was broken two updates ago)
+- [Debug] Add setHeldTemp command which allows to set held item temperature, useful for debugging the mod
+- [Fix] Actually fix tool attributes carrying over on repair (was broken in 1.2.6)
+- [Fix] Remove traits from Commoner class (forgot to delete debug code)
+- [Tweak] Add "sp:smithingQuality" player stat that affects smithed items' durability

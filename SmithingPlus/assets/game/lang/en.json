@@ -1,10 +1,12 @@
 {
   "trait-sp:smith": "<font color=\"#84ff84\">• Smith </font>",
-  "trait-sp:clumsyrepairman": "<font color=\"#ff8484\">• Clumsy Repairman </font>",
+  "trait-sp:drosshand": "<font color=\"#ff8484\">• Dross-hand </font>",
   "traitname-sp:smith": "Smith",
-  "traitname-sp:clumsyrepairman": "Clumsy Repairman",
-  "traitdesc-sp:smith": "Has a 20% reduction in tool repair penalties",
-  "traitdesc-sp:clumsyrepairman": "Has a 10% increase in tool repair penalties",
+  "traitname-sp:drosshand": "Dross-hand",
+  "traitdesc-sp:smith": "Natural born smith, has lower tool repair penalties and higher smithing quality",
+  "traitdesc-sp:drosshand": "Smithing is not your strong suit, has higher tool repair penalties and lower smithing quality",
   "charattribute-sp:toolRepairPenalty-0.2": "Reduces tool repair penalties by 20%",
-  "charattribute-sp:toolRepairPenalty--0.1": "Increases tool repair penalties by 10%"
+  "charattribute-sp:toolRepairPenalty--0.1": "Increases tool repair penalties by 10%",
+  "charattribute-sp:smithingQuality-0.2": "Increases smithing projects durability by 20%",
+  "charattribute-sp:smithingQuality--0.1": "Decreases smithing projects durability by 10%"
 }

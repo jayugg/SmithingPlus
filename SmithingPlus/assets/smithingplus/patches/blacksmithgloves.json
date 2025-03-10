@@ -1,0 +1,21 @@
+[
+  {
+    "enabled": false,
+    "file": "blacksmithgloves:itemtypes/blacksmithgloves.json",
+    "op": "addmerge",
+    "path": "/attributes",
+    "value": {
+      "statModifiers": {
+        "sp:toolRepairPenalty": -0.1,
+        "sp:smithingQuality": 0.1
+      }
+    }
+  },
+  {
+    "enabled": false,
+    "file": "blacksmithgloves:itemtypes/blacksmithgloves.json",
+    "op": "replace",
+    "path": "/attributes/clothescategory",
+    "value": "armorbody"
+  }
+]

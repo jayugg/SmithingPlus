@@ -19,7 +19,7 @@ public class ToolHeadRepairPatches
         if (!itemstack.Collectible.HasBehavior<CollectibleBehaviorRepairableTool>()) return;
         var brokenCount = itemstack.GetBrokenCount();
         if (brokenCount < 0) return;
-        var multiplier = Core.Config.RepairableToolDurabilityMultiplier;
+        var multiplier = Core.Config.RepairableToolDurabilityMultiplier * itemstack.Attributes.GetFloat("sp:smithingQuality", 1);
         var toolRepairPenaltyReduction = itemstack.Attributes.GetFloat("sp:toolRepairPenaltyReduction");
         var toolRepairPenalty = brokenCount * Core.Config.DurabilityPenaltyPerRepair * (1 - toolRepairPenaltyReduction);
         var reducedDurability = (int) (__result * multiplier * (1 - toolRepairPenalty));
@@ -33,15 +33,20 @@ public class ToolHeadRepairPatches
 
     public static void ModifyBrokenCount(BlockEntityAnvil instance, ItemStack itemstack, IPlayer byPlayer)
     {
+        var smithingQuality = byPlayer.Entity.Stats.GetBlended("sp:smithingQuality");
+        if (Math.Abs(smithingQuality - 1) > 1E-3)
+        {
+            itemstack.Attributes.SetFloat("sp:smithingQuality", smithingQuality);
+        }
         Core.Logger.VerboseDebug("ModifyBrokenCount: {0} by {1}", itemstack.Collectible.Code, instance.WorkItemStack);
         if (instance.WorkItemStack.GetBrokenCount() == 0) return;
         itemstack.CloneBrokenCount(instance.WorkItemStack);
         itemstack.CloneRepairedToolStack(instance.WorkItemStack);
         itemstack.SetRepairSmith(byPlayer.PlayerName);
         var toolRepairPenaltyStat = byPlayer.Entity.Stats.GetBlended("sp:toolRepairPenalty");
-        if (toolRepairPenaltyStat != 0)
+        if (Math.Abs(toolRepairPenaltyStat - 1) > 1E-3)
         {
-            itemstack.Attributes.SetFloat("sp:toolRepairPenaltyModifier", toolRepairPenaltyStat - 1);
+            itemstack.Attributes.SetFloat("sp:toolRepairPenaltyModifier", (float) Math.Round(toolRepairPenaltyStat - 1, 3));
         }
     }
 
