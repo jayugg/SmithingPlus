@@ -29,6 +29,15 @@ public static class Extensions
         itemStack.Attributes.SetInt("brokenCount", brokenCount + extraCount);
     }
     
+    internal static void CloneAttributeFrom(this ItemStack itemStack, string attributeKey, ItemStack fromStack)
+    {
+        IAttribute attributeValue = null;
+        itemStack.Attributes?.TryGetAttribute(attributeKey, out attributeValue);
+        if (attributeValue == null) return;
+        if (itemStack.Attributes != null)
+            itemStack.Attributes[attributeKey] = fromStack.Attributes[attributeKey];
+    }
+    
     internal static void SetRepairedToolStack(this ItemStack itemStack, ItemStack fromStack)
     {
         itemStack.Attributes.SetItemstack("repairedToolStack", fromStack);

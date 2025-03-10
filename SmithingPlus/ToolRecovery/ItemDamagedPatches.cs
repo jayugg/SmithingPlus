@@ -24,19 +24,25 @@ public class ItemDamagedPatches
         if (outputSlot?.Itemstack == null) return;
         var brokenStack = allInputslots.FirstOrDefault(slot =>
             slot.Itemstack?.GetBrokenCount() > 0 &&
-            slot.Itemstack?.Collectible.HasBehavior<CollectibleBehaviorRepairableToolHead>() == true &&
-            slot.Itemstack?.Collectible.Code == outputSlot.Itemstack?.Collectible.Code
+            slot.Itemstack?.Collectible.HasBehavior<CollectibleBehaviorRepairableToolHead>() == true
             )?.Itemstack;
         if (brokenStack == null) return;
         var brokenCount = brokenStack.GetBrokenCount();
         if (!(brokenCount > 0)) return;
         if (brokenStack.Item?.IsRepairableTool() is not true) return;
         var repairedStack = brokenStack.GetRepairedToolStack();
-        if (repairedStack == null) return;
+        if (repairedStack == null || repairedStack.Collectible.Code != outputSlot.Itemstack.Collectible.Code) return;
         repairedStack.Attributes?.RemoveAttribute("durability");
         foreach (var attributeKey in Core.Config.GetToolRepairForgettableAttributes)
         {
             repairedStack.Attributes?.RemoveAttribute(attributeKey);
+        }
+        var repairSmith = brokenStack.GetRepairSmith();
+        if (repairSmith != null) repairedStack.SetRepairSmith(repairSmith);
+        var toolRepairPenaltyModifier = brokenStack.Attributes.GetFloat("sp:toolRepairPenaltyModifier");
+        if (toolRepairPenaltyModifier != 0)
+        {
+            repairedStack.Attributes?.SetFloat("sp:toolRepairPenaltyModifier", toolRepairPenaltyModifier);
         }
         var repairedAttributes = repairedStack.Attributes ?? new TreeAttribute();
         var outputAttributes = outputSlot.Itemstack.Attributes;
@@ -87,7 +93,6 @@ public class ItemDamagedPatches
         wItemStack.Attributes.SetInt("selectedRecipeId", smithingRecipe.RecipeId);
         var cloneStack = itemStack?.Clone();
         cloneStack.CloneBrokenCount(itemStack, 1);
-        cloneStack.SetRepairSmith(entityPlayer?.Player.PlayerName);
         wItemStack.SetRepairedToolStack(cloneStack);
         if (ThriftySmithingCompat.ThriftySmithingLoaded)
         {

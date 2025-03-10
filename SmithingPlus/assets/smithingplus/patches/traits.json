@@ -1,0 +1,32 @@
+[
+  {
+    "file": "game:config/traits.json",
+    "op": "addeach",
+    "path": "/-",
+    "value": [
+      {
+        "code": "sp:smith",
+        "type": "positive",
+        "attributes": {
+          "sp:toolRepairPenalty": 0.2
+        }
+      },
+      {
+        "code": "sp:clumsyrepairman",
+        "type": "negative",
+        "attributes": {
+          "sp:toolRepairPenalty": -0.1
+        }
+      }
+    ]
+  },
+  {
+    "file": "game:config/characterclasses.json",
+    "op": "addeach",
+    "path": "/0/traits/-",
+    "value": [
+      "sp:smith",
+      "sp:clumsyrepairman"
+    ]
+  }
+]
