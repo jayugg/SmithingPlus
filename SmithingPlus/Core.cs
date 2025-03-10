@@ -40,6 +40,7 @@ public partial class Core : ModSystem
     public override void Start(ICoreAPI api)
     {
         api.RegisterItemClass("ItemWorkableNugget", typeof(ItemWorkableNugget));
+        api.RegisterItemClass("ItemXWorkableNugget", typeof(ItemXWorkableNugget));
         api.RegisterCollectibleBehaviorClass($"{ModId}:RepairableTool", typeof(CollectibleBehaviorRepairableTool));
         api.RegisterCollectibleBehaviorClass($"{ModId}:RepairableToolHead", typeof(CollectibleBehaviorRepairableToolHead));
         api.RegisterCollectibleBehaviorClass($"{ModId}:BrokenToolHead", typeof(CollectibleBehaviorBrokenToolHead));

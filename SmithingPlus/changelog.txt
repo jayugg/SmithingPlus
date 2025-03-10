@@ -1,1 +1,5 @@
-- [Feature] Anvil recipes will show voxel count at selection
+- [Fix] Bits recovery not working fo iron door hatch
+- [Fix] Crash on tool repair
+- [Compatibility] XSkills metal bits compatibility (can now be used like vanilla bits)
+- [Client Tweak] Anvil recipes display voxel count at selection
+- [Client Tweak] Handbook will display minimum smithing ingredient count to smit an item

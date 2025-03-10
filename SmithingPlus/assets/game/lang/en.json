@@ -10,5 +10,6 @@
   "charattribute-sp:smithingQuality-0.2": "Increases smithing projects durability by 20%",
   "charattribute-sp:smithingQuality--0.1": "Decreases smithing projects durability by 10%",
   
-  "Requires {0} voxels": "Requires {0} voxels"
+  "Requires {0} voxels": "Requires {0} voxels",
+  "with": "with"
 }

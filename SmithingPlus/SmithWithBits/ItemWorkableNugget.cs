@@ -119,23 +119,27 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
 
     public static void CreateVoxelsFromNugget(
         ICoreAPI api,
-        ref byte[,,] voxels)
+        ref byte[,,] voxels,
+        bool withExtraBitChance = true)
     {
         var random = api.World.Rand;
         voxels = new byte[16, 6, 16];
 
         voxels[8, 0, 7] = 1;
         voxels[8, 0, 8] = 1;
-        if (random.NextDouble() < Math.Max(Core.Config.VoxelsPerBit - 2.0, 0))
+        if (withExtraBitChance && random.NextDouble() < Math.Max(Core.Config.VoxelsPerBit - 2.0, 0))
         {
             voxels[8, 1, 7] = 1;
         }
     }
     
-    public static int AddVoxelsFromNugget(ICoreAPI api, ref byte[,,] voxels)
+    public static int AddVoxelsFromNugget(
+        ICoreAPI api,
+        ref byte[,,] voxels, 
+        bool withExtraBitChance = true)
     {
         var nuggetConfig = new byte[16, 2, 16];
-        CreateVoxelsFromNugget(api, ref nuggetConfig);
+        CreateVoxelsFromNugget(api, ref nuggetConfig, withExtraBitChance);
         var voxelsCopy = (byte[,,])voxels.Clone();
         int bits = 0;
 

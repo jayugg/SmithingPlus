@@ -44,9 +44,12 @@ public class BitsRecoveryPatches
         }
         __instance.WorkItemStack.SetSplitCount(Math.Max(splitCount - 1, 0));
         Core.Logger.VerboseDebug("[BitsRecovery] Attempting to recover bits from {0}", workItemStack);
-        var metalVariant = ItemDamagedPatches.GetMetalOrMaterial(__instance.SelectedRecipe.Output.ResolvedItemstack);
+        var metalVariant = ItemDamagedPatches.GetMetalOrMaterial(__instance.SelectedRecipe.Output.ResolvedItemstack) ?? ItemDamagedPatches.GetMetalOrMaterial(__instance.WorkItemStack);;
         var metalbit = byPlayer.Entity.World.GetItem(new AssetLocation("game:metalbit-copper")).ItemWithVariant("metal", metalVariant);
-        if (metalbit == null) { Core.Logger.VerboseDebug("[BitsRecovery] no metalbit found for variant {0}", metalVariant); return;}
+        if (metalbit == null)
+        {
+            Core.Logger.VerboseDebug("[BitsRecovery] no metalbit found for variant {0}", metalVariant); return;
+        }
         var metalbitStack = new ItemStack(metalbit);
         var temperature = workItemStack.Collectible.GetTemperature(byPlayer.Entity.World, workItemStack);
         metalbitStack.Collectible.SetTemperature(byPlayer.Entity.World, metalbitStack, temperature);
