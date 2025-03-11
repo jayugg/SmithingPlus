@@ -225,6 +225,12 @@ public partial class Core : ModSystem
             HarmonyInstance.PatchCategory(BitsRecoveryCategory);
             Logger.VerboseDebug("Patched BitsRecovery...");
         }
+        
+        if (Config.MetalCastingTweaks)
+        {
+            HarmonyInstance.PatchCategory(CastingTweaksCategory);
+            Logger.VerboseDebug("Patched MetalCastingTweaks...");
+        }
 
         if (!Config.SmithWithBits && !Config.BitsTopUp) return;
         HarmonyInstance.PatchCategory(SmithingBitsCategory);

@@ -1,0 +1,51 @@
+using System;
+using System.Linq;
+using HarmonyLib;
+using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
+using Vintagestory.GameContent;
+
+namespace SmithingPlus.CastingTweaks;
+
+[HarmonyPatchCategory(Core.CastingTweaksCategory)]
+public class CastToolPenaltyPatch
+{
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(BlockEntityToolMold), nameof(BlockEntityToolMold.GetMoldedStacks))]
+    public static void Postfix_GetMoldedStacks(ref ItemStack[] __result, BlockEntityToolMold __instance, ItemStack fromMetal)
+    {
+        if (__result == null || __result.Length == 0)
+            return;
+        foreach (var stack in __result)
+        {
+            stack.Attributes ??= new TreeAttribute();
+            stack.Attributes.SetBool("sp:castTool", true);
+        }
+    }
+    
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(CollectibleObject), nameof(CollectibleObject.OnCreatedByCrafting)), HarmonyPriority(Priority.Last)]
+    public static void Postfix_OnCreatedByCrafting(
+        ItemSlot[] allInputslots,
+        ItemSlot outputSlot,
+        GridRecipe byRecipe)
+    {
+        if (outputSlot.Itemstack == null) return;
+        var hasCastToolHead = allInputslots.Any(slot =>
+            slot.Itemstack?.Attributes?.GetBool("sp:castTool") == true &&
+            !byRecipe.resolvedIngredients.Any(ing => 
+                ing.Code.Equals(slot.Itemstack?.Collectible.Code) && ing.IsTool)
+        );
+        if (!hasCastToolHead) return;
+        outputSlot.Itemstack.Attributes.SetBool("sp:castTool", true);
+    }
+    
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(CollectibleObject), nameof(CollectibleObject.GetMaxDurability)), HarmonyPriority(Priority.Last)]
+    public static void Postfix_GetMaxDurability(ref int __result, ItemStack itemstack)
+    {
+        if (itemstack.Attributes?.GetBool("sp:castTool") != true) return;
+        var reducedDurability = __result * (1 - Core.Config.CastToolDurabilityPenalty);
+        __result = (int) Math.Max(reducedDurability, 1);
+    }
+}

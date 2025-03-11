@@ -1,1 +1,2 @@
-- [Fix] Knapping and clayforming UI crash
+- [Fix] Knapping and clayforming UI missing captions
+- [Feature] Added cast tool tweaks category, now can have penalty to cast tool durability

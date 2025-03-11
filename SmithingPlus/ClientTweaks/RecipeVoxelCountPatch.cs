@@ -19,7 +19,6 @@ public class RecipeVoxelCountPatch
     [HarmonyPatch(typeof(BlockEntityAnvil), "OpenDialog")]
     public static void OpenDialog_Postfix(BlockEntityAnvil __instance, ItemStack ingredient)
     {
-        Core.Logger.Warning("OpenDialog_Postfix");
         if (Core.Api.Side != EnumAppSide.Client) return;
         if (__instance == null || ingredient == null) return;
         var recipes = (ingredient.Collectible as IAnvilWorkable)?.GetMatchingRecipes(ingredient);
@@ -33,11 +32,10 @@ public class RecipeVoxelCountPatch
     [HarmonyPatch(typeof(GuiDialogBlockEntityRecipeSelector),"SetupDialog")]
     public static void SetupDialog_Postfix(GuiDialogBlockEntityRecipeSelector __instance)
     {
-        Core.Logger.Warning("SetupDialog_Postfix");
+        if (SelectedRecipes.Count == 0) return;
         if (Core.Api is not ICoreClientAPI capi) return;
         var skillItems = __instance.GetField<List<SkillItem>>("skillItems");
         var prevSlotOver = __instance.GetField<int>("prevSlotOver");
-        
         __instance.SingleComposer.GetSkillItemGrid("skillitemgrid").OnSlotOver = num =>
         {
             if (num >= skillItems.Count || num == prevSlotOver || num >= SelectedRecipes.Count)

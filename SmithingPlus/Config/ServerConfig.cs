@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace SmithingPlus.Config;
 
 public class ServerConfig
@@ -23,9 +25,15 @@ public class ServerConfig
     public float HelveHammerSmithingQualityModifier{ get; set; } = 1;
     public bool ArrowsDropBits { get; set; } = true;
     public string ArrowSelector { get; set; } = "@(.*):arrow-(.*)";
+    public bool MetalCastingTweaks { get; set; } = true;
+    public float CastToolDurabilityPenalty { get; set; } = 0.1f;
     public bool AnvilShowRecipeVoxels { get; set; } = true;
     public bool RememberHammerToolMode { get; set; } = true;
     public bool ShowWorkableTemperature{ get; set; } = true;
     // public bool StoneSmithing { get; set; } = false;
-    public string[] GetToolRepairForgettableAttributes => ToolRepairForgettableAttributes.Split(",");
+    public string[] GetToolRepairForgettableAttributes =>
+        ToolRepairForgettableAttributes.Split(",")
+        .Append("durability")
+        .Append("sp:castTool")
+        .ToArray();
 }

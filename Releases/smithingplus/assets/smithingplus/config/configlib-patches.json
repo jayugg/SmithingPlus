@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 9,
   "file": "SmithingPlus.json",
   "patches": {
   },
@@ -8,7 +8,7 @@
       "code": "RecoverBitsOnSplit",
       "ingui": "smithingplus:setting-recoverbitsonsplit",
       "type": "boolean",
-      "weight": 1.0,
+      "weight": 1.99,
       "comment": "Recover metal bits on split",
       "default": true
     },
@@ -16,7 +16,7 @@
       "code": "VoxelsPerBit",
       "ingui": "smithingplus:setting-voxelsperbit",
       "type": "float",
-      "weight": 0.999,
+      "weight": 1.9,
       "comment": "How many voxels are in a metal bit (used for balance)",
       "default": 2.1,
       "range": {
@@ -28,7 +28,7 @@
       "code": "SmithWithBits",
       "ingui": "smithingplus:setting-smithwithbits",
       "type": "boolean",
-      "weight": 0.995,
+      "weight": 1.8,
       "comment": "Can you smith with metal bits?",
       "default": true
     },
@@ -36,7 +36,7 @@
       "code": "BitsTopUp",
       "ingui": "smithingplus:setting-bitstopup",
       "type": "boolean",
-      "weight": 0.99,
+      "weight": 1.7,
       "comment": "Can you top up a work item with bits?",
       "default": true
     },
@@ -44,7 +44,7 @@
       "code": "EnableToolRecovery",
       "ingui": "smithingplus:setting-enabletoolrecovery",
       "type": "boolean",
-      "weight": 0.97,
+      "weight": 1.49,
       "comment": "Tools drop tool heads that can be repaired",
       "default": true
     },
@@ -52,7 +52,7 @@
       "code": "DurabilityPenaltyPerRepair",
       "ingui": "smithingplus:setting-durabilitypenaltyperrepair",
       "type": "float",
-      "weight": 0.96,
+      "weight": 1.45,
       "comment": "Max durability penalty that accumulates per every tool repair",
       "default": 0.05,
       "range": {
@@ -64,7 +64,7 @@
       "code": "ToolRepairForgettableAttributes",
       "ingui": "smithingplus:setting-toolrepairforgettableattributes",
       "type": "string",
-      "weight": 0.959,
+      "weight": 1.4,
       "comment": "Attrribute keys of attributes that are forgotten when a tool is repaired, separated by commas",
       "default": "quality,maxRepair"
     },
@@ -72,7 +72,7 @@
       "code": "RepairableToolDurabilityMultiplier",
       "ingui": "smithingplus:setting-repairabletooldurabilitymultiplier",
       "type": "float",
-      "weight": 0.951,
+      "weight": 1.35,
       "comment": "Adjust the durability of repairable tools for balance",
       "default": 1.0,
       "range": {
@@ -84,7 +84,7 @@
       "code": "BrokenToolVoxelPercent",
       "ingui": "smithingplus:setting-brokentoolvoxelpercent",
       "type": "float",
-      "weight": 0.95,
+      "weight": 1.3,
       "comment": "Percentage of material not lost when a tool breaks",
       "default": 0.8,
       "range": {
@@ -96,7 +96,7 @@
       "code": "RepairableToolSelector",
       "ingui": "smithingplus:setting-repairabletoolselector",
       "type": "string",
-      "weight": 0.94,
+      "weight": 1.25,
       "comment": "Regex selector for tools that can be repaired",
       "default": "@.*(pickaxe|shovel|saw|axe|hoe|knife|hammer|chisel|shears|sword|spear|bow|shield|sickle|scythe|tongs|wrench|solderingiron|cleaver|prospectingpick|crossbow|pistol|rifle|shotgun).*"
     },
@@ -104,7 +104,7 @@
       "code": "ToolHeadSelector",
       "ingui": "smithingplus:setting-toolheadselector",
       "type": "string",
-      "weight": 0.93,
+      "weight": 1.2,
       "comment": "Regex selector for tool heads or blades that can be repaired",
       "default": "@(.*)(head|blade|boss|barrel|stirrup)(.*)"
     },
@@ -112,7 +112,7 @@
       "code": "IngotSelector",
       "ingui": "smithingplus:setting-ingotselector",
       "type": "string",
-      "weight": 0.92,
+      "weight": 1.15,
       "comment": "Regex selector for ingots that can be used in smithing, used to determine repair materials. Is needed only for metal mods with custom naming patterns. If this does not match, the mod will not affect the tool.",
       "default": "@(.*):ingot-(.*)"
     },
@@ -120,7 +120,7 @@
       "code": "WorkItemSelector",
       "ingui": "smithingplus:setting-workitemselector",
       "type": "string",
-      "weight": 0.91,
+      "weight": 1.1,
       "comment": "Regex selector for work items that can be used in smithing, used to determine repair materials. Is needed only for metal mods with custom naming patterns. If this does not match, the mod will not affect the tool.",
       "default": "@(.*):workitem-(.*)"
     },
@@ -128,7 +128,7 @@
       "code": "DontRepairBrokenToolHeads",
       "ingui": "smithingplus:setting-dontrepairbrokentoolheads",
       "type": "boolean",
-      "weight": 0.905,
+      "weight": 1.05,
       "comment": "Make broken tool heads not repairable on an anvil",
       "default": false
     },
@@ -136,7 +136,7 @@
       "code": "CanRepairForlornHopeEstoc",
       "ingui": "smithingplus:setting-canrepairforlornhopeestoc",
       "type": "boolean",
-      "weight": 0.904,
+      "weight": 1.04,
       "comment": "Allow the repair of the Forlorn Hope estoc",
       "default": true
     },
@@ -144,7 +144,7 @@
       "code": "ShowRepairedCount",
       "ingui": "smithingplus:setting-showrepairedcount",
       "type": "boolean",
-      "weight": 0.90,
+      "weight": 1.03,
       "comment": "Show the number of times a tool has been repaired in the tooltip",
       "default": true
     },
@@ -152,7 +152,7 @@
       "code": "ShowBrokenCount",
       "ingui": "smithingplus:setting-showbrokencount",
       "type": "boolean",
-      "weight": 0.899,
+      "weight": 1.02,
       "comment": "Show the number of times a tool head has broken in the tooltip",
       "default": true
     },
@@ -160,7 +160,7 @@
       "code": "ShowRepairSmithName",
       "ingui": "smithingplus:setting-showrepairsmithname",
       "type": "boolean",
-      "weight": 0.89,
+      "weight": 1.01,
       "comment": "Show the smith name in the repaired item tooltip",
       "default": false
     },
@@ -168,7 +168,7 @@
       "code": "HelveHammerSmithingQualityModifier",
       "ingui": "smithingplus:setting-helvehammersmithingqualitymodifier",
       "type": "float",
-      "weight": 0.899,
+      "weight": 1.005,
       "comment": "Smithing quality modifier for helve hammers",
       "default": 1.0,
       "range": {
@@ -180,7 +180,7 @@
       "code": "ArrowsDropBits",
       "ingui": "smithingplus:setting-arrowsdropbits",
       "type": "boolean",
-      "weight": 0.88,
+      "weight": 0.99,
       "comment": "Broken arrows drop one metal bit",
       "default": true
     },
@@ -188,15 +188,35 @@
       "code": "ArrowSelector",
       "ingui": "smithingplus:setting-arrowselector",
       "type": "string",
-      "weight": 0.87,
+      "weight": 0.9,
       "comment": "Regex selector for arrows that drop metal bits",
       "default": "@(.*)arrow-(.*)"
+    },
+    {
+      "code": "MetalCastingTweaks",
+      "ingui": "smithingplus:setting-metalcastingtweaks",
+      "type": "boolean",
+      "weight": 0.79,
+      "comment": "Enable tweaks to metal casting",
+      "default": true
+    },
+    {
+      "code": "CastToolDurabilityPenalty",
+      "ingui": "smithingplus:setting-casttooldurabilitypenalty",
+      "type": "float",
+      "weight": 0.78,
+      "comment": "Durability penalty for cast tools",
+      "default": 0.1,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
     },
     {
       "code": "AnvilShowRecipeVoxels",
       "ingui": "smithingplus:setting-anvilshowrecipevoxels",
       "type": "boolean",
-      "weight": 0.86,
+      "weight": 0.49,
       "comment": "Show the recipe voxel count in the anvil block info",
       "default": true
     },
@@ -204,7 +224,7 @@
       "code": "RememberHammerToolMode",
       "ingui": "smithingplus:setting-rememberhammertooldmode",
       "type": "boolean",
-      "weight": 0.85,
+      "weight": 0.45,
       "comment": "Remember the last tool mode used with any hammer",
       "default": true
     },
@@ -212,7 +232,7 @@
       "code": "ShowWorkableTemperature",
       "ingui": "smithingplus:setting-showworkabletemperature",
       "type": "boolean",
-      "weight": 0.84,
+      "weight": 0.4,
       "comment": "Show the workable temperature in the tooltip of workable items",
       "default": true
     }
@@ -221,22 +241,27 @@
     {
       "type": "separator",
       "title": "Smithing with bits",
-      "weight": 1.05
+      "weight": 2
     },
     {
       "type": "separator",
       "title": "Tool recovery",
-      "weight": 0.975
+      "weight": 1.5
     },
     {
       "type": "separator",
       "title": "Recyclable arrows",
-      "weight": 0.875
+      "weight": 1
+    },
+    {
+      "type": "separator",
+      "title": "Metal casting tweaks",
+      "weight": 0.8
     },
     {
       "type": "separator",
       "title": "Client tweaks",
-      "weight": 0.865
+      "weight": 0.5
     }
   ]
 }

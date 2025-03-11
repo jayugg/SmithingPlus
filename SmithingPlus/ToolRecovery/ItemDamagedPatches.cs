@@ -34,7 +34,6 @@ public class ItemDamagedPatches
         if (repairedStack == null) return;
         repairedStack.ResolveBlockOrItem(outputSlot.Inventory.Api.World);   // To compare codes, would need to resolve the repaired stack on the server
         if (repairedStack.Collectible.Code != byRecipe.Output.ResolvedItemstack.Collectible.Code) return;
-        repairedStack.Attributes?.RemoveAttribute("durability");
         foreach (var attributeKey in Core.Config.GetToolRepairForgettableAttributes)
         {
             repairedStack.Attributes?.RemoveAttribute(attributeKey);

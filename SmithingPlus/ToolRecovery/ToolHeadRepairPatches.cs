@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.GameContent;
 
 namespace SmithingPlus.ToolRecovery;
@@ -41,9 +42,9 @@ public class ToolHeadRepairPatches
         Core.Logger.VerboseDebug("ModifyBrokenCount: {0} by {1}", itemstack.Collectible.Code, instance.WorkItemStack);
         if (instance.WorkItemStack.GetBrokenCount() == 0) return;
         itemstack.CloneBrokenCount(instance.WorkItemStack);
-        itemstack.CloneRepairedToolStack(instance.WorkItemStack);
-        itemstack.SetRepairSmith(byPlayer.PlayerName);
-        var toolRepairPenaltyStat = byPlayer.Entity.Stats.GetBlended("sp:toolRepairPenalty");
+        itemstack.CloneRepairedToolStack(instance.WorkItemStack, Core.Config.GetToolRepairForgettableAttributes);
+        itemstack.SetRepairSmith(byPlayer?.PlayerName ?? Lang.Get("item-helvehammer"));
+        var toolRepairPenaltyStat = byPlayer?.Entity.Stats.GetBlended("sp:toolRepairPenalty") ?? 1;
         if (Math.Abs(toolRepairPenaltyStat - 1) > 1E-3)
         {
             itemstack.Attributes.SetFloat("sp:toolRepairPenaltyModifier", (float) Math.Round(toolRepairPenaltyStat - 1, 3));

@@ -60,9 +60,14 @@ public static class Extensions
         itemStack.Attributes.SetString("repairSmith", smith);
     }
     
-    internal static void CloneRepairedToolStack(this ItemStack itemStack, ItemStack fromStack)
+    internal static void CloneRepairedToolStack(this ItemStack itemStack, ItemStack fromStack, string[] forgettableAttributes = null)
     {
-        itemStack.SetRepairedToolStack(fromStack.GetRepairedToolStack());
+        var repairedStack = fromStack.GetRepairedToolStack();
+        if (forgettableAttributes != null)
+            foreach(var attributeKey in forgettableAttributes)
+                repairedStack.Attributes?.RemoveAttribute(attributeKey);
+        itemStack.SetRepairedToolStack(repairedStack);
+            
     }
 
     internal static int GetBrokenCount(this ItemStack itemStack)
