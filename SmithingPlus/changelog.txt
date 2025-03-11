@@ -1,7 +1,1 @@
-- [Fix] Bits recovery not working for iron door hatch
-- [Fix] Crash on tool repair
-- [Fix] Helve hammer fix
-- [Tweak] Added config option HelveHammerSmithingQualityModifier to modify durability of items crafted with helve hammers
-- [Compatibility] XSkills metal bits compatibility (can now be used like vanilla bits)
-- [Client Tweak] Anvil recipes display voxel count at selection
-- [Client Tweak] Handbook will display minimum smithing ingredient count to smith an item
+- [Fix] Knapping and clayforming UI crash

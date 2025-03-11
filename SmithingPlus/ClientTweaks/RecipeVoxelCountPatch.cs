@@ -40,7 +40,7 @@ public class RecipeVoxelCountPatch
         
         __instance.SingleComposer.GetSkillItemGrid("skillitemgrid").OnSlotOver = num =>
         {
-            if (num >= skillItems.Count || num == prevSlotOver)
+            if (num >= skillItems.Count || num == prevSlotOver || num >= SelectedRecipes.Count)
                 return;
             var recipeId = SelectedRecipes[num].RecipeId;
             var voxelCount = CacheHelper.GetOrAdd(Core.RecipeVoxelCountCache, recipeId, () =>
@@ -52,5 +52,6 @@ public class RecipeVoxelCountPatch
             __instance.SingleComposer.GetDynamicText("name").SetNewText(skillItems[num].Name);
             __instance.SingleComposer.GetDynamicText("desc").SetNewText(descWithVoxelCount);
         };
+        SelectedRecipes.Clear();
     }
 }
