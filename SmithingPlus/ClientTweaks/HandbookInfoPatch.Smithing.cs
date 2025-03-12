@@ -11,8 +11,7 @@ using LinkTextComponent = Vintagestory.API.Client.LinkTextComponent;
 
 namespace SmithingPlus.ClientTweaks;
 
-[HarmonyPatchCategory(Core.ClientTweaksCategories.AnvilShowRecipeVoxels)]
-public class HandbookSmithingInfoPatch
+public partial class HandbookInfoPatch
 {
     [HarmonyPostfix]
     [HarmonyPatch(typeof(CollectibleBehaviorHandbookTextAndExtraInfo), "addCreatedByInfo")]
@@ -40,11 +39,7 @@ public class HandbookSmithingInfoPatch
             .FindAll(recipe => recipe.Output.Matches(capi.World, stack))
             .OrderBy(recipe => recipe.Voxels.Cast<bool>().Count(voxel => voxel))
             .FirstOrDefault();
-        // If Smithing section was found, add custom info
-        if (smithingSectionIndex < 0) smithingSectionIndex = components.Count;
         if (smallestSmithingRecipe == null) return;
-        components.RemoveAt(smithingSectionIndex - 1);
-        components.Insert(smithingSectionIndex - 1, new LinkTextComponent(capi, $"{Lang.Get("Smithing")} {Lang.Get("with")}\n", CairoFont.WhiteSmallText(), cs => openDetailPageFor("craftinginfo-smithing")));
         var voxelCount = smallestSmithingRecipe.Voxels.Cast<bool>().Count(voxel => voxel); 
         var bitsCount = (int) Math.Ceiling(voxelCount / Core.Config.VoxelsPerBit);
         var baseMaterial = smallestSmithingRecipe.Ingredients
@@ -57,8 +52,10 @@ public class HandbookSmithingInfoPatch
                 collectible is not ItemWorkItem &&
                 collectible.CombustibleProps != null &&
                 collectible.CombustibleProps.SmeltedStack?.Resolve(capi.World, "worldForResolving") != null &&
+                !collectible.Equals(stack.Collectible) &&
                 collectible.Satisfies(collectible.CombustibleProps?.SmeltedStack?.ResolvedItemstack, baseMaterial))
-            .OrderBy(collectible => collectible.Code.Domain == "game")
+            .OrderBy(collectible => collectible.Code.Domain == "game" ? -100 : 0)
+            .ThenByDescending(collectible => collectible.CombustibleProps?.SmeltedRatio ?? 1)
             .ToList();
         var allMaterialStacks = allMaterialCollectibles
             .Select(collectible => new ItemStack(collectible, collectible switch
@@ -69,19 +66,37 @@ public class HandbookSmithingInfoPatch
                 _ => (int) Math.Ceiling(voxelCount * collectible.CombustibleProps.SmeltedRatio / 42.0 )
             }))
             .ToList();
-        
-        var materialStackComponent = new SlideshowItemstackTextComponent(capi, allMaterialStacks.ToArray(), 40.0, EnumFloat.Inline, cs => openDetailPageFor(GuiHandbookItemStackPage.PageCodeForStack(cs)));
-        if (allMaterialStacks.Count > 0)
+        if (allMaterialStacks.Count <= 0) return;
+        // If Smithing section was found, add custom info
+        var smithingSectionExists = smithingSectionIndex >= 0;
+        if (!smithingSectionExists)
         {
+            components.RemoveAt(components.Count - 1);
+            components.RemoveAt(components.Count - 1);
+            AddSubHeading(components, capi, openDetailPageFor,
+                $"{Lang.Get("Smithing")} {Lang.Get("with")}\n",
+                "craftinginfo-smithing");
+            foreach (var itemStack in allMaterialStacks)
+            {
+                ItemstackTextComponent itemstackTextComponent = new ItemstackTextComponent(capi, itemStack, 40, 2.0, EnumFloat.Inline,
+                    cs => openDetailPageFor(GuiHandbookItemStackPage.PageCodeForStack(cs)));
+                itemstackTextComponent.ShowStacksize = true;
+                components.Add(itemstackTextComponent);
+            }
+        }
+        else
+        {
+            components.RemoveAt(smithingSectionIndex-1);
+            components.Insert(smithingSectionIndex-1, new LinkTextComponent(capi, $"{Lang.Get("Smithing")} {Lang.Get("with")}\n", CairoFont.WhiteSmallText(), cs => openDetailPageFor("craftinginfo-smithing")));
             components.Insert(smithingSectionIndex, new ClearFloatTextComponent(capi, 2f));
             foreach (var itemStack in allMaterialStacks)
             {
-                ItemstackTextComponent itemstackTextComponent = new ItemstackTextComponent(capi, itemStack, 40, 10.0, EnumFloat.Inline, cs => openDetailPageFor(GuiHandbookItemStackPage.PageCodeForStack(cs)));
+                smithingSectionIndex++;
+                ItemstackTextComponent itemstackTextComponent = new ItemstackTextComponent(capi, itemStack, 40, 2.0, EnumFloat.Inline,
+                    cs => openDetailPageFor(GuiHandbookItemStackPage.PageCodeForStack(cs)));
                 itemstackTextComponent.ShowStacksize = true;
                 components.Insert(smithingSectionIndex, itemstackTextComponent);
             }
-            components.Insert(smithingSectionIndex, new ClearFloatTextComponent(capi, 3f));
         }
-        materialStackComponent.ShowStackSize = true;
     }
 }

@@ -11,5 +11,9 @@
   "charattribute-sp:smithingQuality--0.1": "Decreases smithing projects durability by 10%",
   
   "Requires {0} voxels": "Requires {0} voxels",
-  "with": "with"
+  "with": "with",
+  
+  "Mold for": "Mold for",
+  "Requires for casting": "Requires for casting",
+  "Can be cast in": "Can be cast in"
 }

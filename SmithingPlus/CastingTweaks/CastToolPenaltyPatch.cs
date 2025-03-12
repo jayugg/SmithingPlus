@@ -32,9 +32,10 @@ public class CastToolPenaltyPatch
     {
         if (outputSlot.Itemstack == null) return;
         var hasCastToolHead = allInputslots.Any(slot =>
-            slot.Itemstack?.Attributes?.GetBool("sp:castTool") == true &&
-            !byRecipe.resolvedIngredients.Any(ing => 
-                ing.Code.Equals(slot.Itemstack?.Collectible.Code) && ing.IsTool)
+                slot.Itemstack?.Attributes?.GetBool("sp:castTool") == true &&
+                slot.Itemstack?.Collectible != null &&
+                !byRecipe.resolvedIngredients.Any(ing => 
+                    ing.Code.Equals(slot.Itemstack.Collectible.Code) && ing.IsTool)
         );
         if (!hasCastToolHead) return;
         outputSlot.Itemstack.Attributes.SetBool("sp:castTool", true);

@@ -30,6 +30,7 @@ public class ServerConfig
     public bool AnvilShowRecipeVoxels { get; set; } = true;
     public bool RememberHammerToolMode { get; set; } = true;
     public bool ShowWorkableTemperature{ get; set; } = true;
+    public bool HandbookExtraInfo { get; set; } = true;
     // public bool StoneSmithing { get; set; } = false;
     public string[] GetToolRepairForgettableAttributes =>
         ToolRepairForgettableAttributes.Split(",")

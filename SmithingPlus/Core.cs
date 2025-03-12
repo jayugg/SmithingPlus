@@ -220,6 +220,12 @@ public partial class Core : ModSystem
             Logger.VerboseDebug("Patched ShowWorkableTemperature...");
         }
         
+        if (Config.HandbookExtraInfo)
+        {
+            HarmonyInstance.PatchCategory(ClientTweaksCategories.HandbookExtraInfo);
+            Logger.VerboseDebug("Patched HandbookExtraInfo...");
+        }
+        
         if (Config.RecoverBitsOnSplit)
         {
             HarmonyInstance.PatchCategory(BitsRecoveryCategory);

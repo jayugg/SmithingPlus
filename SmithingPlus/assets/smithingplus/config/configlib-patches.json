@@ -235,6 +235,14 @@
       "weight": 0.4,
       "comment": "Show the workable temperature in the tooltip of workable items",
       "default": true
+    },
+    {
+      "code": "HandbookExtraInfo",
+      "ingui": "smithingplus:setting-handbookextrainfo",
+      "type": "boolean",
+      "weight": 0.35,
+      "comment": "Extra info in the handbook regarding smithing and tool casting",
+      "default": true
     }
   ],
   "formatting": [

@@ -1,2 +1,3 @@
-- [Fix] Knapping and clayforming UI missing captions
-- [Feature] Added cast tool tweaks category, now can have penalty to cast tool durability
+- [Handbook Tweak] Handbook info fixes for modded content
+- [Handbook Tweak] Metalbit handbook info list usable molds
+- [Fix] Some crafting crashing when metal casting tweaks are enabled
