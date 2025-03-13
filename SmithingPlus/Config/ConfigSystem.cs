@@ -16,9 +16,11 @@ public class ConfigSystem : ModSystem
         try
         {
             Config = api.LoadModConfig<ServerConfig>(ConfigName);
-            if (Config != null) return;
-            Config = new ServerConfig();
-            api.Logger.VerboseDebug("[smithingplus] Config file not found, creating a new one...");
+            if (Config == null)
+            {
+                Config = new ServerConfig();
+                api.Logger.VerboseDebug("[smithingplus] Config file not found, creating a new one...");
+            }
             api.StoreModConfig(Config, ConfigName);
         } catch (Exception e) {
             api.Logger.Error("[smithingplus] Failed to load config, you probably made a typo: {0}", e);

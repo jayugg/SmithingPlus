@@ -5,6 +5,7 @@ using HarmonyLib;
 using SmithingPlus.ClientTweaks;
 using SmithingPlus.Config;
 using SmithingPlus.Extra;
+using SmithingPlus.SmithWithBits;
 using SmithingPlus.ToolRecovery;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -41,6 +42,7 @@ public partial class Core : ModSystem
     {
         api.RegisterItemClass("ItemWorkableNugget", typeof(ItemWorkableNugget));
         api.RegisterItemClass("ItemXWorkableNugget", typeof(ItemXWorkableNugget));
+        api.RegisterItemClass("ItemWorkableRod", typeof(ItemWorkableRod));
         api.RegisterCollectibleBehaviorClass($"{ModId}:RepairableTool", typeof(CollectibleBehaviorRepairableTool));
         api.RegisterCollectibleBehaviorClass($"{ModId}:RepairableToolHead", typeof(CollectibleBehaviorRepairableToolHead));
         api.RegisterCollectibleBehaviorClass($"{ModId}:BrokenToolHead", typeof(CollectibleBehaviorBrokenToolHead));

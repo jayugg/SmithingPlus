@@ -150,7 +150,16 @@ public static class Extensions
         var smithingRecipe = world.Api.ModLoader
             .GetModSystem<RecipeRegistrySystem>()
             .SmithingRecipes
-            .FirstOrDefault(r => r.Output.ResolvedItemstack.Collectible.Code.Equals(toolHead.Collectible.Code));
+            .FirstOrDefault(r => r.Output.ResolvedItemstack.Satisfies(toolHead));
+        return smithingRecipe;
+    }
+    
+    public static SmithingRecipe GetSmithingRecipe(this CollectibleObject collectible, IWorldAccessor world)
+    {
+        var smithingRecipe = world.Api.ModLoader
+            .GetModSystem<RecipeRegistrySystem>()
+            .SmithingRecipes
+            .FirstOrDefault(r => r.Output.ResolvedItemstack.Collectible.Code.Equals(collectible.Code));
         return smithingRecipe;
     }
     

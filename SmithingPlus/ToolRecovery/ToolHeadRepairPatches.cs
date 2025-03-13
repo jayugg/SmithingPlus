@@ -21,8 +21,8 @@ public class ToolHeadRepairPatches
         var brokenCount = itemstack.GetBrokenCount();
         if (brokenCount < 0) return;
         var multiplier = Core.Config.RepairableToolDurabilityMultiplier * itemstack.Attributes.GetFloat("sp:smithingQuality", 1);
-        var toolRepairPenaltyReduction = itemstack.Attributes.GetFloat("sp:toolRepairPenaltyReduction");
-        var toolRepairPenalty = brokenCount * Core.Config.DurabilityPenaltyPerRepair * (1 - toolRepairPenaltyReduction);
+        var toolRepairPenaltyModifier = itemstack.Attributes.GetFloat("sp:toolRepairPenaltyModifier");
+        var toolRepairPenalty = brokenCount * Core.Config.DurabilityPenaltyPerRepair * (1 - toolRepairPenaltyModifier);
         var reducedDurability = (int) (__result * multiplier * (1 - toolRepairPenalty));
         if (itemstack.Attributes.HasAttribute("durability"))
         {

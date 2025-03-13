@@ -40,6 +40,11 @@ public class ItemDamagedPatches
         }
         var repairSmith = brokenStack.GetRepairSmith();
         if (repairSmith != null) repairedStack.SetRepairSmith(repairSmith);
+        var smithingQuality = brokenStack.Attributes.GetFloat("sp:smithingQuality");
+        if (smithingQuality != 0)
+        {
+            repairedStack.Attributes?.SetFloat("sp:smithingQuality", smithingQuality);
+        }
         var toolRepairPenaltyModifier = brokenStack.Attributes.GetFloat("sp:toolRepairPenaltyModifier");
         if (toolRepairPenaltyModifier != 0)
         {

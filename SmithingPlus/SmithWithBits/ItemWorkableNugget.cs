@@ -62,12 +62,34 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
 
     public List<SmithingRecipe> GetMatchingRecipes(ItemStack stack)
     {
+        return this.api.GetSmithingRecipes().Where((System.Func<SmithingRecipe, bool>) (r => r.Ingredient.SatisfiesAsIngredient(stack))).OrderBy<SmithingRecipe, AssetLocation>((System.Func<SmithingRecipe, AssetLocation>) (r => r.Output.ResolvedItemstack.Collectible.Code)).ToList<SmithingRecipe>();
+    }
+
+    
+    public List<SmithingRecipe> GetMatchingRecipes(ICoreAPI coreApi)
+    {
+        var ingotStack = this.Attributes["isPureMetal"].AsBool() &&
+                         this.CombustibleProps?.SmeltedStack?.ResolvedItemstack?.Collectible is ItemIngot itemIngot
+            ? new ItemStack(itemIngot)
+            : new ItemStack(this);
         
-        return api.GetSmithingRecipes().Where((System.Func<SmithingRecipe, bool>) (
-            r => r.Ingredient.SatisfiesAsIngredient(GetRecipeStack(stack))
-            && !(r.Ingredient.RecipeAttributes?["repairOnly"]?.AsBool() ?? false)
-            ))
-            .OrderBy((System.Func<SmithingRecipe, AssetLocation>) (r => r.Output.ResolvedItemstack.Collectible.Code)).ToList();
+        return coreApi.GetSmithingRecipes()
+            .Where(r => 
+                r.Ingredient.Code.Equals(ingotStack.Collectible.Code) &&
+                !r.Output.ResolvedItemstack.Collectible.Code.Equals(this.Code) &&
+                !(r.Ingredient.RecipeAttributes?["repairOnly"]?.AsBool() ?? false)
+                )
+            .OrderBy(r => r.Output.ResolvedItemstack.Collectible.Code)
+            .Select(r =>
+            {
+                var p = r.Clone();
+                p.Ingredient.Code = this.Code;
+                p.Ingredient.Type = this.ItemClass;
+                p.Ingredient.ResolvedItemstack = new ItemStack(this);
+                return p;
+            })
+            .Distinct()
+            .ToList();
     }
 
     public bool CanWork(ItemStack stack)
