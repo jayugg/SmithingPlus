@@ -43,7 +43,7 @@ public class RecipeVoxelCountPatch
             var recipeId = SelectedRecipes[num].RecipeId;
             var voxelCount = CacheHelper.GetOrAdd(Core.RecipeVoxelCountCache, recipeId, () =>
             {
-                return capi.GetSmithingRecipes().Find(recipe => recipe.RecipeId == recipeId).Voxels.Cast<bool>().Count(voxel => voxel);
+                return capi.GetSmithingRecipes().Find(recipe => recipe.RecipeId == recipeId).Voxels.VoxelCount();
             });
             //var bitsCount = (int) (voxelCount / Core.Config.VoxelsPerBit);
             string descWithVoxelCount = $"{Lang.Get("Requires {0} voxels", voxelCount)}. {skillItems[num].Description}";

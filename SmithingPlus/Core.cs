@@ -7,6 +7,7 @@ using SmithingPlus.Config;
 using SmithingPlus.Extra;
 using SmithingPlus.SmithWithBits;
 using SmithingPlus.ToolRecovery;
+using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;

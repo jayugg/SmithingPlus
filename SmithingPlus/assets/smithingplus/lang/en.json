@@ -39,6 +39,7 @@
     "game:Workable Temperature: {0}": "Workable Temperature: {0}",
     "itemdesc-temp-always": "Always",
     "blockdesc-voxelcount": "Material: {0}/{1}",
+    "blockdesc-slagcount": "Slag: {0}",
     "itemdesc-needschiseling": "Chisel to recover bits",
 
     "item-forlornblade-meteoriciron": "Estoc blade",

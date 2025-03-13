@@ -105,7 +105,7 @@ public class ItemDamagedPatches
             var voxelCount = CacheHelper.GetOrAdd(Core.RecipeVoxelCountCache, smithingRecipe.RecipeId,
                 () => {
                     Core.Logger.VerboseDebug("Calculating voxel count for: {0}", smithingRecipe.RecipeId);
-                    return smithingRecipe.Voxels.Cast<bool>().Count(voxel => voxel);
+                    return smithingRecipe.Voxels.VoxelCount();
                 });
             wItemStack.AddToCustomWorkData(voxelCount);
         }
@@ -151,33 +151,19 @@ public class ItemDamagedPatches
     {
         var random = new Random(world.Rand.Next());
         var recipeVoxels = recipe.Voxels;
-        float removableVoxelCount = 0;
-        if (stackSize > 1) removableVoxelCount = CacheHelper.GetOrAdd(Core.RecipeVoxelCountCache, recipe.RecipeId,
-            () => {
-                Core.Logger.VerboseDebug("Calculating voxel count for recipe {0}", recipe.RecipeId);
-                return recipeVoxels.Cast<bool>().Count(voxel => voxel);
-            });
-        if (Core.Config.BrokenToolVoxelPercent <= 0) Core.Logger.VerboseDebug("Error: please fix the config value BrokenToolVoxelPercent, value must be greater than 0");
-        removableVoxelCount /= stackSize;
-        var byteVoxels = new byte[recipeVoxels.GetLength(0), recipeVoxels.GetLength(1), recipeVoxels.GetLength(2)];
-        for (int x = 0; x < recipeVoxels.GetLength(0); x++)
+        int totalVoxels = recipeVoxels.VoxelCount();
+        int targetVoxelCount = (int)(totalVoxels * Core.Config.BrokenToolVoxelPercent);
+        int currentVoxelCount = totalVoxels;
+
+        var byteVoxels = recipeVoxels.ToByteArray();
+
+        int layer = 0;
+        while (currentVoxelCount > targetVoxelCount)
         {
-            for (int y = 0; y < recipeVoxels.GetLength(1); y++)
-            {
-                for (int z = 0; z < recipeVoxels.GetLength(2); z++)
-                {
-                    if (removableVoxelCount > 0)
-                    {
-                        removableVoxelCount--;
-                        continue;
-                    }
-                    if (random.NextDouble() < Core.Config.BrokenToolVoxelPercent)
-                    {
-                        byteVoxels[x, y, z] = recipeVoxels[x, y, z] ? (byte)1 : (byte)0;
-                    }
-                }
-            }
+            byteVoxels.ErodeLayer(layer, ref currentVoxelCount, targetVoxelCount);
+            layer++;
         }
+        
         return byteVoxels;
     }
 }

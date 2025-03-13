@@ -1,2 +1,8 @@
 TODO:
 - Standardise fetching metal variant / type and relevant ingot
+- Cache handbook data
+- DONE Voxel Management System
+
+- [Fix] Tools like chisel or shears not keeping attributes after repair
+- [Tweak] Anvil voxel display will display slag count
+- [Tweak] Better broken toolhead voxel shape

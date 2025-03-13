@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Util;

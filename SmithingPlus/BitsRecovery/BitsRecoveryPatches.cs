@@ -1,6 +1,7 @@
 using System;
 using HarmonyLib;
 using SmithingPlus.ToolRecovery;
+using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;

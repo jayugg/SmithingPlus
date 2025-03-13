@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SmithingPlus.Compat;
 using SmithingPlus.ToolRecovery;
+using SmithingPlus.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -19,7 +20,7 @@ public class ItemWorkableRod : Item, IAnvilWorkable
         base.OnLoaded(coreApi);
         var smallestSmithingRecipe = coreApi.GetSmithingRecipes()
             .FindAll(recipe => recipe.Output.Matches(coreApi.World, new ItemStack(this)))
-            .OrderBy(recipe => recipe.Voxels.Cast<bool>().Count(voxel => voxel))
+            .OrderBy(recipe => recipe.Voxels.VoxelCount())
             .FirstOrDefault();
         RecipeVoxels = smallestSmithingRecipe?.Voxels;
     }
@@ -50,7 +51,7 @@ public class ItemWorkableRod : Item, IAnvilWorkable
     
     public List<SmithingRecipe> GetMatchingRecipes(ICoreAPI coreApi)
     {
-        var ingotStack = this.Attributes["isPureMetal"].AsBool() &&
+        var ingotStack = this.Attributes[ModAttributes.IsPureMetal].AsBool() &&
                          this.CombustibleProps?.SmeltedStack?.ResolvedItemstack?.Collectible is ItemIngot itemIngot
             ? new ItemStack(itemIngot)
             : new ItemStack(this);
@@ -59,8 +60,8 @@ public class ItemWorkableRod : Item, IAnvilWorkable
             .Where(r => 
                 r.Ingredient.Code.Equals(ingotStack.Collectible.Code) &&
                 !r.Output.ResolvedItemstack.Collectible.Code.Equals(this.Code) &&
-                !(r.Ingredient.RecipeAttributes?["nuggetRecipe"]?.AsBool() ?? false) &&
-                !(r.Ingredient.RecipeAttributes?["repairOnly"]?.AsBool() ?? false)
+                !(r.Ingredient.RecipeAttributes?[ModRecipeAttributes.NuggetRecipe]?.AsBool() ?? false) &&
+                !(r.Ingredient.RecipeAttributes?[ModRecipeAttributes.RepairOnly]?.AsBool() ?? false)
             )
             .OrderBy(r => r.Output.ResolvedItemstack.Collectible.Code)
             .Select(r =>
@@ -103,7 +104,7 @@ public class ItemWorkableRod : Item, IAnvilWorkable
         {
             if (!Core.Config.SmithWithBits) return null;
             CreateVoxelsFromRod(ref beAnvil.Voxels, RecipeVoxels ?? new bool[16, 6, 16]);
-            if (ThriftySmithingCompat.ThriftySmithingLoaded) itemstack.AddToCustomWorkData(beAnvil.Voxels.Cast<byte>().Count(voxel => voxel != 0));
+            if (ThriftySmithingCompat.ThriftySmithingLoaded) itemstack.AddToCustomWorkData(beAnvil.Voxels.MaterialCount());
         }
         else
         {

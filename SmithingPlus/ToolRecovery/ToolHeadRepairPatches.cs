@@ -42,8 +42,7 @@ public class ToolHeadRepairPatches
         }
         Core.Logger.VerboseDebug("ModifyBrokenCount: {0} by {1}", itemstack.Collectible.Code, instance.WorkItemStack);
         if (instance.WorkItemStack.GetBrokenCount() == 0) return;
-        itemstack.CloneBrokenCount(instance.WorkItemStack);
-        itemstack.CloneRepairedToolStack(instance.WorkItemStack, Core.Config.GetToolRepairForgettableAttributes);
+        itemstack.CloneRepairedToolStackOrAttributes(instance.WorkItemStack, Core.Config.GetToolRepairForgettableAttributes);
         itemstack.SetRepairSmith(byPlayer?.PlayerName ?? Lang.Get("item-helvehammer"));
         var toolRepairPenaltyStat = byPlayer?.Entity.Stats.GetBlended(ModStats.ToolRepairPenalty) ?? 1;
         if (Math.Abs(toolRepairPenaltyStat - 1) > 1E-3)

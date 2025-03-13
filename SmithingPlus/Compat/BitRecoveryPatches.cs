@@ -27,7 +27,7 @@ public class BitRecoveryPatches
         var voxelCount = CacheHelper.GetOrAdd(Core.RecipeVoxelCountCache, smithingRecipe.RecipeId,
             () => {
                 Core.Logger.VerboseDebug("Calculating voxel count for: {0}", smithingRecipe.RecipeId);
-                return smithingRecipe.Voxels.Cast<bool>().Count(voxel => voxel);
+                return smithingRecipe.Voxels.VoxelCount();
             });
         var ratio = 2f + 0.1*(voxelCount / 42f);
         outputSlot.Itemstack.StackSize = Math.Max((int)(voxelCount/ratio), 1);

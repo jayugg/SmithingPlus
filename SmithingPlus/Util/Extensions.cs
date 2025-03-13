@@ -5,7 +5,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
-namespace SmithingPlus.ToolRecovery;
+namespace SmithingPlus.Util;
 
 public static class Extensions
 {
@@ -26,7 +26,7 @@ public static class Extensions
     internal static void CloneBrokenCount(this ItemStack itemStack, ItemStack fromStack, int extraCount = 0)
     {
         var brokenCount = fromStack.GetBrokenCount();
-        itemStack.Attributes.SetInt("brokenCount", brokenCount + extraCount);
+        itemStack.Attributes.SetInt(ModAttributes.BrokenCount, brokenCount + extraCount);
     }
     
     internal static void CloneAttributeFrom(this ItemStack itemStack, string attributeKey, ItemStack fromStack)
@@ -40,40 +40,56 @@ public static class Extensions
     
     internal static void SetRepairedToolStack(this ItemStack itemStack, ItemStack fromStack)
     {
-        itemStack.Attributes.SetItemstack("repairedToolStack", fromStack);
+        itemStack.Attributes.SetItemstack(ModAttributes.RepairedToolStack, fromStack);
     }
     
     // Note: On server itemstack needs to be resolved!
     internal static ItemStack GetRepairedToolStack(this ItemStack itemStack)
     {
-        return itemStack.Attributes?.GetItemstack("repairedToolStack");
+        return itemStack.Attributes?.GetItemstack(ModAttributes.RepairedToolStack);
     }
     
     internal static string GetRepairSmith(this ItemStack itemStack)
     {
         var repairedStack = itemStack.GetRepairedToolStack();
-        return repairedStack?.GetRepairSmith() ?? itemStack.Attributes.GetString("repairSmith");
+        return repairedStack?.GetRepairSmith() ?? itemStack.Attributes.GetString(ModAttributes.RepairSmith);
     }
     
     internal static void SetRepairSmith(this ItemStack itemStack, string smith)
     {
-        itemStack.Attributes.SetString("repairSmith", smith);
+        itemStack.Attributes.SetString(ModAttributes.RepairSmith, smith);
     }
     
-    internal static void CloneRepairedToolStack(this ItemStack itemStack, ItemStack fromStack, string[] forgettableAttributes = null)
+    internal static void CloneRepairedToolStackOrAttributes(this ItemStack itemStack, ItemStack fromStack, string[] forgettableAttributes = null)
     {
         var repairedStack = fromStack.GetRepairedToolStack();
         if (forgettableAttributes != null)
             foreach(var attributeKey in forgettableAttributes)
                 repairedStack.Attributes?.RemoveAttribute(attributeKey);
-        itemStack.SetRepairedToolStack(repairedStack);
-            
+        if (repairedStack == null)
+        {
+            Core.Logger.VerboseDebug("No repaired tool stack found in {0}", fromStack.Collectible.Code);
+            return;
+        }
+        if (itemStack.Satisfies(repairedStack))
+        {
+            var repairedAttributes = repairedStack.Attributes ?? new TreeAttribute();
+            foreach (var attribute in repairedAttributes)
+            {
+                itemStack.Attributes[attribute.Key] = attribute.Value;
+            }
+            Core.Logger.VerboseDebug("Not a tool head. Cloned repaired tool stack attributes from {0} to {1}", fromStack.Collectible.Code, itemStack.Collectible.Code);
+        }
+        else
+        {
+            itemStack.SetRepairedToolStack(repairedStack);
+        }
     }
 
     internal static int GetBrokenCount(this ItemStack itemStack)
     {
         var repairedStack = itemStack.GetRepairedToolStack();
-        return repairedStack?.GetBrokenCount() ?? (itemStack.Attributes?.GetInt("brokenCount") ?? 0);
+        return repairedStack?.GetBrokenCount() ?? (itemStack.Attributes?.GetInt(ModAttributes.BrokenCount) ?? 0);
     }
     
     public static Item ItemWithVariant(this Item item, string key, string value)
@@ -165,12 +181,12 @@ public static class Extensions
     
     public static float GetSplitCount(this ItemStack stack)
     {
-        var splitCount = stack.TempAttributes.GetFloat("sp:splitCount");
+        var splitCount = stack.TempAttributes.GetFloat(ModAttributes.SplitCount);
         return splitCount;
     }
     
     public static void SetSplitCount(this ItemStack stack, float count)
     {
-        stack.TempAttributes.SetFloat("sp:splitCount", count);
+        stack.TempAttributes.SetFloat(ModAttributes.SplitCount, count);
     }
 }

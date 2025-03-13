@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SmithingPlus.Compat;
 using SmithingPlus.ToolRecovery;
+using SmithingPlus.Util;
 using Vintagestory;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -28,7 +29,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
         if (itemSlot != null && outputSlot.Itemstack is not null)
         {
             var voxels = BlockEntityAnvil.deserializeVoxels(itemSlot.Itemstack.Attributes.GetBytes("voxels"));
-            var voxelCount = voxels.Cast<byte>().Count(voxel => voxel != 0);
+            var voxelCount = voxels.MaterialCount();
             var ratio = 2f + 0.1*(voxelCount / 42f);
             outputSlot.Itemstack.StackSize = Math.Max((int)(voxelCount/ratio), 1);
             var temperature = outputSlot.Itemstack.Collectible.GetTemperature(api.World, itemSlot.Itemstack);
@@ -52,7 +53,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
     
     private static ItemStack GetRecipeStack(ItemStack stack)
     {
-        if (stack.ItemAttributes["isPureMetal"].AsBool() &&
+        if (stack.ItemAttributes[ModAttributes.IsPureMetal].AsBool() &&
             stack.Collectible.CombustibleProps?.SmeltedStack?.ResolvedItemstack?.Collectible is ItemIngot itemIngot)
         {
             return new ItemStack(itemIngot);
@@ -68,7 +69,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
     
     public List<SmithingRecipe> GetMatchingRecipes(ICoreAPI coreApi)
     {
-        var ingotStack = this.Attributes["isPureMetal"].AsBool() &&
+        var ingotStack = this.Attributes[ModAttributes.IsPureMetal].AsBool() &&
                          this.CombustibleProps?.SmeltedStack?.ResolvedItemstack?.Collectible is ItemIngot itemIngot
             ? new ItemStack(itemIngot)
             : new ItemStack(this);
@@ -77,7 +78,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
             .Where(r => 
                 r.Ingredient.Code.Equals(ingotStack.Collectible.Code) &&
                 !r.Output.ResolvedItemstack.Collectible.Code.Equals(this.Code) &&
-                !(r.Ingredient.RecipeAttributes?["repairOnly"]?.AsBool() ?? false)
+                !(r.Ingredient.RecipeAttributes?[ModRecipeAttributes.RepairOnly]?.AsBool() ?? false)
                 )
             .OrderBy(r => r.Output.ResolvedItemstack.Collectible.Code)
             .Select(r =>
@@ -114,7 +115,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
         {
             if (!Core.Config.SmithWithBits) return null;
             CreateVoxelsFromNugget(api, ref beAnvil.Voxels);
-            if (ThriftySmithingCompat.ThriftySmithingLoaded) itemstack.AddToCustomWorkData(beAnvil.Voxels.Cast<byte>().Count(voxel => voxel != 0));
+            if (ThriftySmithingCompat.ThriftySmithingLoaded) itemstack.AddToCustomWorkData(beAnvil.Voxels.MaterialCount());
         }
         else
         {

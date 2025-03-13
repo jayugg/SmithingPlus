@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using SmithingPlus.ToolRecovery;
+using SmithingPlus.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -37,10 +38,10 @@ public partial class HandbookInfoPatch
         }
         var smallestSmithingRecipe = capi.GetSmithingRecipes()
             .FindAll(recipe => recipe.Output.Matches(capi.World, stack))
-            .OrderBy(recipe => recipe.Voxels.Cast<bool>().Count(voxel => voxel))
+            .OrderBy(recipe => recipe.Voxels.VoxelCount())
             .FirstOrDefault();
         if (smallestSmithingRecipe == null) return;
-        var voxelCount = smallestSmithingRecipe.Voxels.Cast<bool>().Count(voxel => voxel); 
+        var voxelCount = smallestSmithingRecipe.Voxels.VoxelCount(); 
         var bitsCount = (int) Math.Ceiling(voxelCount / Core.Config.VoxelsPerBit);
         var baseMaterial = smallestSmithingRecipe.Ingredients
             .FirstOrDefault(ing => ing.Code.Path.Contains("ingot"))

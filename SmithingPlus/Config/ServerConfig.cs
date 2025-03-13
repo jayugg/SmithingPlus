@@ -1,4 +1,5 @@
 using System.Linq;
+using SmithingPlus.Util;
 
 namespace SmithingPlus.Config;
 
@@ -35,6 +36,7 @@ public class ServerConfig
     public string[] GetToolRepairForgettableAttributes =>
         ToolRepairForgettableAttributes.Split(",")
         .Append("durability")
-        .Append("sp:castTool")
+        .Append(ModAttributes.RepairedToolStack)
+        .Append(ModAttributes.CastTool)
         .ToArray();
 }

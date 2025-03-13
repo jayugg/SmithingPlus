@@ -24,9 +24,11 @@ public class AnvilVoxelCountPatch
         var voxelCount = CacheHelper.GetOrAdd(Core.RecipeVoxelCountCache, __instance.SelectedRecipeId, () =>
             {
                 Core.Logger.VerboseDebug("Calculating voxel count for: {0}", __instance.SelectedRecipeId);
-                return __instance.recipeVoxels.Cast<bool>().Count(voxel => voxel);
+                return __instance.recipeVoxels.VoxelCount();
             });
-        var currentVoxelCount = __instance.Voxels?.Cast<byte>().Count(voxel => voxel != 0) ?? 0;
+        var currentVoxelCount = __instance.Voxels?.MaterialCount();
+        var currentSlagCount = __instance.Voxels?.SlagCount();
         dsc.AppendLine(Lang.Get($"{Core.ModId}:blockdesc-voxelcount", currentVoxelCount, voxelCount));
+        if (currentSlagCount > 0) dsc.AppendLine(Lang.Get($"{Core.ModId}:blockdesc-slagcount", currentSlagCount));
     }
 }

@@ -1,6 +1,7 @@
 using System.Linq;
 using SmithingPlus.Compat;
 using SmithingPlus.ToolRecovery;
+using SmithingPlus.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -24,7 +25,7 @@ public class ItemXWorkableNugget : ItemWorkableNugget
         {
             if (!Core.Config.SmithWithBits) return null;
             CreateVoxelsFromNugget(api, ref beAnvil.Voxels);
-            if (ThriftySmithingCompat.ThriftySmithingLoaded) itemstack.AddToCustomWorkData(beAnvil.Voxels.Cast<byte>().Count(voxel => voxel != 0));
+            if (ThriftySmithingCompat.ThriftySmithingLoaded) itemstack.AddToCustomWorkData(beAnvil.Voxels.MaterialCount());
         }
         else
         {
