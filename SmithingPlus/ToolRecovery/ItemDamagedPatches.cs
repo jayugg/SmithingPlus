@@ -114,6 +114,7 @@ public class ItemDamagedPatches
         if (entityPlayer != null) gaveStack = entityPlayer.TryGiveItemStack(wItemStack);
         if (!gaveStack) world.SpawnItemEntity(wItemStack, byEntity.Pos.XYZ);
         Core.Logger.VerboseDebug(gaveStack ? "Gave work item {0} to player {1}" : "Dropped work item {0} to player {1}", wItemStack.Collectible.Code, entityPlayer?.Player.PlayerName);
+        itemslot.MarkDirty();
     }
 
     private static SmithingRecipe GetHeadSmithingRecipe(IWorldAccessor world, ItemStack itemStack)

@@ -13,14 +13,14 @@ public partial class Core
     {
         api.ChatCommands
             .Create("setHeldTemp")
-            .WithAlias("sp t")
+            .WithAlias("spt")
             .WithDescription("Set the temperature of held item.")
             .RequiresPrivilege("controlserver")
             .WithArgs(api.ChatCommands.Parsers.Float("temperature"), api.ChatCommands.Parsers.OptionalWord("playerName"))
             .HandleWith(args => OnSetHeldTempCommand(api, args));
         api.ChatCommands
             .Create("setHeldDurability")
-            .WithAlias("sp d")
+            .WithAlias("spd")
             .WithDescription("Set the durability of held item.")
             .RequiresPrivilege("controlserver")
             .WithArgs(api.ChatCommands.Parsers.Float("durability"), api.ChatCommands.Parsers.OptionalWord("playerName"))
@@ -33,7 +33,7 @@ public partial class Core
             .HandleWith(args => OnGetSmithingQualityCommand(api, args));
         api.ChatCommands
             .Create("completeHeldWorkItem")
-            .WithAlias("sp cw")
+            .WithAlias("spcw")
             .WithDescription("Complete the held work item.")
             .RequiresPrivilege("controlserver")
             .WithArgs(api.ChatCommands.Parsers.OptionalWord("playerName"))

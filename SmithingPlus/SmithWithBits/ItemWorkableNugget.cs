@@ -84,6 +84,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
             .Select(r =>
             {
                 var p = r.Clone();
+                p.Voxels = r.Voxels;
                 p.Ingredient.Code = this.Code;
                 p.Ingredient.Type = this.ItemClass;
                 p.Ingredient.ResolvedItemstack = new ItemStack(this);

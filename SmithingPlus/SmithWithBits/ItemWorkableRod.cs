@@ -18,13 +18,24 @@ public class ItemWorkableRod : Item, IAnvilWorkable
     public override void OnLoaded(ICoreAPI coreApi)
     {
         base.OnLoaded(coreApi);
+        LoadVoxels(coreApi);
+    }
+
+    private void LoadVoxels(ICoreAPI coreApi)
+    {
         var smallestSmithingRecipe = coreApi.GetSmithingRecipes()
-            .FindAll(recipe => recipe.Output.Matches(coreApi.World, new ItemStack(this)))
+            .FindAll(recipe => recipe.Output.Matches(coreApi.World, new ItemStack(this))
+                               && recipe.Voxels.VoxelCount() != 0)
             .OrderBy(recipe => recipe.Voxels.VoxelCount())
             .FirstOrDefault();
+        Core.Logger.VerboseDebug("[ItemWorkableRod#LoadVoxels] Loaded recipe with {0} voxels for {1} from {2}",
+            smallestSmithingRecipe?.Voxels.VoxelCount() ?? 0,
+            smallestSmithingRecipe?.Name,
+            smallestSmithingRecipe?.Ingredient
+            );
         RecipeVoxels = smallestSmithingRecipe?.Voxels;
     }
-    
+
     public string MetalVariant => GetMetalStack().Collectible.Variant["metal"];
     // Support for ExtraCode mod
     public bool IsBlisterSteelLike => IsBlisterSteel || Attributes["blisterSteelLike"].AsBool();
@@ -67,6 +78,7 @@ public class ItemWorkableRod : Item, IAnvilWorkable
             .Select(r =>
             {
                 var p = r.Clone();
+                p.Voxels = r.Voxels;
                 p.Ingredient.Code = this.Code;
                 p.Ingredient.Type = this.ItemClass;
                 p.Ingredient.ResolvedItemstack = new ItemStack(this);
