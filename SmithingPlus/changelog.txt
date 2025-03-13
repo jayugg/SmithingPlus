@@ -1,3 +1,2 @@
-- [Feature] Smith with metal rods
-- [Tweak] Changed recipe system for nuggets and metal rods so they can show up in the handbook
-- [Fix] Fixed durability effect from traits not working properly
+TODO:
+- Standardise fetching metal variant / type and relevant ingot

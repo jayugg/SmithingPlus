@@ -40,15 +40,15 @@ public class ItemDamagedPatches
         }
         var repairSmith = brokenStack.GetRepairSmith();
         if (repairSmith != null) repairedStack.SetRepairSmith(repairSmith);
-        var smithingQuality = brokenStack.Attributes.GetFloat("sp:smithingQuality");
+        var smithingQuality = brokenStack.Attributes.GetFloat(ModAttributes.SmithingQuality);
         if (smithingQuality != 0)
         {
-            repairedStack.Attributes?.SetFloat("sp:smithingQuality", smithingQuality);
+            repairedStack.Attributes?.SetFloat(ModAttributes.SmithingQuality, smithingQuality);
         }
-        var toolRepairPenaltyModifier = brokenStack.Attributes.GetFloat("sp:toolRepairPenaltyModifier");
+        var toolRepairPenaltyModifier = brokenStack.Attributes.GetFloat(ModAttributes.ToolRepairPenaltyModifier);
         if (toolRepairPenaltyModifier != 0)
         {
-            repairedStack.Attributes?.SetFloat("sp:toolRepairPenaltyModifier", toolRepairPenaltyModifier);
+            repairedStack.Attributes?.SetFloat(ModAttributes.ToolRepairPenaltyModifier, toolRepairPenaltyModifier);
         }
         var repairedAttributes = repairedStack.Attributes ?? new TreeAttribute();
         var outputAttributes = outputSlot.Itemstack.Attributes;

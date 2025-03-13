@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
+using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.GameContent;
@@ -20,8 +21,8 @@ public class ToolHeadRepairPatches
         if (!itemstack.Collectible.HasBehavior<CollectibleBehaviorRepairableTool>()) return;
         var brokenCount = itemstack.GetBrokenCount();
         if (brokenCount < 0) return;
-        var multiplier = Core.Config.RepairableToolDurabilityMultiplier * itemstack.Attributes.GetFloat("sp:smithingQuality", 1);
-        var toolRepairPenaltyModifier = itemstack.Attributes.GetFloat("sp:toolRepairPenaltyModifier");
+        var multiplier = Core.Config.RepairableToolDurabilityMultiplier * itemstack.Attributes.GetFloat(ModAttributes.SmithingQuality, 1);
+        var toolRepairPenaltyModifier = itemstack.Attributes.GetFloat(ModAttributes.ToolRepairPenaltyModifier);
         var toolRepairPenalty = brokenCount * Core.Config.DurabilityPenaltyPerRepair * (1 - toolRepairPenaltyModifier);
         var reducedDurability = (int) (__result * multiplier * (1 - toolRepairPenalty));
         if (itemstack.Attributes.HasAttribute("durability"))
@@ -34,20 +35,20 @@ public class ToolHeadRepairPatches
 
     public static void OnSmithingFinished(BlockEntityAnvil instance, ItemStack itemstack, IPlayer byPlayer)
     {
-        var smithingQuality = byPlayer?.Entity.Stats.GetBlended("sp:smithingQuality") ?? Core.Config.HelveHammerSmithingQualityModifier;
+        var smithingQuality = byPlayer?.Entity.Stats.GetBlended(ModStats.SmithingQuality) ?? Core.Config.HelveHammerSmithingQualityModifier;
         if (Math.Abs(smithingQuality - 1) > 1E-3)
         {
-            itemstack.Attributes.SetFloat("sp:smithingQuality", smithingQuality);
+            itemstack.Attributes.SetFloat(ModAttributes.SmithingQuality, smithingQuality);
         }
         Core.Logger.VerboseDebug("ModifyBrokenCount: {0} by {1}", itemstack.Collectible.Code, instance.WorkItemStack);
         if (instance.WorkItemStack.GetBrokenCount() == 0) return;
         itemstack.CloneBrokenCount(instance.WorkItemStack);
         itemstack.CloneRepairedToolStack(instance.WorkItemStack, Core.Config.GetToolRepairForgettableAttributes);
         itemstack.SetRepairSmith(byPlayer?.PlayerName ?? Lang.Get("item-helvehammer"));
-        var toolRepairPenaltyStat = byPlayer?.Entity.Stats.GetBlended("sp:toolRepairPenalty") ?? 1;
+        var toolRepairPenaltyStat = byPlayer?.Entity.Stats.GetBlended(ModStats.ToolRepairPenalty) ?? 1;
         if (Math.Abs(toolRepairPenaltyStat - 1) > 1E-3)
         {
-            itemstack.Attributes.SetFloat("sp:toolRepairPenaltyModifier", (float) Math.Round(toolRepairPenaltyStat - 1, 3));
+            itemstack.Attributes.SetFloat(ModAttributes.ToolRepairPenaltyModifier, (float) Math.Round(toolRepairPenaltyStat - 1, 3));
         }
     }
 
