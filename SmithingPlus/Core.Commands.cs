@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using System.Text.Json.Nodes;
+using Newtonsoft.Json.Linq;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
@@ -38,8 +40,48 @@ public partial class Core
             .RequiresPrivilege("controlserver")
             .WithArgs(api.ChatCommands.Parsers.OptionalWord("playerName"))
             .HandleWith(args => OnCompleteHeldWorkitemCommand(api, args));
+        api.ChatCommands
+            .Create("setHeldAttribute")
+            .WithAlias("spsa")
+            .WithDescription("Set a bool attribute to held item stack.")
+            .RequiresPrivilege("controlserver")
+            .WithArgs(api.ChatCommands.Parsers.Word("attributeKey"), api.ChatCommands.Parsers.Word("attributeValue"), api.ChatCommands.Parsers.OptionalWord("playerName"))
+            .HandleWith(args => OnSetHeldAttributeCommand(api, args));
     }
-    
+
+    private TextCommandResult OnSetHeldAttributeCommand(ICoreServerAPI api, TextCommandCallingArgs args)
+    {
+        var attributeKey = args[0] as string;
+        var attributeValue = bool.Parse(args[1] as string ?? string.Empty);
+        if (string.IsNullOrEmpty(attributeKey) || string.IsNullOrEmpty(args[1] as string) )
+        {
+            return TextCommandResult.Error("Attribute key or value is missing.");
+        }
+        string playerName = args[2] as string;
+        IServerPlayer targetPlayer;
+        if (string.IsNullOrEmpty(playerName))
+        {
+            targetPlayer = args.Caller.Player as IServerPlayer;
+        }
+        else
+        {
+            targetPlayer = GetPlayerByName(api, playerName);
+            if (targetPlayer == null)
+            {
+                return TextCommandResult.Error($"Player '{playerName}' not found.");
+            }
+        }
+        if (targetPlayer == null) return TextCommandResult.Error("Player not found.");
+        var heldStack = targetPlayer.InventoryManager.ActiveHotbarSlot.Itemstack;
+        if (heldStack == null)
+        {
+            return TextCommandResult.Error($"Player '{targetPlayer.PlayerName}' has no held item.");
+        }
+        heldStack.Attributes.SetBool(attributeKey, attributeValue);
+        targetPlayer.InventoryManager.ActiveHotbarSlot.MarkDirty();
+        return TextCommandResult.Success($"Set held stack attribute {attributeKey} to value {attributeValue} for player '{targetPlayer.PlayerName}'.");
+    }
+
     private TextCommandResult OnSetHeldTempCommand(ICoreServerAPI api, TextCommandCallingArgs args)
     {
         var temperature = args[0] as float? ?? 0;

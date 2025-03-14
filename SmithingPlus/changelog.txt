@@ -3,4 +3,4 @@ TODO:
 - Cache handbook data
 - Helve hammer config
 
-- [Fix?] Possible fix to cast tool crash, or at least more debuggable code of it still happens
+- [Fix] Fix cast tool crafting crash

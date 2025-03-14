@@ -38,13 +38,18 @@ public class CastToolPenaltyPatch
         var castTools = allInputslots.Where(slot =>
             !slot.Empty &&
             slot.Itemstack.Attributes?.GetBool(ModAttributes.CastTool) == true
-        ).Select(slot => slot.Itemstack);
+        ).Select(slot => slot.Itemstack).ToArray();
+        if (!castTools.Any()) return;
+        //Core.Logger.VerboseDebug("Found cast tools in recipe");
+        var nonToolsInRecipe = byRecipe.resolvedIngredients.Where(ing => !ing.IsTool).ToArray();
+        //Core.Logger.VerboseDebug($"Non tools in recipe: {nonToolsInRecipe.Length}");
         var castToolHeads = castTools.Where(stack =>
-            !byRecipe.resolvedIngredients.Any(ing => 
-                ing.Code == stack.Collectible.Code && ing.IsTool) == true
-        );
+            nonToolsInRecipe.Any(ing => ing.ResolvedItemstack.Satisfies(stack))
+        ).ToArray();
+        //Core.Logger.VerboseDebug($"Cast tool heads: {castToolHeads.Length}");
         var hasCastToolHead = castToolHeads.Any();
         if (!hasCastToolHead) return;
+        outputSlot.Itemstack.Attributes ??= new TreeAttribute();
         outputSlot.Itemstack.Attributes.SetBool(ModAttributes.CastTool, true);
     }
     
