@@ -30,7 +30,7 @@ public class ItemWorkableRod : Item, IAnvilWorkable
             .FirstOrDefault();
         Core.Logger.VerboseDebug("[ItemWorkableRod#LoadVoxels] Loaded recipe with {0} voxels for {1} from {2}",
             smallestSmithingRecipe?.Voxels.VoxelCount() ?? 0,
-            smallestSmithingRecipe?.Name,
+            smallestSmithingRecipe?.Output.Code,
             smallestSmithingRecipe?.Ingredient
             );
         RecipeVoxels = smallestSmithingRecipe?.Voxels;

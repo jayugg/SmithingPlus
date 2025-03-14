@@ -31,13 +31,19 @@ public class CastToolPenaltyPatch
         ItemSlot outputSlot,
         GridRecipe byRecipe)
     {
-        if (outputSlot.Itemstack == null) return;
-        var hasCastToolHead = allInputslots.Any(slot =>
-                slot.Itemstack?.Attributes?.GetBool(ModAttributes.CastTool) == true &&
-                slot.Itemstack?.Collectible != null &&
-                !byRecipe.resolvedIngredients.Any(ing => 
-                    ing.Code.Equals(slot.Itemstack.Collectible.Code) && ing.IsTool)
+        if (byRecipe is not {resolvedIngredients: not null} ||
+            allInputslots == null ||
+            outputSlot.Itemstack == null)
+            return;
+        var castTools = allInputslots.Where(slot =>
+            !slot.Empty &&
+            slot.Itemstack.Attributes?.GetBool(ModAttributes.CastTool) == true
+        ).Select(slot => slot.Itemstack);
+        var castToolHeads = castTools.Where(stack =>
+            !byRecipe.resolvedIngredients.Any(ing => 
+                ing.Code == stack.Collectible.Code && ing.IsTool) == true
         );
+        var hasCastToolHead = castToolHeads.Any();
         if (!hasCastToolHead) return;
         outputSlot.Itemstack.Attributes.SetBool(ModAttributes.CastTool, true);
     }

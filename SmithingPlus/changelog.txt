@@ -1,10 +1,6 @@
 TODO:
 - Standardise fetching metal variant / type and relevant ingot
 - Cache handbook data
+- Helve hammer config
 
-- [Fix] Metal rod voxels not being loaded on the server
-- [Fix] Tools like chisel or shears not keeping attributes after repair
-- [Tweak] Anvil voxel display will display slag count
-- [Tweak] Better broken toolhead voxel shape
-- [Tweak] Some code refactoring
-- [Tweak] Helve hammer won't generate extra voxels for iron blooms when bits recovery is enabled
+- [Fix?] Possible fix to cast tool crash, or at least more debuggable code of it still happens
