@@ -1,0 +1,19 @@
+{
+  "trait-sp:smith": "<font color=\"#84ff84\">• Кузнец </font>",
+  "trait-sp:drosshand": "<font color=\"#ff8484\">• Криворукий </font>",
+  "traitname-sp:smith": "Кузнец",
+  "traitname-sp:drosshand": "Криворукий",
+  "traitdesc-sp:smith": "Прирожденный кузнец, он имеет более низкие затраты на ремонт инструмента и более высокое качество ковки",
+  "traitdesc-sp:drosshand": "Кузнечное дело - не ваша сильная сторона, оно влечёт за собой более высокие затраты на ремонт инструмента и более низкое качество изготовления",
+  "charattribute-sp:toolRepairPenalty-0.2": "Снижает штрафы за ремонт инструментов на 20%",
+  "charattribute-sp:toolRepairPenalty--0.1": "Увеличивает штрафы за ремонт инструментов на 10%",
+  "charattribute-sp:smithingQuality-0.2": "Увеличивает прочность кузнечных изделий на 20%",
+  "charattribute-sp:smithingQuality--0.1": "Снижает прочность кузнечных изделий на 10%",
+  
+  "Requires {0} voxels": "Требуется {0} вокселей",
+  "with": "с",
+  
+  "Mold for": "Форма для",
+  "Requires for casting": "Требуется для отливки",
+  "Can be cast in": "Может быть отлито в"
+}
