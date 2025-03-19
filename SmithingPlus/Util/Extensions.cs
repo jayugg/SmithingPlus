@@ -106,7 +106,7 @@ public static class Extensions
     
     public static ItemStack GetBaseMaterial(this ItemStack stack)
     {
-        return stack.Collectible is IAnvilWorkable workable ? workable.GetBaseMaterial(stack) : stack;
+        return stack?.Collectible is IAnvilWorkable workable ? workable.GetBaseMaterial(stack) : stack;
     }
     
     public static void AddBehavior<T>(this CollectibleObject collectible) where T : CollectibleBehavior
