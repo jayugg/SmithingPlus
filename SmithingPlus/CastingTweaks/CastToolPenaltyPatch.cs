@@ -31,23 +31,16 @@ public class CastToolPenaltyPatch
         ItemSlot outputSlot,
         GridRecipe byRecipe)
     {
-        if (byRecipe is not {resolvedIngredients: not null} ||
-            allInputslots == null ||
-            outputSlot.Itemstack == null)
+        if (outputSlot.Itemstack == null)
             return;
-        var castTools = allInputslots.Where(slot =>
-            !slot.Empty &&
-            slot.Itemstack.Attributes?.GetBool(ModAttributes.CastTool) == true
-        ).Select(slot => slot.Itemstack).ToArray();
-        if (!castTools.Any()) return;
-        //Core.Logger.VerboseDebug("Found cast tools in recipe");
-        var nonToolsInRecipe = byRecipe.resolvedIngredients.Where(ing => !ing.IsTool).ToArray();
-        //Core.Logger.VerboseDebug($"Non tools in recipe: {nonToolsInRecipe.Length}");
-        var castToolHeads = castTools.Where(stack =>
-            nonToolsInRecipe.Any(ing => ing.ResolvedItemstack.Satisfies(stack))
-        ).ToArray();
-        //Core.Logger.VerboseDebug($"Cast tool heads: {castToolHeads.Length}");
-        var hasCastToolHead = castToolHeads.Any();
+        var castToolsHeads = allInputslots
+            .Where(slot => !slot.Empty)
+            .Select(slot => slot.Itemstack)
+            .Where(stack =>
+            stack.Attributes?.GetBool(ModAttributes.CastTool) == true &&
+            stack.Collectible.GetMaxDurability(stack) == 1)
+            .ToArray();
+        var hasCastToolHead = castToolsHeads.Any();
         if (!hasCastToolHead) return;
         outputSlot.Itemstack.Attributes ??= new TreeAttribute();
         outputSlot.Itemstack.Attributes.SetBool(ModAttributes.CastTool, true);
