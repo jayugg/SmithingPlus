@@ -1,18 +1,12 @@
 {
-	"code": "forlornblade",
-	"ingredient": {
-		"type": "item",
-		"code": "game:ingot-*",
-		"name": "metal",
-		"recipeAttributes": {"repairOnly": true},
-		"allowedVariants": [
-			"meteoriciron"
-		]
-	},
-	"pattern": [[
-		"________########",
-		"################",
-		"________########"
-		]],
-	"output": { "type": "item", "code": "forlornblade-{metal}" }
+  "code": "forlornblade",
+  "ingredient": {
+    "type": "item",
+    "code": "game:ingot-*",
+    "name": "metal",
+    "recipeAttributes": { "repairOnly": true },
+    "allowedVariants": [ "meteoriciron" ]
+  },
+  "pattern": [ [ "________########", "################", "________########" ] ],
+  "output": { "type": "item", "code": "forlornblade-{metal}" }
 }

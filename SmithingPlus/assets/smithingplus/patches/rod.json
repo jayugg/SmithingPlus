@@ -3,9 +3,7 @@
     "file": "game:itemtypes/part/rod.json",
     "op": "addmerge",
     "path": "/attributes",
-    "value": {
-      "isPureMetal": true
-    },
+    "value": { "isPureMetal": true },
     "side": "Server"
   },
   {

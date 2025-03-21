@@ -3,11 +3,9 @@
     "file": "xskills:itemtypes/metalbits/metalbit.json",
     "op": "addmerge",
     "path": "/attributes",
-    "value": {
-      "isPureMetal": true
-    },
+    "value": { "isPureMetal": true },
     "side": "Server",
-    "dependsOn": [{ "modid": "xskills" }]
+    "dependsOn": [ { "modid": "xskills" } ]
   },
   {
     "file": "xskills:itemtypes/metalbits/metalbit.json",
@@ -15,6 +13,6 @@
     "path": "/class",
     "value": "ItemXWorkableNugget",
     "side": "Server",
-    "dependsOn": [{ "modid": "xskills" }]
+    "dependsOn": [ { "modid": "xskills" } ]
   }
 ]

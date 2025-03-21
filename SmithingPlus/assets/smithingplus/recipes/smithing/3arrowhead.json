@@ -1,13 +1,24 @@
 [
   {
-    "ingredient": { "type": "item", "code": "game:ingot-*", "recipeAttributes": {"nuggetRecipe": true}, "name": "metal", "allowedVariants": ["copper", "tinbronze", "bismuthbronze", "blackbronze", "silver", "gold", "iron", "meteoriciron", "steel"] },
-    "pattern": [[
-      "________",
-      "##_##_##",
-      "#__#__#_",
-      "________"
-    ]],
+    "ingredient": {
+      "type": "item",
+      "code": "game:ingot-*",
+      "recipeAttributes": { "nuggetRecipe": true },
+      "name": "metal",
+      "allowedVariants": [
+        "copper",
+        "tinbronze",
+        "bismuthbronze",
+        "blackbronze",
+        "silver",
+        "gold",
+        "iron",
+        "meteoriciron",
+        "steel"
+      ]
+    },
+    "pattern": [ [ "________", "##_##_##", "#__#__#_", "________" ] ],
     "name": "3 Arrowheads",
-    "output": { "type": "item", "code": "game:arrowhead-{metal}", "stacksize": 3  }
+    "output": { "type": "item", "code": "game:arrowhead-{metal}", "stacksize": 3 }
   }
 ]

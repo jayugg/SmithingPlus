@@ -4,9 +4,7 @@
     "op": "addmerge",
     "path": "/attributesByType",
     "value": {
-      "@*-(nativecopper|nativegold|nativesilver|nativeplatinum)": {
-          "isPureMetal": true
-      }
+      "@*-(nativecopper|nativegold|nativesilver|nativeplatinum)": { "isPureMetal": true }
     },
     "side": "Server"
   },
@@ -23,9 +21,7 @@
     "file": "game:itemtypes/resource/metalbit.json",
     "op": "addmerge",
     "path": "/attributes",
-    "value": {
-      "isPureMetal": true
-    },
+    "value": { "isPureMetal": true },
     "side": "Server"
   },
   {

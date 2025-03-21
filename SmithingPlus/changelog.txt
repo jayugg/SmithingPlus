@@ -3,4 +3,4 @@ TODO:
 - Cache handbook data
 - Helve hammer config
 
-- [Fix] Fix cast tool crafting crash
+- Add russian translation
