@@ -1,23 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Newtonsoft.Json;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 
-namespace SmithingPlus.Extra;
+namespace SmithingPlus.StoneSmithing;
 
 public class ItemStoneHammer : ItemHammer
 {
     public static int MaxHitCount = 3;
+
     protected override void strikeAnvil(EntityAgent byEntity, ItemSlot slot)
     {
-        IPlayer player = (byEntity as EntityPlayer)?.Player;
-        BlockSelection currentBlockSelection = player?.CurrentBlockSelection;
+        var player = (byEntity as EntityPlayer)?.Player;
+        var currentBlockSelection = player?.CurrentBlockSelection;
         if (currentBlockSelection == null)
             return;
         var random = byEntity.World.Rand;
-        BlockEntity blockEntity = byEntity.World.BlockAccessor.GetBlockEntity(currentBlockSelection.Position);
+        var blockEntity = byEntity.World.BlockAccessor.GetBlockEntity(currentBlockSelection.Position);
         if (blockEntity is BlockEntityAnvilPart blockEntityAnvilPart)
         {
             if (slot.Itemstack == null)
@@ -28,19 +28,22 @@ public class ItemStoneHammer : ItemHammer
         }
         else
         {
-            if (byEntity.World.BlockAccessor.GetBlock(currentBlockSelection.Position) is not BlockAnvil || blockEntity is not BlockEntityAnvil blockEntityAnvil)
+            if (byEntity.World.BlockAccessor.GetBlock(currentBlockSelection.Position) is not BlockAnvil ||
+                blockEntity is not BlockEntityAnvil blockEntityAnvil)
                 return;
-            if (blockEntityAnvil.WorkItemStack is not {Collectible: IAnvilWorkable } workItemStack)
+            if (blockEntityAnvil.WorkItemStack is not { Collectible: IAnvilWorkable } workItemStack)
                 return;
             var metalTier =
                 ((IAnvilWorkable)workItemStack.Collectible)?.GetRequiredAnvilTier(blockEntityAnvil
                     .WorkItemStack) ?? 0;
             Core.Logger.VerboseDebug("[ItemStoneHammer#strikeAnvil] Metal tier: {0}", metalTier);
-            if (!HitVoxelAndCheck(blockEntityAnvil.WorkItemStack, currentBlockSelection.SelectionBoxIndex, GetHitHardness(random, metalTier)))
+            if (!HitVoxelAndCheck(blockEntityAnvil.WorkItemStack, currentBlockSelection.SelectionBoxIndex,
+                    GetHitHardness(random, metalTier)))
                 return;
-            if (this.api.World.Side == EnumAppSide.Client)
+            if (api.World.Side == EnumAppSide.Client)
                 blockEntityAnvil.InvokeOnUseOver(player, currentBlockSelection.SelectionBoxIndex);
         }
+
         slot.Itemstack?.TempAttributes.SetBool("isAnvilAction", false);
     }
 
@@ -55,20 +58,21 @@ public class ItemStoneHammer : ItemHammer
         Core.Logger.VerboseDebug("[ItemStoneHammer#GetHitHardness] Hit hardness: {0}", intHardness);
         return intHardness;
     }
-    
+
     public float GetHitHardness()
     {
-        return this.Attributes["hitHardnessByType"]?.AsFloat(1.3f) ?? 1.3f;
+        return Attributes["hitHardnessByType"]?.AsFloat(1.3f) ?? 1.3f;
     }
-    
+
     public static bool HitVoxelAndCheck(ItemStack stack, int selectionBoxIndex, int hardness = 1)
     {
-        int hitCount = GetVoxelHitCount(stack, selectionBoxIndex) + hardness;
+        var hitCount = GetVoxelHitCount(stack, selectionBoxIndex) + hardness;
         if (hitCount >= MaxHitCount)
         {
             SetVoxelHitCount(stack, selectionBoxIndex, 0);
             return true;
         }
+
         SetVoxelHitCount(stack, selectionBoxIndex, hitCount);
         return false;
     }
@@ -82,26 +86,28 @@ public class ItemStoneHammer : ItemHammer
 
     public static void SetVoxelHitCounts(ItemStack stack, Dictionary<int, int> hitCounts)
     {
-        byte[] byteArray = new byte[hitCounts.Count * 2];
-        int index = 0;
+        var byteArray = new byte[hitCounts.Count * 2];
+        var index = 0;
         foreach (var kvp in hitCounts)
         {
             byteArray[index++] = (byte)kvp.Key;
             byteArray[index++] = (byte)kvp.Value;
         }
+
         stack.TempAttributes.SetBytes("sp:voxelHitCounts", byteArray);
     }
 
     public static Dictionary<int, int> GetVoxelHitCounts(ItemStack stack)
     {
-        byte[] byteArray = stack.TempAttributes.GetBytes("sp:voxelHitCounts", new byte[0]);
+        var byteArray = stack.TempAttributes.GetBytes("sp:voxelHitCounts", new byte[0]);
         var hitCounts = new Dictionary<int, int>();
-        for (int i = 0; i < byteArray.Length; i += 2)
+        for (var i = 0; i < byteArray.Length; i += 2)
         {
             int selectionBoxIndex = byteArray[i];
             int hitCount = byteArray[i + 1];
             hitCounts[selectionBoxIndex] = hitCount;
         }
+
         return hitCounts;
     }
 
@@ -110,17 +116,15 @@ public class ItemStoneHammer : ItemHammer
         var hitCounts = GetVoxelHitCounts(stack);
         return hitCounts.GetValueOrDefault(selectionBoxIndex, 0);
     }
-    
 }
 
 public static class XHammer
 {
     public static void InvokeOnUseOver(this BlockEntityAnvil blockEntityAnvil, IPlayer player, int selectionBoxIndex)
     {
-        MethodInfo onUseOverMethod = typeof(BlockEntityAnvil).GetMethod("OnUseOver", BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(IPlayer), typeof(int) }, null);
+        var onUseOverMethod = typeof(BlockEntityAnvil).GetMethod("OnUseOver",
+            BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(IPlayer), typeof(int) }, null);
         if (onUseOverMethod != null)
-        {
             onUseOverMethod.Invoke(blockEntityAnvil, new object[] { player, selectionBoxIndex });
-        }
     }
 }

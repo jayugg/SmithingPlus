@@ -15,40 +15,42 @@ namespace SmithingPlus.ToolRecovery;
 public class ToolHeadRepairPatches
 {
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(CollectibleObject), nameof(CollectibleObject.GetMaxDurability)), HarmonyPriority(-int.MaxValue)]
+    [HarmonyPatch(typeof(CollectibleObject), nameof(CollectibleObject.GetMaxDurability))]
+    [HarmonyPriority(-int.MaxValue)]
     public static void Postfix_GetMaxDurability(ref int __result, ItemStack itemstack)
     {
         if (!itemstack.Collectible.HasBehavior<CollectibleBehaviorRepairableTool>()) return;
         var brokenCount = itemstack.GetBrokenCount();
         if (brokenCount < 0) return;
-        var multiplier = Core.Config.RepairableToolDurabilityMultiplier * itemstack.Attributes.GetFloat(ModAttributes.SmithingQuality, 1);
+        var multiplier = Core.Config.RepairableToolDurabilityMultiplier *
+                         itemstack.Attributes.GetFloat(ModAttributes.SmithingQuality, 1);
         var toolRepairPenaltyModifier = itemstack.Attributes.GetFloat(ModAttributes.ToolRepairPenaltyModifier);
         var toolRepairPenalty = brokenCount * Core.Config.DurabilityPenaltyPerRepair * (1 - toolRepairPenaltyModifier);
-        var reducedDurability = (int) (__result * multiplier * (1 - toolRepairPenalty));
+        var reducedDurability = (int)(__result * multiplier * (1 - toolRepairPenalty));
         if (itemstack.Attributes.HasAttribute("durability"))
         {
             var durability = itemstack.Attributes.GetInt("durability");
             itemstack.SetDurability(Math.Min(durability, reducedDurability));
         }
+
         __result = Math.Max(reducedDurability, 1);
     }
 
     public static void OnSmithingFinished(BlockEntityAnvil instance, ItemStack itemstack, IPlayer byPlayer)
     {
-        var smithingQuality = byPlayer?.Entity.Stats.GetBlended(ModStats.SmithingQuality) ?? Core.Config.HelveHammerSmithingQualityModifier;
+        var smithingQuality = byPlayer?.Entity.Stats.GetBlended(ModStats.SmithingQuality) ??
+                              Core.Config.HelveHammerSmithingQualityModifier;
         if (Math.Abs(smithingQuality - 1) > 1E-3)
-        {
             itemstack.Attributes.SetFloat(ModAttributes.SmithingQuality, smithingQuality);
-        }
         Core.Logger.VerboseDebug("ModifyBrokenCount: {0} by {1}", itemstack.Collectible.Code, instance.WorkItemStack);
         if (instance.WorkItemStack.GetBrokenCount() == 0) return;
-        itemstack.CloneRepairedToolStackOrAttributes(instance.WorkItemStack, Core.Config.GetToolRepairForgettableAttributes);
+        itemstack.CloneRepairedToolStackOrAttributes(instance.WorkItemStack,
+            Core.Config.GetToolRepairForgettableAttributes);
         itemstack.SetRepairSmith(byPlayer?.PlayerName ?? Lang.Get("item-helvehammer"));
         var toolRepairPenaltyStat = byPlayer?.Entity.Stats.GetBlended(ModStats.ToolRepairPenalty) ?? 1;
         if (Math.Abs(toolRepairPenaltyStat - 1) > 1E-3)
-        {
-            itemstack.Attributes.SetFloat(ModAttributes.ToolRepairPenaltyModifier, (float) Math.Round(toolRepairPenaltyStat - 1, 3));
-        }
+            itemstack.Attributes.SetFloat(ModAttributes.ToolRepairPenaltyModifier,
+                (float)Math.Round(toolRepairPenaltyStat - 1, 3));
     }
 
     [HarmonyTranspiler]
@@ -62,7 +64,7 @@ public class ToolHeadRepairPatches
 
         Core.Logger.VerboseDebug("Target method: {0}", targetMethod);
 
-        for (int i = 0; i < codes.Count; i++)
+        for (var i = 0; i < codes.Count; i++)
         {
             yield return codes[i];
 
@@ -72,7 +74,8 @@ public class ToolHeadRepairPatches
             yield return new CodeInstruction(OpCodes.Ldarg_0); // Load 'this' (instance)
             yield return new CodeInstruction(OpCodes.Ldloc_0); // Load itemstack (local variable at index 0)
             yield return new CodeInstruction(OpCodes.Ldarg_1); // Load player (first argument)
-            yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(ToolHeadRepairPatches), nameof(OnSmithingFinished)));
+            yield return new CodeInstruction(OpCodes.Call,
+                AccessTools.Method(typeof(ToolHeadRepairPatches), nameof(OnSmithingFinished)));
         }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Cairo;
 using HarmonyLib;
@@ -12,19 +11,19 @@ namespace SmithingPlus.ClientTweaks;
 [HarmonyPatchCategory(Core.ClientTweaksCategories.HandbookExtraInfo)]
 public partial class HandbookInfoPatch
 {
-    public static ItemStack[] StacksFromCode(ICoreClientAPI capi, ItemStack moldStack, out List<string> existingMetalVariants)
+    public static ItemStack[] StacksFromCode(ICoreClientAPI capi, ItemStack moldStack,
+        out List<string> existingMetalVariants)
     {
         existingMetalVariants = new List<string>();
         var stacks = new List<ItemStack>();
         foreach (var metalVariant in capi.ModLoader.GetModSystem<SurvivalCoreSystem>().metalsByCode.Keys)
         {
             var stack = GetStackForVariant(capi, moldStack, metalVariant);
-            if (stack != null)
-            {
-                stacks.Add(stack);
-                existingMetalVariants.Add(metalVariant);
-            }
+            if (stack == null) continue;
+            stacks.Add(stack);
+            existingMetalVariants.Add(metalVariant);
         }
+
         return stacks.ToArray();
     }
 
@@ -32,19 +31,18 @@ public partial class HandbookInfoPatch
     {
         var mold = moldStack.Collectible;
         var jstack = mold.Attributes["drop"]?.AsObject<JsonItemStack>(null, mold.Code.Domain).Clone();
-        string toolVariant = mold.LastCodePart();
+        var toolVariant = mold.LastCodePart();
         jstack.Code.Path = jstack.Code.Path.Replace("{tooltype}", toolVariant).Replace("{metal}", metalVariant);
         jstack.Resolve(capi.World, "tool mold drop for " + mold.Code, false);
         return jstack.ResolvedItemstack;
     }
-    
+
     public static string ToolMoldType(CollectibleObject mold)
     {
-        JsonItemStack jstack = mold.Attributes["drop"].AsObject<JsonItemStack>(null, mold.Code.Domain);
-        if (jstack.Code.Path.Contains("{tooltype}")) return mold.LastCodePart();
-        return jstack.Code.FirstCodePart();
+        var jstack = mold.Attributes["drop"].AsObject<JsonItemStack>(null, mold.Code.Domain);
+        return jstack.Code.Path.Contains("{tooltype}") ? mold.LastCodePart() : jstack.Code.FirstCodePart();
     }
-    
+
     public static void AddHeading(
         List<RichTextComponentBase> components,
         ICoreClientAPI capi,
@@ -54,10 +52,11 @@ public partial class HandbookInfoPatch
         if (haveText)
             components.Add(new ClearFloatTextComponent(capi, 14f));
         haveText = true;
-        RichTextComponent richTextComponent = new RichTextComponent(capi, Lang.Get(heading) + "\n", CairoFont.WhiteSmallText().WithWeight(FontWeight.Bold));
+        var richTextComponent = new RichTextComponent(capi, Lang.Get(heading) + "\n",
+            CairoFont.WhiteSmallText().WithWeight(FontWeight.Bold));
         components.Add(richTextComponent);
     }
-    
+
     public static void AddSubHeading(
         List<RichTextComponentBase> components,
         ICoreClientAPI capi,
@@ -67,17 +66,22 @@ public partial class HandbookInfoPatch
     {
         if (detailpage == null)
         {
-            RichTextComponent richTextComponent = new RichTextComponent(capi, "• " + Lang.Get(subheading) + "\n", CairoFont.WhiteSmallText());
-            richTextComponent.PaddingLeft = 2.0;
-            components.Add((RichTextComponentBase) richTextComponent);
+            var richTextComponent =
+                new RichTextComponent(capi, "• " + Lang.Get(subheading) + "\n", CairoFont.WhiteSmallText())
+                {
+                    PaddingLeft = 2.0
+                };
+            components.Add(richTextComponent);
         }
         else
         {
-            RichTextComponent richTextComponent = new RichTextComponent(capi, "• ", CairoFont.WhiteSmallText());
-            richTextComponent.PaddingLeft = 2.0;
-            components.Add( richTextComponent);
-            int num;
-            components.Add(new LinkTextComponent(capi, Lang.Get(subheading) + "\n", CairoFont.WhiteSmallText(), cs => num = openDetailPageFor(detailpage) ? 1 : 0));
+            var richTextComponent = new RichTextComponent(capi, "• ", CairoFont.WhiteSmallText())
+            {
+                PaddingLeft = 2.0
+            };
+            components.Add(richTextComponent);
+            components.Add(new LinkTextComponent(capi, Lang.Get(subheading) + "\n", CairoFont.WhiteSmallText(),
+                cs => _ = openDetailPageFor(detailpage) ? 1 : 0));
         }
     }
 }

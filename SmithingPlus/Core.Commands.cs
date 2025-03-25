@@ -1,7 +1,5 @@
 using System;
 using System.Linq;
-using System.Text.Json.Nodes;
-using Newtonsoft.Json.Linq;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
@@ -11,14 +9,15 @@ namespace SmithingPlus;
 
 public partial class Core
 {
-    private void RegisterServerCommands(ICoreServerAPI api)
+    private static void RegisterServerCommands(ICoreServerAPI api)
     {
         api.ChatCommands
             .Create("setHeldTemp")
             .WithAlias("spt")
             .WithDescription("Set the temperature of held item.")
             .RequiresPrivilege("controlserver")
-            .WithArgs(api.ChatCommands.Parsers.Float("temperature"), api.ChatCommands.Parsers.OptionalWord("playerName"))
+            .WithArgs(api.ChatCommands.Parsers.Float("temperature"),
+                api.ChatCommands.Parsers.OptionalWord("playerName"))
             .HandleWith(args => OnSetHeldTempCommand(api, args));
         api.ChatCommands
             .Create("setHeldDurability")
@@ -45,19 +44,18 @@ public partial class Core
             .WithAlias("spsa")
             .WithDescription("Set a bool attribute to held item stack.")
             .RequiresPrivilege("controlserver")
-            .WithArgs(api.ChatCommands.Parsers.Word("attributeKey"), api.ChatCommands.Parsers.Word("attributeValue"), api.ChatCommands.Parsers.OptionalWord("playerName"))
+            .WithArgs(api.ChatCommands.Parsers.Word("attributeKey"), api.ChatCommands.Parsers.Word("attributeValue"),
+                api.ChatCommands.Parsers.OptionalWord("playerName"))
             .HandleWith(args => OnSetHeldAttributeCommand(api, args));
     }
 
-    private TextCommandResult OnSetHeldAttributeCommand(ICoreServerAPI api, TextCommandCallingArgs args)
+    private static TextCommandResult OnSetHeldAttributeCommand(ICoreServerAPI api, TextCommandCallingArgs args)
     {
         var attributeKey = args[0] as string;
         var attributeValue = bool.Parse(args[1] as string ?? string.Empty);
-        if (string.IsNullOrEmpty(attributeKey) || string.IsNullOrEmpty(args[1] as string) )
-        {
+        if (string.IsNullOrEmpty(attributeKey) || string.IsNullOrEmpty(args[1] as string))
             return TextCommandResult.Error("Attribute key or value is missing.");
-        }
-        string playerName = args[2] as string;
+        var playerName = args[2] as string;
         IServerPlayer targetPlayer;
         if (string.IsNullOrEmpty(playerName))
         {
@@ -66,26 +64,22 @@ public partial class Core
         else
         {
             targetPlayer = GetPlayerByName(api, playerName);
-            if (targetPlayer == null)
-            {
-                return TextCommandResult.Error($"Player '{playerName}' not found.");
-            }
+            if (targetPlayer == null) return TextCommandResult.Error($"Player '{playerName}' not found.");
         }
+
         if (targetPlayer == null) return TextCommandResult.Error("Player not found.");
         var heldStack = targetPlayer.InventoryManager.ActiveHotbarSlot.Itemstack;
-        if (heldStack == null)
-        {
-            return TextCommandResult.Error($"Player '{targetPlayer.PlayerName}' has no held item.");
-        }
+        if (heldStack == null) return TextCommandResult.Error($"Player '{targetPlayer.PlayerName}' has no held item.");
         heldStack.Attributes.SetBool(attributeKey, attributeValue);
         targetPlayer.InventoryManager.ActiveHotbarSlot.MarkDirty();
-        return TextCommandResult.Success($"Set held stack attribute {attributeKey} to value {attributeValue} for player '{targetPlayer.PlayerName}'.");
+        return TextCommandResult.Success(
+            $"Set held stack attribute {attributeKey} to value {attributeValue} for player '{targetPlayer.PlayerName}'.");
     }
 
-    private TextCommandResult OnSetHeldTempCommand(ICoreServerAPI api, TextCommandCallingArgs args)
+    private static TextCommandResult OnSetHeldTempCommand(ICoreServerAPI api, TextCommandCallingArgs args)
     {
         var temperature = args[0] as float? ?? 0;
-        string playerName = args[1] as string;
+        var playerName = args[1] as string;
         IServerPlayer targetPlayer;
         if (string.IsNullOrEmpty(playerName))
         {
@@ -94,26 +88,22 @@ public partial class Core
         else
         {
             targetPlayer = GetPlayerByName(api, playerName);
-            if (targetPlayer == null)
-            {
-                return TextCommandResult.Error($"Player '{playerName}' not found.");
-            }
+            if (targetPlayer == null) return TextCommandResult.Error($"Player '{playerName}' not found.");
         }
+
         if (targetPlayer == null) return TextCommandResult.Error("Player not found.");
         var heldStack = targetPlayer.InventoryManager.ActiveHotbarSlot.Itemstack;
-        if (heldStack == null)
-        {
-            return TextCommandResult.Error($"Player '{targetPlayer.PlayerName}' has no held item.");
-        }
+        if (heldStack == null) return TextCommandResult.Error($"Player '{targetPlayer.PlayerName}' has no held item.");
         heldStack.Collectible.SetTemperature(targetPlayer.Entity.World, heldStack, temperature);
         targetPlayer.InventoryManager.ActiveHotbarSlot.MarkDirty();
-        return TextCommandResult.Success($"Held item temperature set to {heldStack.Collectible.GetTemperature(targetPlayer.Entity.World, heldStack)} for player '{targetPlayer.PlayerName}'.");
+        return TextCommandResult.Success(
+            $"Held item temperature set to {heldStack.Collectible.GetTemperature(targetPlayer.Entity.World, heldStack)} for player '{targetPlayer.PlayerName}'.");
     }
-    
-    private TextCommandResult OnSetHeldDurabilityCommand(ICoreServerAPI api, TextCommandCallingArgs args)
+
+    private static TextCommandResult OnSetHeldDurabilityCommand(ICoreServerAPI api, TextCommandCallingArgs args)
     {
         var durability = args[0] as float? ?? 0;
-        string playerName = args[1] as string;
+        var playerName = args[1] as string;
         IServerPlayer targetPlayer;
         if (string.IsNullOrEmpty(playerName))
         {
@@ -122,25 +112,22 @@ public partial class Core
         else
         {
             targetPlayer = GetPlayerByName(api, playerName);
-            if (targetPlayer == null)
-            {
-                return TextCommandResult.Error($"Player '{playerName}' not found.");
-            }
+            if (targetPlayer == null) return TextCommandResult.Error($"Player '{playerName}' not found.");
         }
+
         if (targetPlayer == null) return TextCommandResult.Error("Player not found.");
         var heldStack = targetPlayer.InventoryManager.ActiveHotbarSlot.Itemstack;
-        if (heldStack == null)
-        {
-            return TextCommandResult.Error($"Player '{targetPlayer.PlayerName}' has no held item.");
-        }
-        heldStack.Attributes.SetInt("durability", (int) Math.Clamp(durability, 1, heldStack.Collectible.GetMaxDurability(heldStack)));
+        if (heldStack == null) return TextCommandResult.Error($"Player '{targetPlayer.PlayerName}' has no held item.");
+        heldStack.Attributes.SetInt("durability",
+            (int)Math.Clamp(durability, 1, heldStack.Collectible.GetMaxDurability(heldStack)));
         targetPlayer.InventoryManager.ActiveHotbarSlot.MarkDirty();
-        return TextCommandResult.Success($"Held item durability set to {heldStack.Attributes.GetInt("durability")} for player '{targetPlayer.PlayerName}'.");
+        return TextCommandResult.Success(
+            $"Held item durability set to {heldStack.Attributes.GetInt("durability")} for player '{targetPlayer.PlayerName}'.");
     }
-    
-    private TextCommandResult OnCompleteHeldWorkitemCommand(ICoreServerAPI api, TextCommandCallingArgs args)
+
+    private static TextCommandResult OnCompleteHeldWorkitemCommand(ICoreServerAPI api, TextCommandCallingArgs args)
     {
-        string playerName = args[0] as string;
+        var playerName = args[0] as string;
         IServerPlayer targetPlayer;
         if (string.IsNullOrEmpty(playerName))
         {
@@ -149,36 +136,28 @@ public partial class Core
         else
         {
             targetPlayer = GetPlayerByName(api, playerName);
-            if (targetPlayer == null)
-            {
-                return TextCommandResult.Error($"Player '{playerName}' not found.");
-            }
+            if (targetPlayer == null) return TextCommandResult.Error($"Player '{playerName}' not found.");
         }
+
         if (targetPlayer == null) return TextCommandResult.Error("Player not found.");
         var heldStack = targetPlayer.InventoryManager.ActiveHotbarSlot.Itemstack;
-        if (heldStack == null)
-        {
-            return TextCommandResult.Error($"Player '{targetPlayer.PlayerName}' has no held item.");
-        }
+        if (heldStack == null) return TextCommandResult.Error($"Player '{targetPlayer.PlayerName}' has no held item.");
         if (heldStack.Collectible is not ItemWorkItem)
-        {
             return TextCommandResult.Error($"Player '{targetPlayer.PlayerName}' is not holding a work item.");
-        }
         var selectedRecipe = api.GetSmithingRecipes().FirstOrDefault(r =>
             r.RecipeId == heldStack.Attributes.GetInt("selectedRecipeId"));
         if (selectedRecipe == null)
-        {
-            return TextCommandResult.Error($"Player '{targetPlayer.PlayerName}''s held work item has no selected recipe.");
-        }
+            return TextCommandResult.Error(
+                $"Player '{targetPlayer.PlayerName}''s held work item has no selected recipe.");
         var recipeVoxels = selectedRecipe.Voxels;
         heldStack.Attributes.SetBytes("voxels", BlockEntityAnvil.serializeVoxels(recipeVoxels.ToByteArray()));
         targetPlayer.InventoryManager.ActiveHotbarSlot.MarkDirty();
         return TextCommandResult.Success($"Held work item completed for player '{targetPlayer.PlayerName}'.");
     }
-    
-    private TextCommandResult OnGetSmithingQualityCommand(ICoreServerAPI api, TextCommandCallingArgs args)
+
+    private static TextCommandResult OnGetSmithingQualityCommand(ICoreServerAPI api, TextCommandCallingArgs args)
     {
-        string playerName = args[0] as string;
+        var playerName = args[0] as string;
         IServerPlayer targetPlayer;
         if (string.IsNullOrEmpty(playerName))
         {
@@ -187,27 +166,19 @@ public partial class Core
         else
         {
             targetPlayer = GetPlayerByName(api, playerName);
-            if (targetPlayer == null)
-            {
-                return TextCommandResult.Error($"Player '{playerName}' not found.");
-            }
-        }
-        if (targetPlayer == null) return TextCommandResult.Error("Player not found.");
-        var smithingQuality = targetPlayer.Entity.Stats.GetBlended("sp:smithingQuality");
-        return TextCommandResult.Success($"Smithing quality for player '{targetPlayer?.PlayerName}' is {smithingQuality}.");
-    }
-    
-    private static IServerPlayer GetPlayerByName(ICoreServerAPI api, string playerName)
-    {
-        foreach (var player1 in api.World.AllOnlinePlayers)
-        {
-            var player = (IServerPlayer)player1;
-            if (player.PlayerName.Equals(playerName, StringComparison.OrdinalIgnoreCase))
-            {
-                return player;
-            }
+            if (targetPlayer == null) return TextCommandResult.Error($"Player '{playerName}' not found.");
         }
 
-        return null;
+        if (targetPlayer == null) return TextCommandResult.Error("Player not found.");
+        var smithingQuality = targetPlayer.Entity.Stats.GetBlended("sp:smithingQuality");
+        return TextCommandResult.Success(
+            $"Smithing quality for player '{targetPlayer?.PlayerName}' is {smithingQuality}.");
+    }
+
+    private static IServerPlayer GetPlayerByName(ICoreServerAPI api, string playerName)
+    {
+        return api.World.AllOnlinePlayers
+            .Cast<IServerPlayer>()
+            .FirstOrDefault(player => player.PlayerName.Equals(playerName, StringComparison.OrdinalIgnoreCase));
     }
 }

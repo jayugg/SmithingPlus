@@ -10,12 +10,13 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus.ToolRecovery;
 
-[HarmonyPatch(typeof (CollectibleObject))]
+[HarmonyPatch(typeof(CollectibleObject))]
 [HarmonyPatchCategory(Core.ToolRecoveryCategory)]
 public class ItemDamagedPatches
 {
     [HarmonyPostfix]
-    [HarmonyPatch(nameof(CollectibleObject.OnCreatedByCrafting)), HarmonyPriority(-int.MaxValue)]
+    [HarmonyPatch(nameof(CollectibleObject.OnCreatedByCrafting))]
+    [HarmonyPriority(-int.MaxValue)]
     public static void Postfix_OnCreatedByCrafting(
         ItemSlot[] allInputslots,
         ItemSlot outputSlot,
@@ -25,65 +26,59 @@ public class ItemDamagedPatches
         var brokenStack = allInputslots.FirstOrDefault(slot =>
             slot.Itemstack?.GetBrokenCount() > 0 &&
             slot.Itemstack?.Collectible.HasBehavior<CollectibleBehaviorRepairableToolHead>() == true
-            )?.Itemstack;
+        )?.Itemstack;
         if (brokenStack == null) return;
         var brokenCount = brokenStack.GetBrokenCount();
         if (brokenCount <= 0) return;
         if (brokenStack.Item?.IsRepairableTool() is not true) return;
         var repairedStack = brokenStack.GetRepairedToolStack();
         if (repairedStack == null) return;
-        repairedStack.ResolveBlockOrItem(outputSlot.Inventory.Api.World);   // To compare codes, would need to resolve the repaired stack on the server
+        repairedStack.ResolveBlockOrItem(outputSlot.Inventory.Api
+            .World); // To compare codes, would need to resolve the repaired stack on the server
         if (repairedStack.Collectible.Code != byRecipe.Output.ResolvedItemstack.Collectible.Code) return;
         foreach (var attributeKey in Core.Config.GetToolRepairForgettableAttributes)
-        {
             repairedStack.Attributes?.RemoveAttribute(attributeKey);
-        }
         var repairSmith = brokenStack.GetRepairSmith();
         if (repairSmith != null) repairedStack.SetRepairSmith(repairSmith);
         var smithingQuality = brokenStack.Attributes.GetFloat(ModAttributes.SmithingQuality);
-        if (smithingQuality != 0)
-        {
-            repairedStack.Attributes?.SetFloat(ModAttributes.SmithingQuality, smithingQuality);
-        }
+        if (smithingQuality != 0) repairedStack.Attributes?.SetFloat(ModAttributes.SmithingQuality, smithingQuality);
         var toolRepairPenaltyModifier = brokenStack.Attributes.GetFloat(ModAttributes.ToolRepairPenaltyModifier);
         if (toolRepairPenaltyModifier != 0)
-        {
             repairedStack.Attributes?.SetFloat(ModAttributes.ToolRepairPenaltyModifier, toolRepairPenaltyModifier);
-        }
         var repairedAttributes = repairedStack.Attributes ?? new TreeAttribute();
         var outputAttributes = outputSlot.Itemstack.Attributes;
-        foreach (var attribute in repairedAttributes)
-        {
-            outputAttributes[attribute.Key] = attribute.Value;
-        }
+        foreach (var attribute in repairedAttributes) outputAttributes[attribute.Key] = attribute.Value;
     }
 
     [HarmonyPrefix]
     [HarmonyPatch("DamageItem")]
     private static void Prefix_DamageItem(
-      IWorldAccessor world,
-      Entity byEntity,
-      ItemSlot itemslot,
-      int amount,
-      CollectibleObject __instance)
+        IWorldAccessor world,
+        Entity byEntity,
+        ItemSlot itemslot,
+        int amount,
+        CollectibleObject __instance)
     {
         if (world.Api.Side.IsClient())
-          return;
+            return;
         var durability = itemslot?.Itemstack?.GetDurability();
         if (!durability.HasValue || durability > amount) return;
         if (itemslot.Itemstack?.Collectible.HasBehavior<CollectibleBehaviorRepairableTool>() != true) return;
-        Core.Logger.VerboseDebug("Broken tool in InventoryID: {0}, Entity: {1}", itemslot?.Inventory?.InventoryID, byEntity.GetName());
+        Core.Logger.VerboseDebug("Broken tool in InventoryID: {0}, Entity: {1}", itemslot?.Inventory?.InventoryID,
+            byEntity.GetName());
         var entityPlayer = byEntity as EntityPlayer;
         var itemStack = itemslot.Itemstack;
         var toolCode = itemStack?.Collectible.Code.ToString();
-        var smithingRecipe = CacheHelper.GetOrAdd(Core.ToolToRecipeCache, toolCode, () => GetHeadSmithingRecipe(world, itemStack));
+        var smithingRecipe = CacheHelper.GetOrAdd(Core.ToolToRecipeCache, toolCode,
+            () => GetHeadSmithingRecipe(world, itemStack));
         if (smithingRecipe == null)
         {
             Core.Logger.VerboseDebug("Head or tool smithing recipe not found for: {0}", toolCode);
             return;
         }
+
         var metal = smithingRecipe.Output.ResolvedItemstack.Collectible.GetMetalOrMaterial();
-        var workItemCode = new AssetLocation(itemStack?.Collectible.Code.Domain,$"workitem-{metal}");
+        var workItemCode = new AssetLocation(itemStack?.Collectible.Code.Domain, $"workitem-{metal}");
         var workItem = world.GetItem(workItemCode);
         workItem ??= world.GetItem(new AssetLocation("game:workitem-" + metal));
         if (workItem is null)
@@ -91,9 +86,11 @@ public class ItemDamagedPatches
             Core.Logger.VerboseDebug("Work item not found: {0}, {1}", workItemCode, "game:workitem-" + metal);
             return;
         }
+
         Core.Logger.VerboseDebug("Found work item: {0}", workItemCode);
         var wItemStack = new ItemStack(workItem);
-        Core.Logger.VerboseDebug("Found smithing recipe: {0}", smithingRecipe.Output.ResolvedItemstack.Collectible.Code);
+        Core.Logger.VerboseDebug("Found smithing recipe: {0}",
+            smithingRecipe.Output.ResolvedItemstack.Collectible.Code);
         var byteVoxels = ByteVoxelsFromRecipe(smithingRecipe, world, smithingRecipe.Output.ResolvedItemstack.StackSize);
         wItemStack.Attributes.SetBytes("voxels", BlockEntityAnvil.serializeVoxels(byteVoxels));
         wItemStack.Attributes.SetInt("selectedRecipeId", smithingRecipe.RecipeId);
@@ -103,7 +100,8 @@ public class ItemDamagedPatches
         if (ThriftySmithingCompat.ThriftySmithingLoaded)
         {
             var voxelCount = CacheHelper.GetOrAdd(Core.RecipeVoxelCountCache, smithingRecipe.RecipeId,
-                () => {
+                () =>
+                {
                     Core.Logger.VerboseDebug("Calculating voxel count for: {0}", smithingRecipe.RecipeId);
                     return smithingRecipe.Voxels.VoxelCount();
                 });
@@ -113,7 +111,8 @@ public class ItemDamagedPatches
         var gaveStack = false;
         if (entityPlayer != null) gaveStack = entityPlayer.TryGiveItemStack(wItemStack);
         if (!gaveStack) world.SpawnItemEntity(wItemStack, byEntity.Pos.XYZ);
-        Core.Logger.VerboseDebug(gaveStack ? "Gave work item {0} to player {1}" : "Dropped work item {0} to player {1}", wItemStack.Collectible.Code, entityPlayer?.Player.PlayerName);
+        Core.Logger.VerboseDebug(gaveStack ? "Gave work item {0} to player {1}" : "Dropped work item {0} to player {1}",
+            wItemStack.Collectible.Code, entityPlayer?.Player.PlayerName);
         itemslot.MarkDirty();
     }
 
@@ -131,7 +130,7 @@ public class ItemDamagedPatches
                 r.Output.ResolvedItemstack.StackSize == 1 &&
                 r.Output.ResolvedItemstack.Collectible.Code.Equals(itemStack?.Collectible.Code));
         var toolHead = toolRecipe?.resolvedIngredients
-            .FirstOrDefault(k => 
+            .FirstOrDefault(k =>
                 k?.ResolvedItemstack?.Collectible?.HasBehavior<CollectibleBehaviorRepairableToolHead>() ?? false)
             ?.ResolvedItemstack;
         if (toolHead == null)
@@ -139,6 +138,7 @@ public class ItemDamagedPatches
             toolHead = itemStack;
             Core.Logger.VerboseDebug("Tool head not found for: {0}", itemStack);
         }
+
         Core.Logger.VerboseDebug("Tool head: {0}", toolHead);
         return toolHead;
     }
@@ -147,24 +147,24 @@ public class ItemDamagedPatches
     {
         return itemStack.Collectible.Variant["metal"] ?? itemStack.Collectible.Variant["material"];
     }
-    
-    public static byte[,,] ByteVoxelsFromRecipe(SmithingRecipe recipe, IWorldAccessor world, int stackSize = 1)
+
+    private static byte[,,] ByteVoxelsFromRecipe(SmithingRecipe recipe, IWorldAccessor world, int stackSize = 1)
     {
         var random = new Random(world.Rand.Next());
         var recipeVoxels = recipe.Voxels;
-        int totalVoxels = recipeVoxels.VoxelCount();
-        int targetVoxelCount = (int)(totalVoxels * Core.Config.BrokenToolVoxelPercent);
-        int currentVoxelCount = totalVoxels;
+        var totalVoxels = recipeVoxels.VoxelCount();
+        var targetVoxelCount = (int)(totalVoxels * Core.Config.BrokenToolVoxelPercent);
+        var currentVoxelCount = totalVoxels;
 
         var byteVoxels = recipeVoxels.ToByteArray();
 
-        int layer = 0;
+        var layer = 0;
         while (currentVoxelCount > targetVoxelCount)
         {
             byteVoxels.ErodeLayer(layer, ref currentVoxelCount, targetVoxelCount);
             layer++;
         }
-        
+
         return byteVoxels;
     }
 }

@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Text;
 using HarmonyLib;
 using SmithingPlus.Util;
@@ -13,7 +12,8 @@ namespace SmithingPlus.ClientTweaks;
 public class AnvilVoxelCountPatch
 {
     [HarmonyPostfix]
-    [HarmonyPatch(nameof(BlockEntityAnvil.GetBlockInfo)), HarmonyPriority(Priority.VeryLow)]
+    [HarmonyPatch(nameof(BlockEntityAnvil.GetBlockInfo))]
+    [HarmonyPriority(Priority.VeryLow)]
     public static void Postfix_GetBlockInfo(BlockEntityAnvil __instance, IPlayer forPlayer, StringBuilder dsc)
     {
         if (forPlayer?.InventoryManager?.ActiveHotbarSlot?.Itemstack?.Collectible is not ItemHammer &&
@@ -22,10 +22,10 @@ public class AnvilVoxelCountPatch
         if (__instance.recipeVoxels == null) return;
         if (__instance.CanWorkCurrent == false) return;
         var voxelCount = CacheHelper.GetOrAdd(Core.RecipeVoxelCountCache, __instance.SelectedRecipeId, () =>
-            {
-                Core.Logger.VerboseDebug("Calculating voxel count for: {0}", __instance.SelectedRecipeId);
-                return __instance.recipeVoxels.VoxelCount();
-            });
+        {
+            Core.Logger.VerboseDebug("Calculating voxel count for: {0}", __instance.SelectedRecipeId);
+            return __instance.recipeVoxels.VoxelCount();
+        });
         var currentVoxelCount = __instance.Voxels?.MaterialCount();
         var currentSlagCount = __instance.Voxels?.SlagCount();
         dsc.AppendLine(Lang.Get($"{Core.ModId}:blockdesc-voxelcount", currentVoxelCount, voxelCount));

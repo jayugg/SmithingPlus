@@ -1,6 +1,6 @@
 using Vintagestory.GameContent;
 
-namespace SmithingPlus.Extra;
+namespace SmithingPlus.StoneSmithing;
 
 public class BlockEntityStoneAnvil : BlockEntityAnvil
 {

@@ -13,11 +13,9 @@ public static class CacheHelper
     {
         if (cache.TryGetValue(key, out var value)) return value;
         value = valueFactory();
-        if (value != null)
-        {
-            cache[key] = value;
-            onAdd?.Invoke(key, value);
-        }
+        if (value == null) return default;
+        cache[key] = value;
+        onAdd?.Invoke(key, value);
         return value;
     }
 }

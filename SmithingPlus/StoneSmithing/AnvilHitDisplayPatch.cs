@@ -3,14 +3,15 @@ using HarmonyLib;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 
-namespace SmithingPlus.Extra;
+namespace SmithingPlus.StoneSmithing;
 
 [HarmonyPatch(typeof(BlockEntityAnvil))]
 [HarmonyPatchCategory(Core.StoneSmithingCategory)]
 public class AnvilHitDisplayPatch
 {
     [HarmonyPostfix]
-    [HarmonyPatch(nameof(BlockEntityAnvil.GetBlockInfo)), HarmonyPriority(Priority.Last)]
+    [HarmonyPatch(nameof(BlockEntityAnvil.GetBlockInfo))]
+    [HarmonyPriority(Priority.Last)]
     public static void Postfix_GetBlockInfo(BlockEntityAnvil __instance, IPlayer forPlayer, StringBuilder dsc)
     {
         if (forPlayer?.InventoryManager?.ActiveHotbarSlot?.Itemstack?.Collectible is not ItemStoneHammer) return;
@@ -26,10 +27,12 @@ public class AnvilHitDisplayPatch
 public class AnvilPartPatch
 {
     [HarmonyPostfix]
-    [HarmonyPatch(nameof(BlockEntityAnvil.GetBlockInfo)), HarmonyPriority(Priority.Last)]
+    [HarmonyPatch(nameof(BlockEntityAnvil.GetBlockInfo))]
+    [HarmonyPriority(Priority.Last)]
     public static void Postfix_GetBlockInfo(BlockEntityAnvil __instance, IPlayer forPlayer, StringBuilder dsc)
     {
-        if (forPlayer?.InventoryManager?.ActiveHotbarSlot?.Itemstack is not {Collectible: ItemStoneHammer} hammerStack) return;
+        if (forPlayer?.InventoryManager?.ActiveHotbarSlot?.Itemstack is not
+            { Collectible: ItemStoneHammer } hammerStack) return;
         var selectionBoxIndex = forPlayer.CurrentBlockSelection?.SelectionBoxIndex;
         if (selectionBoxIndex == null || __instance.WorkItemStack == null) return;
         var voxelHitCount = ItemStoneHammer.GetVoxelHitCount(hammerStack, selectionBoxIndex.Value);

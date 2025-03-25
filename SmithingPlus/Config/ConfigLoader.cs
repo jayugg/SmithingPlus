@@ -1,16 +1,18 @@
 using System;
-using Vintagestory;
 using Vintagestory.API.Common;
-using Vintagestory.API.Server;
 
 namespace SmithingPlus.Config;
 
-public class ConfigSystem : ModSystem
+public class ConfigLoader : ModSystem
 {
-    public override double ExecuteOrder() => 0.03;
-    internal static readonly string ConfigName = "SmithingPlus.json";
-    public static ServerConfig Config;
-    
+    private const string ConfigName = "SmithingPlus.json";
+    public static ServerConfig Config { get; private set; }
+
+    public override double ExecuteOrder()
+    {
+        return 0.03;
+    }
+
     public override void StartPre(ICoreAPI api)
     {
         try
@@ -19,11 +21,14 @@ public class ConfigSystem : ModSystem
             if (Config == null)
             {
                 Config = new ServerConfig();
-                api.Logger.VerboseDebug("[smithingplus] Config file not found, creating a new one...");
+                Mod.Logger.VerboseDebug("Config file not found, creating a new one...");
             }
+
             api.StoreModConfig(Config, ConfigName);
-        } catch (Exception e) {
-            api.Logger.Error("[smithingplus] Failed to load config, you probably made a typo: {0}", e);
+        }
+        catch (Exception e)
+        {
+            Mod.Logger.Error("Failed to load config, you probably made a typo: {0}", e);
             Config = new ServerConfig();
         }
     }
@@ -31,5 +36,11 @@ public class ConfigSystem : ModSystem
     public override void Start(ICoreAPI api)
     {
         api.World.Config.SetBool("SmithingPlus_CanRepairForlornHopeEstoc", Config.CanRepairForlornHopeEstoc);
+    }
+
+    public override void Dispose()
+    {
+        Config = null;
+        base.Dispose();
     }
 }

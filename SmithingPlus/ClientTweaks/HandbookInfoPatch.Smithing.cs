@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
-using SmithingPlus.ToolRecovery;
+using SmithingPlus.SmithWithBits;
 using SmithingPlus.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -29,30 +29,29 @@ public partial class HandbookInfoPatch
         for (var i = 0; i < components.Count; i++)
         {
             if (components[i] is not LinkTextComponent linkComponent) continue;
-            bool isSmithingHeader = 
+            var isSmithingHeader =
                 linkComponent.DisplayText != null && linkComponent.DisplayText.Contains(Lang.Get("Smithing"));
 
             if (!isSmithingHeader || i + 1 >= components.Count) continue;
             smithingSectionIndex = i + 1;
             break;
         }
+
         var smallestSmithingRecipe = capi.GetSmithingRecipes()
             .FindAll(recipe => recipe.Output.Matches(capi.World, stack))
             .OrderBy(recipe => recipe.Voxels.VoxelCount())
             .FirstOrDefault();
         if (smallestSmithingRecipe == null) return;
-        var voxelCount = smallestSmithingRecipe.Voxels.VoxelCount(); 
-        var bitsCount = (int) Math.Ceiling(voxelCount / Core.Config.VoxelsPerBit);
+        var voxelCount = smallestSmithingRecipe.Voxels.VoxelCount();
+        var bitsCount = (int)Math.Ceiling(voxelCount / Core.Config.VoxelsPerBit);
         var baseMaterial = smallestSmithingRecipe.Ingredients
             .FirstOrDefault(ing => ing.Code.Path.Contains("ingot"))
             ?.ResolvedItemstack.GetBaseMaterial();
         if (baseMaterial == null) return;
         var allMaterialCollectibles = capi.World.Collectibles
             .Where(collectible =>
-                collectible is IAnvilWorkable &&
-                collectible is not ItemWorkItem &&
-                collectible.CombustibleProps != null &&
-                collectible.CombustibleProps.SmeltedStack?.Resolve(capi.World, "worldForResolving") != null &&
+                collectible is IAnvilWorkable and not ItemWorkItem &&
+                collectible.CombustibleProps?.SmeltedStack?.Resolve(capi.World, "worldForResolving") != null &&
                 !collectible.Equals(stack.Collectible) &&
                 collectible.Satisfies(collectible.CombustibleProps?.SmeltedStack?.ResolvedItemstack, baseMaterial))
             .OrderBy(collectible => collectible.Code.Domain == "game" ? -100 : 0)
@@ -61,10 +60,10 @@ public partial class HandbookInfoPatch
         var allMaterialStacks = allMaterialCollectibles
             .Select(collectible => new ItemStack(collectible, collectible switch
             {
-                ItemMetalPlate => (int) Math.Ceiling(voxelCount / 81.0),
-                ItemXWorkableNugget => (int) Math.Ceiling(voxelCount / 2.0),
+                ItemMetalPlate => (int)Math.Ceiling(voxelCount / 81.0),
+                ItemXWorkableNugget => (int)Math.Ceiling(voxelCount / 2.0),
                 ItemWorkableNugget => bitsCount,
-                _ => (int) Math.Ceiling(voxelCount * collectible.CombustibleProps.SmeltedRatio / 42.0 )
+                _ => (int)Math.Ceiling(voxelCount * collectible.CombustibleProps.SmeltedRatio / 42.0)
             }))
             .ToList();
         if (allMaterialStacks.Count <= 0) return;
@@ -77,25 +76,26 @@ public partial class HandbookInfoPatch
             AddSubHeading(components, capi, openDetailPageFor,
                 $"{Lang.Get("Smithing")} {Lang.Get("with")}\n",
                 "craftinginfo-smithing");
-            foreach (var itemStack in allMaterialStacks)
-            {
-                ItemstackTextComponent itemstackTextComponent = new ItemstackTextComponent(capi, itemStack, 40, 2.0, EnumFloat.Inline,
-                    cs => openDetailPageFor(GuiHandbookItemStackPage.PageCodeForStack(cs)));
-                itemstackTextComponent.ShowStacksize = true;
-                components.Add(itemstackTextComponent);
-            }
+            components.AddRange(allMaterialStacks.Select(itemStack =>
+                new ItemstackTextComponent(capi, itemStack, 40, 2.0, EnumFloat.Inline,
+                    cs =>
+                        openDetailPageFor(GuiHandbookItemStackPage.PageCodeForStack(cs))) { ShowStacksize = true }));
         }
         else
         {
-            components.RemoveAt(smithingSectionIndex-1);
-            components.Insert(smithingSectionIndex-1, new LinkTextComponent(capi, $"{Lang.Get("Smithing")} {Lang.Get("with")}\n", CairoFont.WhiteSmallText(), cs => openDetailPageFor("craftinginfo-smithing")));
+            components.RemoveAt(smithingSectionIndex - 1);
+            components.Insert(smithingSectionIndex - 1,
+                new LinkTextComponent(capi, $"{Lang.Get("Smithing")} {Lang.Get("with")}\n", CairoFont.WhiteSmallText(),
+                    cs => openDetailPageFor("craftinginfo-smithing")));
             components.Insert(smithingSectionIndex, new ClearFloatTextComponent(capi, 2f));
             foreach (var itemStack in allMaterialStacks)
             {
                 smithingSectionIndex++;
-                ItemstackTextComponent itemstackTextComponent = new ItemstackTextComponent(capi, itemStack, 40, 2.0, EnumFloat.Inline,
-                    cs => openDetailPageFor(GuiHandbookItemStackPage.PageCodeForStack(cs)));
-                itemstackTextComponent.ShowStacksize = true;
+                var itemstackTextComponent = new ItemstackTextComponent(capi, itemStack, 40, 2.0, EnumFloat.Inline,
+                    cs => openDetailPageFor(GuiHandbookItemStackPage.PageCodeForStack(cs)))
+                {
+                    ShowStacksize = true
+                };
                 components.Insert(smithingSectionIndex, itemstackTextComponent);
             }
         }

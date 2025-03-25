@@ -4,11 +4,11 @@ using HarmonyLib;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 
-namespace SmithingPlus.SmithWithBits;
+namespace SmithingPlus.ToolRecovery;
 
 [HarmonyPatch]
-[HarmonyPatchCategory(Core.SmithingBitsCategory)]
-public class IngotNoBitRecipePatch
+[HarmonyPatchCategory(Core.ToolRecoveryCategory)]
+public class NoSmithingEstocPatch
 {
     [HarmonyPostfix]
     [HarmonyPatch(typeof(ItemIngot), nameof(ItemIngot.GetMatchingRecipes))]
@@ -18,6 +18,7 @@ public class IngotNoBitRecipePatch
         __result = __result.Where((System.Func<SmithingRecipe, bool>)(
             r => r.Ingredient.SatisfiesAsIngredient(stack)
                  && !(r.Ingredient.RecipeAttributes?["nuggetRecipe"]?.AsBool() ?? false)
+                 && !(r.Ingredient.RecipeAttributes?["repairOnly"]?.AsBool() ?? false)
         )).OrderBy((System.Func<SmithingRecipe, AssetLocation>)(
                 r => r.Output.ResolvedItemstack.Collectible.Code)
         ).ToList();

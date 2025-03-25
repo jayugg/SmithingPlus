@@ -1,19 +1,17 @@
-using System;
 using System.Linq;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
-using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
 namespace SmithingPlus.Util;
 
-public static class Extensions
+public static class ItemStackExtensions
 {
     internal static int? GetDurability(this ItemStack itemStack)
     {
         if (itemStack?.Attributes == null)
-            return new int?();
-        return itemStack.Attributes.HasAttribute("durability") ? itemStack.Attributes.GetInt("durability", itemStack.Item?.Durability ?? 1) : new int?();
+            return null;
+        return itemStack.Attributes.HasAttribute("durability") ? itemStack.Attributes.GetInt("durability", itemStack.Item?.Durability ?? 1) : null;
     }
 
     internal static void SetDurability(this ItemStack itemStack, int number)
@@ -92,13 +90,6 @@ public static class Extensions
         return repairedStack?.GetBrokenCount() ?? (itemStack.Attributes?.GetInt(ModAttributes.BrokenCount) ?? 0);
     }
     
-    public static Item ItemWithVariant(this Item item, string key, string value)
-    {
-        if (Core.Api != null) return Core.Api.World.GetItem(item.CodeWithVariant(key, value));
-        Core.Logger.Error("Core.Api is null, call this extension method after the mod has started");
-        return item;
-    } 
-    
     public static bool CodeMatches(this ItemStack stack, ItemStack that)
     {
         return stack.Collectible.Code.Equals(that.Collectible.Code);
@@ -109,54 +100,10 @@ public static class Extensions
         return stack?.Collectible is IAnvilWorkable workable ? workable.GetBaseMaterial(stack) : stack;
     }
     
-    public static void AddBehavior<T>(this CollectibleObject collectible) where T : CollectibleBehavior
-    {
-        var existingBehavior = collectible.CollectibleBehaviors.FirstOrDefault(b => b.GetType() == typeof(T));
-        collectible.CollectibleBehaviors.Remove(existingBehavior);
-        var behavior = (T) Activator.CreateInstance(typeof(T), collectible);
-        collectible.CollectibleBehaviors = collectible.CollectibleBehaviors.Append(behavior);
-    }
-    
-    public static string GetMetalOrMaterial(this CollectibleObject collObj)
-    {
-        return collObj.Variant["metal"] ?? collObj.Variant["material"];
-    }
-    
-    public static string GetMetalMaterial(this CollectibleObject collObj, ICoreAPI api = null)
-    {
-        api ??= Core.Api;
-        var ingotItem = api?.World.GetItem(new AssetLocation("game:ingot-" + collObj.GetMetalOrMaterial()));
-        return ingotItem?.Variant["metal"] ?? ingotItem?.Variant["material"];
-    }
-
-    public static bool HasMetalMaterial(this CollectibleObject collObj, ICoreAPI api = null)
-    {
-        return collObj.GetMetalMaterial(api) != null;
-    }
-    
-    /*
-     Regex matching is slow.
-     Only use when first assigning behaviors.
-     On runtime, check for CollectibleBehaviorRepairableTool instead.
-    */
-    public static bool IsRepairableTool(this CollectibleObject collObj, bool verbose = false)
-    {
-        var repairable = WildcardUtil.Match(Core.Config.RepairableToolSelector, collObj.Code.ToString());
-        if (verbose && !repairable) Core.Logger.VerboseDebug("Not a repairable tool: {0}", collObj.Code);
-        return repairable;
-    }
-    
-    // Same as above, use CollectibleBehaviorRepairableToolHead instead
-    public static bool IsRepairableToolHead(this CollectibleObject collObj, bool verbose = false)
-    {
-        var repairable = WildcardUtil.Match(Core.Config.ToolHeadSelector, collObj.Code.ToString());
-        if (verbose && !repairable) Core.Logger.VerboseDebug("Not a repairable tool head: {0}", collObj.Code);
-        return repairable;
-    }
     
     public static float GetWorkableTemperature(this ItemStack stack)
     {
-        float meltingPoint = stack.Collectible.CombustibleProps?.MeltingPoint ?? 0.0f;
+        var meltingPoint = stack.Collectible.CombustibleProps?.MeltingPoint ?? 0.0f;
         var defaultTemperature = meltingPoint / 2f;
         return stack.ItemAttributes?["workableTemperature"]?.AsFloat(defaultTemperature) ?? defaultTemperature;
     }
@@ -167,15 +114,6 @@ public static class Extensions
             .GetModSystem<RecipeRegistrySystem>()
             .SmithingRecipes
             .FirstOrDefault(r => r.Output.ResolvedItemstack.Satisfies(toolHead));
-        return smithingRecipe;
-    }
-    
-    public static SmithingRecipe GetSmithingRecipe(this CollectibleObject collectible, IWorldAccessor world)
-    {
-        var smithingRecipe = world.Api.ModLoader
-            .GetModSystem<RecipeRegistrySystem>()
-            .SmithingRecipes
-            .FirstOrDefault(r => r.Output.ResolvedItemstack.Collectible.Code.Equals(collectible.Code));
         return smithingRecipe;
     }
     
