@@ -127,4 +127,25 @@ public static class ItemStackExtensions
     {
         stack.TempAttributes.SetFloat(ModAttributes.SplitCount, count);
     }
+    
+    public static float GetTemperature(this ItemStack stack, IWorldAccessor world)
+    {
+        return stack.Collectible.GetTemperature(world, stack);
+    }
+    
+    public static void SetTemperatureFrom(this ItemStack stack, IWorldAccessor world, ItemStack fromStack)
+    {
+        var temperature = fromStack.GetTemperature(world);
+        stack.Collectible.SetTemperature(world, stack, temperature);
+    }
+    
+    public static void SetTemperature(this ItemStack stack, IWorldAccessor world, float count)
+    {
+        stack.Collectible.SetTemperature(world, stack, count);
+    }
+    
+    public static bool IsSmeltedContainer(this ItemStack stack)
+    {
+        return stack.Collectible is BlockSmeltedContainer;
+    }
 }

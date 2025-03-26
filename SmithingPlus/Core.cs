@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using HarmonyLib;
+using SmithingPlus.BitsRecovery;
 using SmithingPlus.ClientTweaks;
 using SmithingPlus.Config;
 using SmithingPlus.SmithWithBits;
@@ -21,6 +22,7 @@ public partial class Core : ModSystem
     public static ICoreAPI Api { get; private set; }
     public static Harmony HarmonyInstance { get; private set; }
     public static ServerConfig Config => ConfigLoader.Config;
+    public object ModInventoryLock = new();
 
     public override void StartPre(ICoreAPI api)
     {
@@ -38,6 +40,8 @@ public partial class Core : ModSystem
             typeof(CollectibleBehaviorRepairableToolHead));
         api.RegisterCollectibleBehaviorClass($"{ModId}:BrokenToolHead", typeof(CollectibleBehaviorBrokenToolHead));
         api.RegisterCollectibleBehaviorClass($"{ModId}:AnvilWorkable", typeof(CollectibleBehaviorAnvilWorkable));
+        api.RegisterCollectibleBehaviorClass($"{ModId}:ScrapeCrucible", typeof(CollectibleBehaviorScrapeCrucible));
+        api.RegisterCollectibleBehaviorClass($"{ModId}:SmeltedContainer", typeof(CollectibleBehaviorSmeltedContainer));
         api.RegisterEntityBehaviorClass($"{ModId}:RecyclableArrow", typeof(RecyclableArrowBehavior));
         api.RegisterItemClass($"{ModId}:ItemStoneHammer", typeof(ItemStoneHammer));
         api.RegisterBlockEntityClass($"{ModId}:StoneAnvil", typeof(BlockEntityStoneAnvil));
@@ -73,9 +77,9 @@ public partial class Core : ModSystem
 
         foreach (var collObj in api.World.Collectibles.Where(c => c?.Code != null))
         {
-            if (Config.ShowWorkableTemperature && collObj is IAnvilWorkable)
-                collObj.AddBehavior<CollectibleBehaviorAnvilWorkable>();
-
+            collObj.AddBehaviorIf<CollectibleBehaviorAnvilWorkable>(Config.ShowWorkableTemperature && collObj is IAnvilWorkable);
+            collObj.AddBehaviorIf<CollectibleBehaviorScrapeCrucible>(Config.RecoverBitsOnSplit && collObj is ItemChisel);
+            collObj.AddBehaviorIf<CollectibleBehaviorSmeltedContainer>(Config.RecoverBitsOnSplit && collObj is BlockSmeltedContainer);
             if ((collObj.Tool != null || (collObj.IsRepairableTool() && !collObj.IsRepairableToolHead())) &&
                 collObj.HasMetalMaterial(api)) collObj.AddBehavior<CollectibleBehaviorRepairableTool>();
             else if (collObj.IsRepairableToolHead()) collObj.AddBehavior<CollectibleBehaviorRepairableToolHead>();

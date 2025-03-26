@@ -14,6 +14,16 @@ public static class ReflectionExtensions
 
         return (T)fi.GetValue(obj);
     }
+    
+    public static void SetField<T>(this object obj, string fieldName, T newValue)
+    {
+        if (obj == null) throw new ArgumentNullException(nameof(obj));
+
+        var fi = obj.GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+        if (fi == null) throw new InvalidOperationException($"Field '{fieldName}' not found.");
+
+        fi.SetValue(obj, newValue);
+    }
 
     public static T GetInternalField<T>(this object obj, string fieldName)
     {

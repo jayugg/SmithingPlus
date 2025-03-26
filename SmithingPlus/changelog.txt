@@ -1,6 +1,8 @@
 TODO:
-- Standardise fetching metal variant / type and relevant ingot
-- Cache handbook data
-- Helve hammer config
+- TODO [Code Tweak] Standardise fetching metal variant / type and relevant ingot
+- TODO [Performance Tweak] Cache handbook data
+- TODO [Tweak] Config option to disable iron bloom modifications from helve hammers
 
-- Add russian translation
+- [Feature] When bits recovery is enabled, the player can recover bits from crucibles by holding right click with a chisel
+- [Localisation] Add russian translation
+- [Fix] Fix cast tool attribute on things that are not tools, mainly prevented ingot stacking with some mods

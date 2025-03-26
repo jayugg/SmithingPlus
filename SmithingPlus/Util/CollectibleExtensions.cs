@@ -13,7 +13,13 @@ public static class CollectibleExtensions
         var existingBehavior = collectible.CollectibleBehaviors.FirstOrDefault(b => b.GetType() == typeof(T));
         collectible.CollectibleBehaviors.Remove(existingBehavior);
         var behavior = (T) Activator.CreateInstance(typeof(T), collectible);
-        collectible.CollectibleBehaviors = (CollectibleBehavior[])Enumerable.Append(collectible.CollectibleBehaviors, behavior);
+        collectible.CollectibleBehaviors = collectible.CollectibleBehaviors.Append(behavior);
+    }
+    
+    public static void AddBehaviorIf<T>(this CollectibleObject collectible, bool condition) where T : CollectibleBehavior
+    {
+        if (!condition) return;
+        collectible.AddBehavior<T>();
     }
     
     public static string GetMetalOrMaterial(this CollectibleObject collObj)

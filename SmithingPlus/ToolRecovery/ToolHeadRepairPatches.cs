@@ -16,7 +16,7 @@ public class ToolHeadRepairPatches
 {
     [HarmonyPostfix]
     [HarmonyPatch(typeof(CollectibleObject), nameof(CollectibleObject.GetMaxDurability))]
-    [HarmonyPriority(-int.MaxValue)]
+    [HarmonyPriority(int.MinValue)]
     public static void Postfix_GetMaxDurability(ref int __result, ItemStack itemstack)
     {
         if (!itemstack.Collectible.HasBehavior<CollectibleBehaviorRepairableTool>()) return;

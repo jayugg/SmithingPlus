@@ -21,10 +21,15 @@ public partial class Core
 
 public static class PatchExtensions
 {
-    public static void PatchIfEnabled(this string patchCategory, bool configFlag)
+    /// <summary>
+    /// Patches the category if the boolean flag is enabled.
+    /// </summary>
+    /// <param name="patchCategory">String HarmonyPatchCategory to patch.</param>
+    /// <param name="configFlag">Boolean flag to determine if the patch should be applied.</param>
+    public static void PatchIfEnabled(this string patchCategory, bool configFlag, bool withDebugLogs = true)
     {
         if (!configFlag) return;
         Core.HarmonyInstance.PatchCategory(patchCategory);
-        Core.Logger.VerboseDebug("Patched {0}...", patchCategory);
+        if (withDebugLogs) Core.Logger.VerboseDebug("Patched {0}...", patchCategory);
     }
 }

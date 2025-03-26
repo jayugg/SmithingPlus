@@ -35,6 +35,11 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
         return defaultValue;
     }
 
+    /// <summary>
+    /// Get all smithing recipes that match the given stack
+    /// </summary>
+    /// <param name="stack"> The stack to match </param>
+    /// <returns> A list of matching recipes </returns>
     public List<SmithingRecipe> GetMatchingRecipes(ItemStack stack)
     {
         return api.GetSmithingRecipes()
