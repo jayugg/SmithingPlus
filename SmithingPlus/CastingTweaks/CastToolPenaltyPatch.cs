@@ -19,6 +19,7 @@ public class CastToolPenaltyPatch
             return;
         foreach (var stack in __result)
         {
+            if (stack.Collectible.GetMaxDurability(stack) > 1) continue;
             stack.Attributes ??= new TreeAttribute();
             stack.Attributes.SetBool(ModAttributes.CastTool, true);
         }
