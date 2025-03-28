@@ -1,9 +1,0 @@
-[
-  {
-    "file": "smithingplus:recipes/grid/forlornestoc.json",
-    "op": "replace",
-    "path": "/0/enabled",
-    "value": true,
-    "condition": { "when": "SmithingPlus_CanRepairForlornHopeEstoc", "isValue": "true" }
-  }
-]
