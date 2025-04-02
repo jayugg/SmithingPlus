@@ -33,8 +33,8 @@ public class ItemDamagedPatches
         if (brokenStack.Item?.IsRepairableTool() is not true) return;
         var repairedStack = brokenStack.GetRepairedToolStack();
         if (repairedStack == null) return;
-        repairedStack.ResolveBlockOrItem(outputSlot.Inventory.Api
-            .World); // To compare codes, would need to resolve the repaired stack on the server
+        repairedStack.ResolveBlockOrItem((allInputslots.FirstOrDefault()?.Inventory?.Api ?? Core.Api)
+            .World);
         if (repairedStack.Collectible.Code != byRecipe.Output.ResolvedItemstack.Collectible.Code) return;
         foreach (var attributeKey in Core.Config.GetToolRepairForgettableAttributes)
             repairedStack.Attributes?.RemoveAttribute(attributeKey);
@@ -47,7 +47,8 @@ public class ItemDamagedPatches
             repairedStack.Attributes?.SetFloat(ModAttributes.ToolRepairPenaltyModifier, toolRepairPenaltyModifier);
         var repairedAttributes = repairedStack.Attributes ?? new TreeAttribute();
         var outputAttributes = outputSlot.Itemstack.Attributes;
-        foreach (var attribute in repairedAttributes) outputAttributes[attribute.Key] = attribute.Value;
+        foreach (var attribute in repairedAttributes)
+            outputAttributes[attribute.Key] = attribute.Value;
     }
 
     [HarmonyPrefix]

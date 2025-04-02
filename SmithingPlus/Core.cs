@@ -22,7 +22,6 @@ public partial class Core : ModSystem
     public static ICoreAPI Api { get; private set; }
     public static Harmony HarmonyInstance { get; private set; }
     public static ServerConfig Config => ConfigLoader.Config;
-    public object ModInventoryLock = new();
 
     public override void StartPre(ICoreAPI api)
     {
@@ -77,9 +76,12 @@ public partial class Core : ModSystem
 
         foreach (var collObj in api.World.Collectibles.Where(c => c?.Code != null))
         {
-            collObj.AddBehaviorIf<CollectibleBehaviorAnvilWorkable>(Config.ShowWorkableTemperature && collObj is IAnvilWorkable);
-            collObj.AddBehaviorIf<CollectibleBehaviorScrapeCrucible>(Config.RecoverBitsOnSplit && collObj is ItemChisel);
-            collObj.AddBehaviorIf<CollectibleBehaviorSmeltedContainer>(Config.RecoverBitsOnSplit && collObj is BlockSmeltedContainer);
+            collObj.AddBehaviorIf<CollectibleBehaviorAnvilWorkable>(Config.ShowWorkableTemperature &&
+                                                                    collObj is IAnvilWorkable);
+            collObj.AddBehaviorIf<CollectibleBehaviorScrapeCrucible>(Config.RecoverBitsOnSplit &&
+                                                                     collObj is ItemChisel);
+            collObj.AddBehaviorIf<CollectibleBehaviorSmeltedContainer>(Config.RecoverBitsOnSplit &&
+                                                                       collObj is BlockSmeltedContainer);
             if ((collObj.Tool != null || (collObj.IsRepairableTool() && !collObj.IsRepairableToolHead())) &&
                 collObj.HasMetalMaterial(api)) collObj.AddBehavior<CollectibleBehaviorRepairableTool>();
             else if (collObj.IsRepairableToolHead()) collObj.AddBehavior<CollectibleBehaviorRepairableToolHead>();
@@ -114,6 +116,7 @@ public partial class Core : ModSystem
         BitsRecoveryCategory.PatchIfEnabled(Config.RecoverBitsOnSplit);
         CastingTweaksCategory.PatchIfEnabled(Config.MetalCastingTweaks);
         SmithingBitsCategory.PatchIfEnabled(Config.SmithWithBits || Config.BitsTopUp);
+        HammerTweaksCategory.PatchIfEnabled(true);
         // StoneSmithingCategory.PatchIfEnabled(Config.StoneSmithing);
     }
 

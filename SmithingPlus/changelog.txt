@@ -3,6 +3,7 @@ TODO:
 - TODO [Performance Tweak] Cache handbook data
 - TODO [Tweak] Config option to disable iron bloom modifications from helve hammers
 
-- [Feature] When bits recovery is enabled, the player can recover bits from crucibles by holding right click with a chisel
-- [Localisation] Add russian translation
 - [Fix] Fix cast tool attribute on things that are not tools, mainly prevented ingot stacking with some mods
+- [Fix] Chisel crash when right-clicking on air
+- [Fix, Compatibility] Fix crash with Dana Tweaks ground storage crafting
+- [Feature] Added hammer toolmode to flip work items upside down

@@ -7,6 +7,7 @@ public partial class Core
     internal const string StoneSmithingCategory = "stoneSmithing";
     internal const string BitsRecoveryCategory = "bitsRecovery";
     internal const string CastingTweaksCategory = "castingTweaks";
+    internal const string HammerTweaksCategory = "hammerTweaks";
 
     internal const string ThriftySmithingCompatCategory = "thriftySmithingCompat";
 
@@ -22,7 +23,7 @@ public partial class Core
 public static class PatchExtensions
 {
     /// <summary>
-    /// Patches the category if the boolean flag is enabled.
+    ///     Patches the category if the boolean flag is enabled.
     /// </summary>
     /// <param name="patchCategory">String HarmonyPatchCategory to patch.</param>
     /// <param name="configFlag">Boolean flag to determine if the patch should be applied.</param>
