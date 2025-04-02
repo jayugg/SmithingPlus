@@ -15,24 +15,67 @@ namespace SmithingPlus.HammerTweaks;
 [HarmonyPatch(typeof(ItemHammer))]
 public class ItemHammerPatch
 {
-    [HarmonyPatch(nameof(ItemHammer.OnLoaded))]
+    private static int _originalToolModesCount = -1;
+
     [HarmonyPostfix]
-    public static void OnLoaded_Postfix(ItemHammer __instance, ICoreAPI api)
+    [HarmonyPatch(nameof(ItemHammer.GetToolModes))]
+    [HarmonyPriority(Priority.Last)]
+    public static void Postfix_GetToolModes(ItemHammer __instance, ItemSlot slot,
+        IClientPlayer forPlayer, BlockSelection blockSel, ref SkillItem[] __result, ref SkillItem[] ___toolModes)
     {
-        if (api is not ICoreClientAPI capi)
-            return;
-        var toolModes = __instance.GetField<SkillItem[]>("toolModes");
-        var newModes = ObjectCacheUtil.GetOrCreate(api, "extraHammerToolModes", () => new[]
+        try
         {
-            new SkillItem
+            if (forPlayer?.Entity?.Api is not ICoreClientAPI capi) return;
+            if (__result is null) return;
+
+            if (___toolModes is not null)
             {
-                Code = new AssetLocation("flip"),
-                Name = Lang.Get("Flip")
-            }.WithIcon(capi, DrawFlipSvg)
-        });
-        var allModes = toolModes?.Concat(newModes).ToArray() ?? newModes;
-        __instance.SetField("toolModes", allModes);
+                // Store original tool modes count
+                if (_originalToolModesCount < 0)
+                    _originalToolModesCount = ___toolModes.Length;
+                // If configuration is toggled off, remove extra tool mode added by this mod
+                if (!Core.Config.HammerTweaks)
+                {
+                    if (___toolModes.Length > _originalToolModesCount + 1)
+                        __result = ___toolModes = ___toolModes.Take(_originalToolModesCount).ToArray();
+
+                    if (__instance.GetToolMode(slot, forPlayer, blockSel) < _originalToolModesCount)
+                        return;
+                    __instance.SetToolMode(slot, forPlayer, blockSel, 0);
+                    return;
+                }
+                // Only add new toolmode if it hasn’t been added yet.
+                if (___toolModes.Length > _originalToolModesCount) return;
+            }
+
+            var newModes  = ObjectCacheUtil.GetOrCreate(capi, "extraHammerToolModes", () => new[]
+            {
+                new SkillItem
+                {
+                    Code = new AssetLocation("flip"),
+                    Name = Lang.Get("Flip")
+                }.WithIcon(capi, DrawFlipSvg)
+            });
+            __result = ___toolModes = ___toolModes?.Concat(newModes).ToArray() ?? newModes;
+        }
+        catch (ArgumentNullException ex)
+        {
+            Core.Logger.Error(ex);
+        }
     }
+    
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(ItemHammer.SetToolMode))]
+    public static void SetToolMode_Postfix(
+        ItemSlot slot,
+        IPlayer byPlayer,
+        BlockSelection blockSel,
+        int toolMode)
+    {
+        if (_originalToolModesCount < 0) return;
+        slot.Itemstack.TempAttributes.SetInt("flipItemToolMode", _originalToolModesCount);
+    }
+    
 
     private static void DrawFlipSvg(
         Context cr,

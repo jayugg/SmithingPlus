@@ -20,7 +20,7 @@ public static class BlockEntityAnvilPatch
         if (itemstack == null)
             return true;
         if (itemstack.Collectible.Tool.GetValueOrDefault() != EnumTool.Hammer ||
-            itemstack.Collectible.GetToolMode(activeSlot, byPlayer, blockSel) != 6)
+            itemstack.Collectible.GetToolMode(activeSlot, byPlayer, blockSel) != activeSlot.Itemstack?.TempAttributes.GetInt("flipItemToolMode"))
             return true;
         __instance.FlipWorkItem();
         return false;

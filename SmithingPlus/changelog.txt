@@ -3,8 +3,4 @@ TODO:
 - TODO [Performance Tweak] Cache handbook data
 - TODO [Tweak] Config option to disable iron bloom modifications from helve hammers
 
-- [Tweak] Change hammer flip toolmode icon to better reflect the action
-- [Fix] Maybe fix chisel animation looping for some players
-- [Fix] Mod not unloading properly when no cache was created
-- [Fix, Compatibility] Extra hammer tool mode crashing with some mods
-- [Tweak] Add config option for hammer tweaks (enabled by default)
+- [Fix, Compatibility] Knapster compatibility, possibly fix crash due to missing toolModes field in modded hammers
