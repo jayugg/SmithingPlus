@@ -21,8 +21,8 @@ public partial class Core
 
     private static void ClearCache()
     {
-        RecipeOutputNameCache.Clear();
-        ToolToRecipeCache.Clear();
-        RecipeVoxelCountCache.Clear();
+        RecipeOutputNameCache?.Clear();
+        ToolToRecipeCache?.Clear();
+        RecipeVoxelCountCache?.Clear();
     }
 }

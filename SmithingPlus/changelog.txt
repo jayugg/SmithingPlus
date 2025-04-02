@@ -3,7 +3,8 @@ TODO:
 - TODO [Performance Tweak] Cache handbook data
 - TODO [Tweak] Config option to disable iron bloom modifications from helve hammers
 
-- [Fix] Fix cast tool attribute on things that are not tools, mainly prevented ingot stacking with some mods
-- [Fix] Chisel crash when right-clicking on air
-- [Fix, Compatibility] Fix crash with Dana Tweaks ground storage crafting
-- [Feature] Added hammer toolmode to flip work items upside down
+- [Tweak] Change hammer flip toolmode icon to better reflect the action
+- [Fix] Maybe fix chisel animation looping for some players
+- [Fix] Mod not unloading properly when no cache was created
+- [Fix, Compatibility] Extra hammer tool mode crashing with some mods
+- [Tweak] Add config option for hammer tweaks (enabled by default)

@@ -1,6 +1,7 @@
 using System.Text;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 
 namespace SmithingPlus.BitsRecovery;
 
@@ -15,8 +16,6 @@ public class CollectibleBehaviorSmeltedContainer : CollectibleBehavior
         base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
         var temp = inSlot.Itemstack.GetTemperature(world);
         if (temp < CollectibleBehaviorScrapeCrucible.MaxScrapeTemperature)
-        { 
-            dsc.AppendLine($"<i>Scrape with <hk>rightmouse</hk> to recover bits</i>");
-        }
+            dsc.AppendLine(Lang.Get($"{Core.ModId}:heldhelp-scrapecrucible"));
     }
 }

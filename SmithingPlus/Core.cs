@@ -15,6 +15,7 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public partial class Core : ModSystem
 {
     public static ILogger Logger { get; private set; }
@@ -116,7 +117,7 @@ public partial class Core : ModSystem
         BitsRecoveryCategory.PatchIfEnabled(Config.RecoverBitsOnSplit);
         CastingTweaksCategory.PatchIfEnabled(Config.MetalCastingTweaks);
         SmithingBitsCategory.PatchIfEnabled(Config.SmithWithBits || Config.BitsTopUp);
-        HammerTweaksCategory.PatchIfEnabled(true);
+        HammerTweaksCategory.PatchIfEnabled(Config.HammerTweaks);
         // StoneSmithingCategory.PatchIfEnabled(Config.StoneSmithing);
     }
 

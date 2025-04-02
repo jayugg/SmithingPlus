@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using HarmonyLib;
 using SmithingPlus.Compat;
@@ -57,8 +56,7 @@ public class ItemDamagedPatches
         IWorldAccessor world,
         Entity byEntity,
         ItemSlot itemslot,
-        int amount,
-        CollectibleObject __instance)
+        int amount)
     {
         if (world.Api.Side.IsClient())
             return;
@@ -92,7 +90,7 @@ public class ItemDamagedPatches
         var wItemStack = new ItemStack(workItem);
         Core.Logger.VerboseDebug("Found smithing recipe: {0}",
             smithingRecipe.Output.ResolvedItemstack.Collectible.Code);
-        var byteVoxels = ByteVoxelsFromRecipe(smithingRecipe, world, smithingRecipe.Output.ResolvedItemstack.StackSize);
+        var byteVoxels = ByteVoxelsFromRecipe(smithingRecipe, smithingRecipe.Output.ResolvedItemstack.StackSize);
         wItemStack.Attributes.SetBytes("voxels", BlockEntityAnvil.serializeVoxels(byteVoxels));
         wItemStack.Attributes.SetInt("selectedRecipeId", smithingRecipe.RecipeId);
         var cloneStack = itemStack?.Clone();
@@ -149,9 +147,8 @@ public class ItemDamagedPatches
         return itemStack.Collectible.Variant["metal"] ?? itemStack.Collectible.Variant["material"];
     }
 
-    private static byte[,,] ByteVoxelsFromRecipe(SmithingRecipe recipe, IWorldAccessor world, int stackSize = 1)
+    private static byte[,,] ByteVoxelsFromRecipe(SmithingRecipe recipe, int stackSize = 1)
     {
-        var random = new Random(world.Rand.Next());
         var recipeVoxels = recipe.Voxels;
         var totalVoxels = recipeVoxels.VoxelCount();
         var targetVoxelCount = (int)(totalVoxels * Core.Config.BrokenToolVoxelPercent);

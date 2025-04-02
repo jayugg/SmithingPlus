@@ -1,7 +1,6 @@
 {
   "game:itemcraftdesc-ingot-*": "The basic of all metalworking",
   "material:blistersteel": "Blister Steel",
-
   "setting-recoverbitsonsplit": "Recover bits on split",
   "setting-voxelsperbit": "Voxels per metal bit",
   "setting-smithwithbits": "Smith with bits",
@@ -24,13 +23,13 @@
   "setting-arrowselector": "Arrow selector",
   "setting-metalcastingtweaks": "Metal casting tweaks",
   "setting-casttooldurabilitypenalty": "Cast tool durability penalty",
+  "setting-hammertweaks": "Hammer tweaks",
   "setting-anvilshowrecipevoxels": "Show recipe voxel count",
   "setting-rememberhammertooldmode": "Remember hammer tool mode",
   "setting-showworkabletemperature": "Show workable temperature",
   "setting-handbookextrainfo": "Handbook extra info",
   "setting-dontrepairbrokentoolheads": "Don't repair broken tool heads",
   "setting-canrepairforlornhopeestoc": "Can repair Forlorn Hope estoc",
-
   "game:Last repaired by {0}": "Last repaired by {0}",
   "game:Broken {0} times": "Broken {0} times",
   "game:Repaired {0} times": "Repaired {0} times",
@@ -41,8 +40,8 @@
   "blockdesc-voxelcount": "Material: {0}/{1}",
   "blockdesc-slagcount": "Slag: {0}",
   "itemdesc-needschiseling": "Chisel to recover bits",
-
   "item-forlornblade-meteoriciron": "Estoc blade",
   "itemdesc-item-forlornblade-meteoriciron": "This recipe should not be visible, blade can only be repaired",
-  "itemcraftdesc-item-forlornblade-meteoriciron": "This recipe should not be visible, blade can only be repaired"
+  "itemcraftdesc-item-forlornblade-meteoriciron": "This recipe should not be visible, blade can only be repaired",
+  "heldhelp-scrapecrucible": "<i>Scrape with <hk>rightmouse</hk> to recover bits</i>"
 }

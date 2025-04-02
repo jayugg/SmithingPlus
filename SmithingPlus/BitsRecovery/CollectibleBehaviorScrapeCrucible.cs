@@ -7,26 +7,30 @@ namespace SmithingPlus.BitsRecovery;
 
 public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
 {
+    public const float MaxScrapeTemperature = 50;
+
     public CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : base(collObj)
     {
     }
 
-    public const float MaxScrapeTemperature = 50;
-    
-    public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel,
+    public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel,
+        EntitySelection entitySel,
         bool firstEvent, ref EnumHandHandling handHandling, ref EnumHandling handling)
     {
         if (byEntity is not EntityPlayer entityPlayer) return;
         if (blockSel?.Position is null) return;
+        handHandling = EnumHandHandling.NotHandled;
         // Check if player can access the block
         if (!CanAccessBlock(entityPlayer, blockSel)) return;
         if (!IsSelectingValidCrucible(entityPlayer, blockSel)) return;
         handling = EnumHandling.PreventDefault;
         handHandling = EnumHandHandling.PreventDefault;
-        byEntity.World.PlaySoundAt(new AssetLocation("sounds/effect/toolbreak"), entityPlayer, entityPlayer.Player, 0.3f);
+        byEntity.World.PlaySoundAt(new AssetLocation("sounds/effect/toolbreak"), entityPlayer, entityPlayer.Player,
+            0.3f);
     }
-    
-    public override bool OnHeldInteractStep(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel,
+
+    public override bool OnHeldInteractStep(float secondsUsed, ItemSlot slot, EntityAgent byEntity,
+        BlockSelection blockSel,
         EntitySelection entitySel, ref EnumHandling handling)
     {
         if (byEntity is not EntityPlayer) return false;
@@ -34,8 +38,9 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         byEntity.StartAnimation("knifecut");
         return secondsUsed < 1.5;
     }
-    
-    public override void OnHeldInteractStop(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel,
+
+    public override void OnHeldInteractStop(float secondsUsed, ItemSlot slot, EntityAgent byEntity,
+        BlockSelection blockSel,
         EntitySelection entitySel, ref EnumHandling handling)
     {
         if (secondsUsed < 1.5) return;
@@ -46,15 +51,17 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         var playerInventory = entityPlayer.Player.InventoryManager;
         var activeSlot = playerInventory.ActiveHotbarSlot;
         // Check that player is interacting with a valid crucible
-        if (activeSlot?.Itemstack is null ) return;
+        if (activeSlot?.Itemstack is null) return;
         var world = entityPlayer.World;
         if (!TryGetOutputStack(crucibleStack, world, out var outputStack)) return;
         var outputUnits = crucibleStack.Attributes.GetInt("units");
         var outputBitCount = outputUnits / 5;
         var (metalVariant, metalTier) = GetMetalVariantAndTier(byEntity, outputStack);
-        var metalBitStack = new ItemStack(world.GetItem("game:metalbit-copper").ItemWithVariant("metal", metalVariant), outputBitCount);
+        var metalBitStack = new ItemStack(world.GetItem("game:metalbit-copper").ItemWithVariant("metal", metalVariant),
+            outputBitCount);
         metalBitStack.SetTemperatureFrom(world, crucibleStack);
-        var emptyCrucibleStack = new ItemStack(world.GetBlock(crucibleStack.Collectible.CodeWithVariant("type", "burned")));
+        var emptyCrucibleStack =
+            new ItemStack(world.GetBlock(crucibleStack.Collectible.CodeWithVariant("type", "burned")));
         if (!playerInventory.TryGiveItemstack(metalBitStack, true))
             world.SpawnItemEntity(metalBitStack, blockSel.Position);
         crucibleSlot.Itemstack = emptyCrucibleStack;
@@ -66,10 +73,12 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         byEntity.StopAnimation("knifecut");
     }
 
-    private static (string metalVariant, int metalTier) GetMetalVariantAndTier(EntityAgent byEntity, ItemStack outputStack)
+    private static (string metalVariant, int metalTier) GetMetalVariantAndTier(EntityAgent byEntity,
+        ItemStack outputStack)
     {
         var metalVariant = outputStack.Collectible.GetMetalMaterial();
-        byEntity.Api.ModLoader.GetModSystem<SurvivalCoreSystem>().metalsByCode.TryGetValue(metalVariant, out var metalProperty);
+        byEntity.Api.ModLoader.GetModSystem<SurvivalCoreSystem>().metalsByCode
+            .TryGetValue(metalVariant, out var metalProperty);
         var metalTier = metalProperty?.Tier ?? 0;
         return (metalVariant, metalTier);
     }
@@ -95,7 +104,8 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         return itemStack.IsSmeltedContainer() && itemStack.GetTemperature(world) < MaxScrapeTemperature;
     }
 
-    private static bool TryGetCrucibleStack(EntityPlayer entityPlayer, BlockSelection blockSel, out ItemStack crucibleStack, out ItemSlot atSlot)
+    private static bool TryGetCrucibleStack(EntityPlayer entityPlayer, BlockSelection blockSel,
+        out ItemStack crucibleStack, out ItemSlot atSlot)
     {
         crucibleStack = null;
         atSlot = null;
@@ -106,7 +116,8 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         return true;
     }
 
-    private static BlockEntityGroundStorage TryGetSelectedGroundStorage(EntityPlayer entityPlayer, BlockSelection blockSel)
+    private static BlockEntityGroundStorage TryGetSelectedGroundStorage(EntityPlayer entityPlayer,
+        BlockSelection blockSel)
     {
         var blockEntity = entityPlayer.World.BlockAccessor.GetBlockEntity(blockSel.Position);
         return blockEntity as BlockEntityGroundStorage;
@@ -116,7 +127,7 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
     {
         var modSystem = entityPlayer.Api.ModLoader.GetModSystem<ModSystemBlockReinforcement>();
         return modSystem?.IsReinforced(blockSel.Position) != true &&
-               entityPlayer.World.Claims.TryAccess(entityPlayer.Player, blockSel.Position, EnumBlockAccessFlags.BuildOrBreak);
+               entityPlayer.World.Claims.TryAccess(entityPlayer.Player, blockSel.Position,
+                   EnumBlockAccessFlags.BuildOrBreak);
     }
-    
 }

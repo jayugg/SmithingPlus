@@ -194,6 +194,14 @@
       "range": { "min": 0, "max": 1 }
     },
     {
+      "code": "HammerTweaks",
+      "ingui": "smithingplus:setting-hammertweaks",
+      "type": "boolean",
+      "weight": 0.51,
+      "comment": "Enable extra hammer tool modes",
+      "default": true
+    },
+    {
       "code": "AnvilShowRecipeVoxels",
       "ingui": "smithingplus:setting-anvilshowrecipevoxels",
       "type": "boolean",

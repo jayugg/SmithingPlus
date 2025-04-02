@@ -86,7 +86,7 @@ public partial class HandbookInfoPatch
             components.RemoveAt(smithingSectionIndex - 1);
             components.Insert(smithingSectionIndex - 1,
                 new LinkTextComponent(capi, $"{Lang.Get("Smithing")} {Lang.Get("with")}\n", CairoFont.WhiteSmallText(),
-                    cs => openDetailPageFor("craftinginfo-smithing")));
+                    _ => openDetailPageFor("craftinginfo-smithing")));
             components.Insert(smithingSectionIndex, new ClearFloatTextComponent(capi, 2f));
             foreach (var itemStack in allMaterialStacks)
             {

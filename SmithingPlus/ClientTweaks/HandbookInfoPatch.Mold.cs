@@ -63,7 +63,7 @@ public partial class HandbookInfoPatch
             components.Insert(moldingSectionIndex - 1,
                 new LinkTextComponent(capi, $"{Lang.Get("Metal molding")} {Lang.Get("with")}\n",
                     CairoFont.WhiteSmallText(),
-                    cs => openDetailPageFor("craftinginfo-smelting")));
+                    _ => openDetailPageFor("craftinginfo-smelting")));
             components.Insert(moldingSectionIndex, new ClearFloatTextComponent(capi, 2f));
             var slideshowMolds = new SlideshowItemstackTextComponent(capi, moldStacks.ToArray(), 40,
                     EnumFloat.Inline,
@@ -92,7 +92,7 @@ public partial class HandbookInfoPatch
 
         var mold = stack.Collectible;
         var requiredUnits = mold.Attributes["requiredUnits"].AsInt();
-        var jstack = mold.Attributes["drop"].AsObject<JsonItemStack>(null, mold.Code.Domain);
+        mold.Attributes["drop"].AsObject<JsonItemStack>(null, mold.Code.Domain);
         var castStacks = StacksFromCode(capi, stack, out var existingMetalVariants);
         // Use linq search to find all metal bit stacks
         var metalBitStacks = allStacks.Where(s =>
