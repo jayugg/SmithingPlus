@@ -3,4 +3,4 @@ TODO:
 - TODO [Performance Tweak] Cache handbook data
 - TODO [Tweak] Config option to disable iron bloom modifications from helve hammers
 
-- [Fix, Compatibility] Knapster compatibility, possibly fix crash due to missing toolModes field in modded hammers
+- [Fix] (Maybe) Looping chisel animation (hard to reproduce, see if this fixes it)

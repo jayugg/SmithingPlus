@@ -2,8 +2,8 @@
   "type": "code",
   "modid": "smithingplus",
   "name": "SmithingPlus",
-  "authors": [ "jayugg" ],
+  "authors": [ "jayu" ],
   "description": "Add bits when smithing and other tweaks",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "dependencies": { "game": "" }
 }

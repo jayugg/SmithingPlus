@@ -43,7 +43,7 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         BlockSelection blockSel,
         EntitySelection entitySel, ref EnumHandling handling)
     {
-        if (secondsUsed < 1.5) return;
+        byEntity.StopAnimation("knifecut");
         if (byEntity.World.Side != EnumAppSide.Server) return;
         if (byEntity is not EntityPlayer entityPlayer) return;
         var groundStorage = TryGetSelectedGroundStorage(entityPlayer, blockSel);
@@ -70,7 +70,6 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         var chiselDamage = (2 + metalTier) * outputBitCount;
         activeSlot.Itemstack.Collectible.DamageItem(world, entityPlayer, activeSlot, chiselDamage);
         activeSlot.MarkDirty();
-        byEntity.StopAnimation("knifecut");
     }
 
     private static (string metalVariant, int metalTier) GetMetalVariantAndTier(EntityAgent byEntity,
