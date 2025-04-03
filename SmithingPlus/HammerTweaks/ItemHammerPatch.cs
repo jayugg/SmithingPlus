@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using Cairo;
 using HarmonyLib;
-using SmithingPlus.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -13,9 +12,9 @@ namespace SmithingPlus.HammerTweaks;
 
 [HarmonyPatchCategory(Core.HammerTweaksCategory)]
 [HarmonyPatch(typeof(ItemHammer))]
-public class ItemHammerPatch
+public class ItemHammerPatch : ModSystem
 {
-    private static int _originalToolModesCount = -1;
+    public static int OriginalToolModesCount = -1;
 
     [HarmonyPostfix]
     [HarmonyPatch(nameof(ItemHammer.GetToolModes))]
@@ -31,31 +30,24 @@ public class ItemHammerPatch
             if (___toolModes is not null)
             {
                 // Store original tool modes count
-                if (_originalToolModesCount < 0)
-                    _originalToolModesCount = ___toolModes.Length;
+                if (OriginalToolModesCount < 0)
+                    OriginalToolModesCount = ___toolModes.Length;
                 // If configuration is toggled off, remove extra tool mode added by this mod
                 if (!Core.Config.HammerTweaks)
                 {
-                    if (___toolModes.Length > _originalToolModesCount + 1)
-                        __result = ___toolModes = ___toolModes.Take(_originalToolModesCount).ToArray();
+                    if (___toolModes.Length > OriginalToolModesCount)
+                        __result = ___toolModes = ___toolModes.Take(OriginalToolModesCount).ToArray();
 
-                    if (__instance.GetToolMode(slot, forPlayer, blockSel) < _originalToolModesCount)
+                    if (__instance.GetToolMode(slot, forPlayer, blockSel) < OriginalToolModesCount)
                         return;
                     __instance.SetToolMode(slot, forPlayer, blockSel, 0);
                     return;
                 }
                 // Only add new toolmode if it hasn’t been added yet.
-                if (___toolModes.Length > _originalToolModesCount) return;
+                if (___toolModes.Length > OriginalToolModesCount) return;
             }
-
-            var newModes  = ObjectCacheUtil.GetOrCreate(capi, "extraHammerToolModes", () => new[]
-            {
-                new SkillItem
-                {
-                    Code = new AssetLocation("flip"),
-                    Name = Lang.Get("Flip")
-                }.WithIcon(capi, DrawFlipSvg)
-            });
+            
+            var newModes= GetOrCreateFlipToolMode(capi);
             __result = ___toolModes = ___toolModes?.Concat(newModes).ToArray() ?? newModes;
         }
         catch (ArgumentNullException ex)
@@ -64,19 +56,18 @@ public class ItemHammerPatch
         }
     }
     
-    [HarmonyPostfix]
-    [HarmonyPatch(nameof(ItemHammer.SetToolMode))]
-    public static void SetToolMode_Postfix(
-        ItemSlot slot,
-        IPlayer byPlayer,
-        BlockSelection blockSel,
-        int toolMode)
+    private static SkillItem[] GetOrCreateFlipToolMode(ICoreClientAPI capi)
     {
-        if (_originalToolModesCount < 0) return;
-        slot.Itemstack.TempAttributes.SetInt("flipItemToolMode", _originalToolModesCount);
+        return ObjectCacheUtil.GetOrCreate(capi, "extraHammerToolModes", () => new[]
+        {
+            new SkillItem
+            {
+                Code = new AssetLocation("flip"),
+                Name = Lang.Get("Flip")
+            }.WithIcon(capi, DrawFlipSvg)
+        });
     }
     
-
     private static void DrawFlipSvg(
         Context cr,
         int x,
@@ -195,5 +186,11 @@ public class ItemHammerPatch
         cr.StrokePreserve();
         source5.Dispose();
         cr.Restore();
+    }
+
+    public override void Dispose()
+    {
+        OriginalToolModesCount = -1;
+        base.Dispose();
     }
 }

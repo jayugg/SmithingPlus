@@ -3,6 +3,7 @@ using HarmonyLib;
 using SmithingPlus.BitsRecovery;
 using SmithingPlus.ClientTweaks;
 using SmithingPlus.Config;
+using SmithingPlus.HammerTweaks;
 using SmithingPlus.SmithWithBits;
 using SmithingPlus.StoneSmithing;
 using SmithingPlus.ToolRecovery;
@@ -118,7 +119,7 @@ public partial class Core : ModSystem
         CastingTweaksCategory.PatchIfEnabled(Config.MetalCastingTweaks);
         SmithingBitsCategory.PatchIfEnabled(Config.SmithWithBits || Config.BitsTopUp);
         HammerTweaksCategory.PatchIfEnabled(Config.HammerTweaks);
-        // StoneSmithingCategory.PatchIfEnabled(Config.StoneSmithing);
+        //StoneSmithingCategory.PatchIfEnabled(true);
     }
 
     private static void Unpatch()

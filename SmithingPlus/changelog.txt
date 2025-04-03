@@ -2,5 +2,7 @@ TODO:
 - TODO [Code Tweak] Standardise fetching metal variant / type and relevant ingot
 - TODO [Performance Tweak] Cache handbook data
 - TODO [Tweak] Config option to disable iron bloom modifications from helve hammers
+- TODO [Tweak] Add option to require tongs to flip items
 
-- [Fix] (Maybe) Looping chisel animation (hard to reproduce, see if this fixes it)
+- [Fix] Flip item action not applying on the server
+- [Fix] Can now chisel work items to bits if smith with bits or tool recovery are enabled 

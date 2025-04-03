@@ -1,0 +1,19 @@
+[
+  {
+    "code": "chiselworkitem",
+    "ingredientPattern": "C,W",
+    "shapeless": true,
+    "ingredients": {
+      "C": {
+        "type": "item",
+        "code": "game:chisel-*",
+        "isTool": true,
+        "toolDurabilityCost": 10
+      },
+      "W": { "type": "item", "code": "game:workitem-*", "name": "metal" }
+    },
+    "width": 1,
+    "height": 2,
+    "output": { "type": "item", "code": "game:metalbit-{metal}", "quantity": 20 }
+  }
+]

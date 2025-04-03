@@ -36,6 +36,7 @@ public class ConfigLoader : ModSystem
     public override void Start(ICoreAPI api)
     {
         api.World.Config.SetBool("SmithingPlus_CanRepairForlornHopeEstoc", Config.CanRepairForlornHopeEstoc);
+        api.World.Config.SetBool("SmithingPlus_WorkableBits", Config.SmithWithBits || Config.EnableToolRecovery);
     }
 
     public override void Dispose()

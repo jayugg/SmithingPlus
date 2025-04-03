@@ -6,7 +6,8 @@
     "value": {
       "@*-(nativecopper|nativegold|nativesilver|nativeplatinum)": { "isPureMetal": true }
     },
-    "side": "Server"
+    "side": "Server",
+    "condition": { "when": "SmithingPlus_WorkableBits", "isValue": "true" }
   },
   {
     "file": "game:itemtypes/resource/nugget.json",
@@ -15,20 +16,23 @@
     "value": {
       "@*-(nativecopper|nativegold|nativesilver|nativeplatinum)": "ItemWorkableNugget"
     },
-    "side": "Server"
+    "side": "Server",
+    "condition": { "when": "SmithingPlus_WorkableBits", "isValue": "true" }
   },
   {
     "file": "game:itemtypes/resource/metalbit.json",
     "op": "addmerge",
     "path": "/attributes",
     "value": { "isPureMetal": true },
-    "side": "Server"
+    "side": "Server",
+    "condition": { "when": "SmithingPlus_WorkableBits", "isValue": "true" }
   },
   {
     "file": "game:itemtypes/resource/metalbit.json",
     "op": "replace",
     "path": "/class",
     "value": "ItemWorkableNugget",
-    "side": "Server"
+    "side": "Server",
+    "condition": { "when": "SmithingPlus_WorkableBits", "isValue": "true" }
   }
 ]

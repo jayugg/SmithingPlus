@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using HarmonyLib;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
@@ -10,23 +9,33 @@ namespace SmithingPlus.HammerTweaks;
 [HarmonyPatch(typeof(BlockEntityAnvil))]
 public static class BlockEntityAnvilPatch
 {
-    [HarmonyPrefix]
-    [HarmonyPatch("OnPlayerInteract")]
-    public static bool Prefix_OnPlayerInteract(BlockEntityAnvil __instance, IWorldAccessor world, IPlayer byPlayer,
+    [HarmonyPrefix, HarmonyPatch("OnPlayerInteract")]
+    public static bool Prefix_OnPlayerInteract(
+        BlockEntityAnvil __instance,
+        ref ItemStack ___workItemStack,
+        ref bool __result,
+        IWorldAccessor world,
+        IPlayer byPlayer,
         BlockSelection blockSel)
     {
         var activeSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
         var itemstack = activeSlot.Itemstack;
-        if (itemstack == null)
+        if (itemstack?.Collectible is not ItemHammer hammer ||
+            world.Side == EnumAppSide.Client && // Tool modes exist only on the client
+            hammer.GetToolMode(activeSlot, byPlayer, blockSel) != ItemHammerPatch.OriginalToolModesCount)
             return true;
-        if (itemstack.Collectible.Tool.GetValueOrDefault() != EnumTool.Hammer ||
-            itemstack.Collectible.GetToolMode(activeSlot, byPlayer, blockSel) != activeSlot.Itemstack?.TempAttributes.GetInt("flipItemToolMode"))
-            return true;
-        __instance.FlipWorkItem();
+        __instance.FlipWorkItem(___workItemStack);
+        __result = true;
         return false;
     }
+    
+    [HarmonyReversePatch, HarmonyPatch("RegenMeshAndSelectionBoxes")]
+    public static void RegenMeshAndSelectionBoxes(BlockEntityAnvil __instance)
+    {
+        throw new NotImplementedException("Reverse patch stub");
+    }
 
-    private static void FlipWorkItem(this BlockEntityAnvil anvil)
+    private static void FlipWorkItem(this BlockEntityAnvil anvil, ItemStack workItemStack)
     {
         var flippedVoxels = new byte[16, 6, 16];
 
@@ -48,10 +57,9 @@ public static class BlockEntityAnvilPatch
             flippedVoxels[x, y, z] = anvil.Voxels[x, shapeHeight - 1 - y, z];
 
         anvil.Voxels = flippedVoxels;
-        var regenMethod = anvil.GetType()
-            .GetMethod("RegenMeshAndSelectionBoxes", BindingFlags.Instance | BindingFlags.NonPublic);
-
-        regenMethod?.Invoke(anvil, null);
+        var flip = anvil.WorkItemStack.Attributes.GetBool("flipped");
+        workItemStack.Attributes.SetBool("flipped", !flip);
+        RegenMeshAndSelectionBoxes(anvil);
         anvil.MarkDirty();
     }
 }
