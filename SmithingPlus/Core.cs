@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using HarmonyLib;
+using JetBrains.Annotations;
 using SmithingPlus.BitsRecovery;
 using SmithingPlus.ClientTweaks;
 using SmithingPlus.Config;
-using SmithingPlus.HammerTweaks;
 using SmithingPlus.SmithWithBits;
 using SmithingPlus.StoneSmithing;
 using SmithingPlus.ToolRecovery;
@@ -16,11 +16,11 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus;
 
-// ReSharper disable once ClassNeverInstantiated.Global
+[MeansImplicitUse]
 public partial class Core : ModSystem
 {
+    public const string ModId = "smithingplus";
     public static ILogger Logger { get; private set; }
-    public static string ModId { get; private set; }
     public static ICoreAPI Api { get; private set; }
     public static Harmony HarmonyInstance { get; private set; }
     public static ServerConfig Config => ConfigLoader.Config;
@@ -28,7 +28,6 @@ public partial class Core : ModSystem
     public override void StartPre(ICoreAPI api)
     {
         Logger = Mod.Logger;
-        ModId = Mod.Info.ModID;
         Api = api;
     }
 
@@ -134,7 +133,6 @@ public partial class Core : ModSystem
         Unpatch();
         ClearCache();
         Logger = null;
-        ModId = null;
         Api = null;
         base.Dispose();
     }

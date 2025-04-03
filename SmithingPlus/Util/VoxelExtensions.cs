@@ -26,8 +26,17 @@ public static class VoxelExtensions
         for (var y = 0; y < voxels.GetLength(1); y++)
         for (var z = 0; z < voxels.GetLength(2); z++)
             byteVoxels[x, y, z] = voxels[x, y, z] ? (byte)1 : (byte)0;
-
         return byteVoxels;
+    }
+    
+    public static bool[,,] ToBoolArray(this byte[,,] voxels)
+    {
+        var boolVoxels = new bool[voxels.GetLength(0), voxels.GetLength(1), voxels.GetLength(2)];
+        for (var x = 0; x < voxels.GetLength(0); x++)
+        for (var y = 0; y < voxels.GetLength(1); y++)
+        for (var z = 0; z < voxels.GetLength(2); z++)
+            boolVoxels[x, y, z] = voxels[x, y, z] == 1;
+        return boolVoxels;
     }
 
     public static void ErodeLayer(this byte[,,] byteVoxels, int layer, ref int currentVoxelCount, int targetVoxelCount)

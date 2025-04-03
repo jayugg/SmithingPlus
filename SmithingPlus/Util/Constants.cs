@@ -2,29 +2,33 @@ namespace SmithingPlus.Util;
 
 public static class Constants
 {
-    public const string AnvilWorkableColor = "#00A36C";
+    internal const string AnvilWorkableColor = "#00A36C";
+    internal const string Sp = "sp";
 }
 
 public static class ModAttributes
 {
-    public const string RepairSmith = "repairSmith";
-    public const string RepairedToolStack = "repairedToolStack";
-    public const string BrokenCount = "brokenCount";
-    public const string SmithingQuality = "sp:smithingQuality";
-    public const string ToolRepairPenaltyModifier = "sp:toolRepairPenaltyModifier";
-    public const string SplitCount = "sp:splitCount";
-    public const string IsPureMetal = "isPureMetal";
-    public const string CastTool = "sp:castTool";
+    internal const string RepairSmith = "repairSmith";
+    internal const string RepairedToolStack = "repairedToolStack";
+    internal const string BrokenCount = "brokenCount";
+    internal const string SmithingQuality = $"{Constants.Sp}:smithingQuality";
+    internal const string ToolRepairPenaltyModifier = $"{Constants.Sp}:toolRepairPenaltyModifier";
+    internal const string SplitCount = $"{Constants.Sp}:splitCount";
+    internal const string IsPureMetal = "isPureMetal";
+    internal const string CastTool = $"{Constants.Sp}:castTool";
+    internal const string FlipItemToolMode = $"{Constants.Sp}:flipItemToolMode";
+    internal const string RotationX = $"{Constants.Sp}:rotationX";
+    internal const string RotationZ = $"{Constants.Sp}:rotationZ";
 }
 
 public static class ModRecipeAttributes
 {
-    public const string RepairOnly = "repairOnly";
-    public const string NuggetRecipe = "nuggetRecipe";
+    internal const string RepairOnly = "repairOnly";
+    internal const string NuggetRecipe = "nuggetRecipe";
 }
 
 public static class ModStats
 {
-    public const string SmithingQuality = ModAttributes.SmithingQuality;
-    public const string ToolRepairPenalty = "sp:toolRepairPenalty";
+    internal const string SmithingQuality = ModAttributes.SmithingQuality;
+    internal const string ToolRepairPenalty = $"{Constants.Sp}:toolRepairPenalty";
 }

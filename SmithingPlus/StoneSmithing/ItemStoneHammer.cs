@@ -8,8 +8,7 @@ namespace SmithingPlus.StoneSmithing;
 
 public class ItemStoneHammer : ItemHammer
 {
-    public static int MaxHitCount = 3;
-
+    public const int MaxHitCount = 3;
     protected override void strikeAnvil(EntityAgent byEntity, ItemSlot slot)
     {
         var player = (byEntity as EntityPlayer)?.Player;
@@ -47,7 +46,7 @@ public class ItemStoneHammer : ItemHammer
         slot.Itemstack?.TempAttributes.SetBool("isAnvilAction", false);
     }
 
-    public int GetHitHardness(Random random, int metalTier = 1)
+    private int GetHitHardness(Random random, int metalTier = 1)
     {
         var tierModifier = metalTier / 10f;
         var modifiedHardness = Math.Max(GetHitHardness() - tierModifier, 0.1);

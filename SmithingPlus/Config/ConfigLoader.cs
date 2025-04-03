@@ -1,17 +1,15 @@
 using System;
+using JetBrains.Annotations;
 using Vintagestory.API.Common;
 
 namespace SmithingPlus.Config;
 
+[UsedImplicitly]
 public class ConfigLoader : ModSystem
 {
     private const string ConfigName = "SmithingPlus.json";
     public static ServerConfig Config { get; private set; }
-
-    public override double ExecuteOrder()
-    {
-        return 0.03;
-    }
+    public override double ExecuteOrder() =>  0.03;
 
     public override void StartPre(ICoreAPI api)
     {
@@ -23,7 +21,6 @@ public class ConfigLoader : ModSystem
                 Config = new ServerConfig();
                 Mod.Logger.VerboseDebug("Config file not found, creating a new one...");
             }
-
             api.StoreModConfig(Config, ConfigName);
         }
         catch (Exception e)

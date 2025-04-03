@@ -6,9 +6,9 @@ namespace SmithingPlus;
 
 public partial class Core
 {
-    private const string RecipeOutputNameCacheKey = "smithingplus:recipeOutputName";
-    private const string ToolToRecipeCacheKey = "smithingplus:toolToRecipe";
-    private const string RecipeVoxelCountCacheKey = "smithingplus:recipeVoxelCount";
+    private const string RecipeOutputNameCacheKey = $"{ModId}:recipeOutputName";
+    private const string ToolToRecipeCacheKey = $"{ModId}:toolToRecipe";
+    private const string RecipeVoxelCountCacheKey = $"{ModId}:recipeVoxelCount";
 
     public static Dictionary<int, string> RecipeOutputNameCache =>
         ObjectCacheUtil.GetOrCreate(Api, RecipeOutputNameCacheKey, () => new Dictionary<int, string>());
