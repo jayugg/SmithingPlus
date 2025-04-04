@@ -34,9 +34,11 @@ public class HammerTweaksNetwork : ModSystem
     #region Client
 
     private IClientNetworkChannel ClientChannel { get; set; }
+    private ICoreClientAPI Capi { get; set; }
 
     public override void StartClientSide(ICoreClientAPI api)
     {
+        Capi = api;
         ClientChannel = api.Network.GetChannel(ChannelName);
     }
 

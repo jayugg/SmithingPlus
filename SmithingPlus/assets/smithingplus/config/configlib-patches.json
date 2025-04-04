@@ -202,6 +202,14 @@
       "default": true
     },
     {
+      "code": "RotationRequiresTongs",
+      "ingui": "smithingplus:setting-rotationrequirestongs",
+      "type": "boolean",
+      "weight": 0.505,
+      "comment": "Tongs are needed to enable the flip tool mode and right click rotation with hammers",
+      "default": false
+    },
+    {
       "code": "AnvilShowRecipeVoxels",
       "ingui": "smithingplus:setting-anvilshowrecipevoxels",
       "type": "boolean",

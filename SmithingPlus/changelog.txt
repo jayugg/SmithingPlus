@@ -3,6 +3,11 @@ TODO:
 - TODO [Performance Tweak] Cache handbook data
 - TODO [Tweak] Config option to disable iron bloom modifications from helve hammers
 - TODO [Tweak] Add option to require tongs to flip items
+- TODO [Compatibility] Stop knapster from autocompleting when hitting in flip tool mode
+- TODO Fight cheating players that try to remove tongs while setting the tool mode
 
-- [Fix] Flip item action not applying on the server
-- [Fix] Can now chisel work items to bits if smith with bits or tool recovery are enabled 
+- [Fix] Flip item action overhaul. Now recipe outline will follow
+  the item when flipping. This should also fix the issue of items
+  flipping when right clicking in any other tool mode.
+- [Tweak] Added config option to disable flip tool mode and right-click
+  workitem rotation unless holding tongs (or other heat resistant gear).

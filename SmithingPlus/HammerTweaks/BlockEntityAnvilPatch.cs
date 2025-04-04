@@ -24,6 +24,11 @@ public static class BlockEntityAnvilPatch
         IPlayer byPlayer,
         BlockSelection blockSel)
     {
+        if (Core.Config.RotationRequiresTongs && !byPlayer.HasHeatResistantHandGear())
+        {
+            __result = false;
+            return false;
+        }
         var activeSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
         var itemStack = activeSlot.Itemstack;
         if (itemStack?.Collectible is not ItemHammer itemHammer)
