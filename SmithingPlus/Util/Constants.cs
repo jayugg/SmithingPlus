@@ -19,6 +19,7 @@ public static class ModAttributes
     internal const string FlipItemToolMode = $"{Constants.Sp}:flipItemToolMode";
     internal const string RotationX = $"{Constants.Sp}:rotationX";
     internal const string RotationZ = $"{Constants.Sp}:rotationZ";
+    internal const string MinY = $"{Constants.Sp}:minY";
 }
 
 public static class ModRecipeAttributes

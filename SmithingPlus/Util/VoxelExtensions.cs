@@ -38,6 +38,16 @@ public static class VoxelExtensions
             boolVoxels[x, y, z] = voxels[x, y, z] == 1;
         return boolVoxels;
     }
+    
+    public static byte[,,] Union(this byte[,,] voxels1, byte[,,] voxels2)
+    {
+        var result = new byte[voxels1.GetLength(0), voxels1.GetLength(1), voxels1.GetLength(2)];
+        for (var x = 0; x < voxels1.GetLength(0); x++)
+        for (var y = 0; y < voxels1.GetLength(1); y++)
+        for (var z = 0; z < voxels1.GetLength(2); z++)
+            result[x, y, z] = (byte)(voxels1[x, y, z] | voxels2[x, y, z]);
+        return result;
+    }
 
     public static void ErodeLayer(this byte[,,] byteVoxels, int layer, ref int currentVoxelCount, int targetVoxelCount)
     {
