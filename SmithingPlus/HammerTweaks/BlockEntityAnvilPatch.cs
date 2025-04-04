@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,19 +69,37 @@ public static class BlockEntityAnvilPatch
         throw new NotImplementedException("Reverse patch stub");
     }
     
-    [HarmonyPatch("recipeVoxels", MethodType.Getter)]
-    public static void BlockEntityAnvil_recipeVoxels_Patch(BlockEntityAnvil __instance, ref bool[,,] __result)
+    [HarmonyPrefix, HarmonyPatch(nameof(BlockEntityAnvil.recipeVoxels), MethodType.Getter)]
+    public static bool BlockEntityAnvil_recipeVoxels_Patch(BlockEntityAnvil __instance, ref bool[,,] __result)
     {
+        if (__instance.WorkItemStack == null) return true;
+        if (__instance.SelectedRecipe == null)
+            return true;
+        __result = __instance.SelectedRecipe.Voxels;
+        __instance.ResolveRotations();
         var rotationAxis = __instance.WorkItemStack.GetHorizontalRotationAxis();
-        if (rotationAxis == EnumAxis.Y) return;
-        __result = __result.ToByteArray().RotateAroundAxis(rotationAxis).ToBoolArray();
+
+        if (rotationAxis != null)
+        {
+            var rotationValue = __instance.WorkItemStack.GetHorizontalRotation(rotationAxis.Value);
+            __instance.Api.Logger.Warning("Rotating work item stack {0} by {1} around {2} axis", __instance.WorkItemStack.Collectible.Code, rotationValue, rotationAxis);
+            int? minY = __instance.WorkItemStack.Attributes.GetInt("sp:minY");
+            var center = __instance.WorkItemStack.Attributes.GetVec3f("sp:center");
+            __result = __result.ToByteArray()
+                .RotateAroundAxis(rotationAxis.Value, ref minY, ref center).ToBoolArray();
+        }
+        
+        var rotation = __instance.rotation;
+        for (var i = 0; i < rotation / 90; i++)
+            __result = __result.ToByteArray().RotateAroundAxis(EnumAxis.Y).ToBoolArray();
+        return false;
     }
 
     private static bool RotateWorkItem(this BlockEntityAnvil beAnvil, bool ccw)
     {
         var rotatedVoxels = RotateAroundAxis(beAnvil.Voxels, EnumAxis.Y);
         if (ccw) rotatedVoxels = rotatedVoxels.RotateAroundAxis(EnumAxis.Y);
-        beAnvil.rotation = (beAnvil.rotation + 90) % 360;
+        beAnvil.rotation = (beAnvil.rotation + (ccw ? 180 : 90)) % 360;
         beAnvil.Voxels = rotatedVoxels;
         beAnvil.ResolveRotations();
         RegenMeshAndSelectionBoxes(beAnvil);
@@ -88,11 +107,22 @@ public static class BlockEntityAnvilPatch
         return true;
     }
 
+    private static byte[,,] RotateAroundAxis(this byte[,,] beAnvilVoxels, EnumAxis axis)
+    {
+        int? minY = null;
+        Vec3f? center = null;
+        return beAnvilVoxels.RotateAroundAxis(axis, ref minY, ref center);
+    }
+
     private static void FlipWorkItem(this BlockEntityAnvil beAnvil, ItemStack workItemStack, EnumAxis axis)
     {
         if (axis == EnumAxis.Y) throw new ArgumentException("Axis Y is not supported for flipping.");
         if (!HasAnyMetalVoxel(beAnvil)) return;
-        var rotatedVoxels = beAnvil.Voxels.RotateAroundAxis(axis);
+        int? minY = null;
+        Vec3f? center = null;
+        var rotatedVoxels = beAnvil.Voxels.RotateAroundAxis(axis, ref minY, ref center);
+        if (minY.HasValue) beAnvil.WorkItemStack.Attributes.SetInt("sp:minY", minY.Value);
+        if (center != null) beAnvil.WorkItemStack.Attributes.SetVec3f("sp:center", center);
         beAnvil.Voxels = rotatedVoxels;
         workItemStack.FlipHorizontalRotationAttribute(axis);
         beAnvil.ResolveRotations();
@@ -108,33 +138,27 @@ public static class BlockEntityAnvilPatch
         workItemStack.Attributes.SetInt(rotationAttribute, rotation);
     }
     
-    private static void ResolveRotations(this ItemStack workItemStack)
-    {
-        var rotationX = workItemStack.Attributes.GetInt(ModAttributes.RotationX);
-        var rotationZ = workItemStack.Attributes.GetInt(ModAttributes.RotationZ);
-        if (rotationX % 360 != 180 || rotationZ % 360 != 180) return;
-        var rotationY = workItemStack.Attributes.GetInt("rotation");
-        rotationY = (rotationY + 180) % 360;
-        workItemStack.Attributes.SetInt(ModAttributes.RotationX, 0);
-        workItemStack.Attributes.SetInt(ModAttributes.RotationZ, 0);
-        workItemStack.Attributes.SetInt("rotation", rotationY);
-    }
-    
     private static void ResolveRotations(this BlockEntityAnvil beAnvil)
     {
         if (beAnvil.Api.World.Side != EnumAppSide.Server) return;
         var workItemStack = beAnvil.WorkItemStack;
-        ResolveRotations(workItemStack);
-        beAnvil.rotation = workItemStack.Attributes.GetInt("rotation");
+        var rotationX = workItemStack.Attributes.GetInt(ModAttributes.RotationX);
+        var rotationZ = workItemStack.Attributes.GetInt(ModAttributes.RotationZ);
+        if (rotationX % 360 != 180 || rotationZ % 360 != 180) return;
+        var rotationY = beAnvil.rotation;
+        rotationY = (rotationY + 180) % 360;
+        workItemStack.Attributes.SetInt(ModAttributes.RotationX, 0);
+        workItemStack.Attributes.SetInt(ModAttributes.RotationZ, 0);
+        beAnvil.rotation = rotationY;
     }
     
-    private static EnumAxis GetHorizontalRotationAxis(this ItemStack workItemStack)
+    private static EnumAxis? GetHorizontalRotationAxis(this ItemStack workItemStack)
     {
         var rotationX = workItemStack.Attributes.GetInt(ModAttributes.RotationX);
         var rotationZ = workItemStack.Attributes.GetInt(ModAttributes.RotationZ);
-        if (rotationX != 0 && rotationZ != 0)
-            throw new ArgumentException("Both X and Z rotations are set. Cannot determine horizontal axis. Resolve rotations first.");
-        if (rotationX % 360 == 0 && rotationZ % 360 == 0) return EnumAxis.Y;
+        if ((rotationX != 0 && rotationZ != 0 ) ||
+            (rotationX % 360 == 0 && rotationZ % 360 == 0))
+            return null;
         return rotationX % 360 == 0 ? EnumAxis.Z : EnumAxis.X;
     }
 
@@ -152,8 +176,9 @@ public static class BlockEntityAnvilPatch
         var rotationAttribute = axis.HorizontalRotationAttribute();
         return workItemStack.Attributes.GetInt(rotationAttribute);
     }
-
-    private static byte[,,] RotateAroundAxis(this byte[,,] voxels, EnumAxis axis)
+    
+    // Allow to override and store the minY and center of rotation to reuse when rotating the mesh
+    private static byte[,,] RotateAroundAxis(this byte[,,] voxels, EnumAxis axis, ref int? minY, ref Vec3f? center)
     {
         if ((int) axis > 2)
             throw new ArgumentOutOfRangeException(nameof(axis), axis, "Axis must be X, Y, or Z.");
@@ -174,7 +199,8 @@ public static class BlockEntityAnvilPatch
         // Temporary list to hold rotated voxel info.
         var rotatedList = new List<(int X, int Y, int Z, byte Value)>();
         // Compute center of mass for all nonzero voxels.
-        CalcCoM(voxels, out var centerX, out var centerY, out var centerZ);
+        //var arr = new Func<byte[,,]>(() => { var a = new byte[16, 6, 16]; for (int i = 0; i < 16; i++) for (int j = 0; j < 6; j++) for (int k = 0; k < 16; k++) a[i, j, k] = 1; return a; })();
+        center ??= CalcCoM(voxels) ?? Vec3f.Zero;
         for (var x = 0; x < 16; x++)
         {
             for (var y = 0; y < 6; y++)
@@ -185,23 +211,23 @@ public static class BlockEntityAnvilPatch
                     {
                         var value = voxels[x, y, z];
                         if (value == 0) continue;
-                        var newY = (int)Math.Round(2 * centerY - y);
-                        var newZ = (int)Math.Round(2 * centerZ - z);
+                        var newY = (int)Math.Round(2 * center.Y - y);
+                        var newZ = (int)Math.Round(2 * center.Z - z);
                         rotatedList.Add((x, newY, newZ, value));
                     }
                     else // Rotate around Z axis (in the X-Y plane).
                     {
                         var value = voxels[x, y, z];
                         if (value == 0) continue;
-                        var newX = (int)Math.Round(2 * centerX - x);
-                        var newY = (int)Math.Round(2 * centerY - y);
+                        var newX = (int)Math.Round(2 * center.X - x);
+                        var newY = (int)Math.Round(2 * center.Y - y);
                         rotatedList.Add((newX, newY, z, value));
                     }
                 }
             }
         }
         // Determine the min Y value among rotated voxels.
-        var minRotY = rotatedList.Select(point => point.Y).Prepend(int.MaxValue).Min();
+        var minRotY = minY ?? rotatedList.Select(point => point.Y).Prepend(int.MaxValue).Min();
         // Offset all Y's so that the lowest voxel is at y=0.
         foreach (var (x, y, z, value) in rotatedList)
         {
@@ -218,13 +244,9 @@ public static class BlockEntityAnvilPatch
     /// Calculates the center of mass (CoM) of the voxels in the anvil.
     /// </summary>
     /// <param name="voxels">The voxel data.</param>
-    /// <param name="centerX">Output parameter for the X coordinate of the CoM.</param>
-    /// <param name="centerY">Output parameter for the Y coordinate of the CoM.</param>
-    /// <param name="centerZ">Output parameter for the Z coordinate of the CoM.</param>
-    /// <returns>True if the CoM was successfully calculated, false if there are no voxels.</returns>
-    private static bool CalcCoM(byte[,,] voxels, out double centerX, out double centerY, out double centerZ)
+    private static Vec3f? CalcCoM(byte[,,] voxels)
     {
-        double sumX = 0, sumY = 0, sumZ = 0;
+        float sumX = 0, sumY = 0, sumZ = 0;
         var count = 0;
         for (var x = 0; x < 16; x++)
         {
@@ -240,18 +262,13 @@ public static class BlockEntityAnvilPatch
                 }
             }
         }
-
-        if (count == 0)
-        {
-            centerX = 0;
-            centerY = 0;
-            centerZ = 0;
-            return false;
-        }
-
-        centerX = sumX / count;
-        centerY = sumY / count;
-        centerZ = sumZ / count;
-        return true;
+        return count == 0 ?
+            Vec3f.Zero : 
+            new Vec3f
+            {
+                X = sumX / count,
+                Y = sumY / count,
+                Z = sumZ / count
+            };
     }
 }
