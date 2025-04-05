@@ -6,8 +6,4 @@ TODO:
 - TODO [Compatibility] Stop knapster from autocompleting when hitting in flip tool mode
 - TODO Fight cheating players that try to remove tongs while setting the tool mode
 
-- [Fix] Flip item action overhaul. Now recipe outline will follow
-  the item when flipping. This should also fix the issue of items
-  flipping when right clicking in any other tool mode.
-- [Tweak] Added config option to disable flip tool mode and right-click
-  workitem rotation unless holding tongs (or other heat resistant gear).
+- Port most recent version of the mod to 1.19.8 – won't be maintained unless there is a major bug

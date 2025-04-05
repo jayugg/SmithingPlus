@@ -2,15 +2,15 @@
   "profiles": {
     "Client": {
       "commandName": "Executable",
-      "executablePath": "$(VINTAGE_STORY)/Vintagestory",
+      "executablePath": "$(VINTAGE_STORY_1_19_8)/Vintagestory",
       "commandLineArgs": "--tracelog --addModPath \"$(ProjectDir)/bin/$(Configuration)/Mods\"",
-      "workingDirectory": "$(VINTAGE_STORY)"
+      "workingDirectory": "$(VINTAGE_STORY_1_19_8)"
     },
     "Server": {
       "commandName": "Executable",
       "executablePath": "dotnet",
-      "commandLineArgs": "\"$(VINTAGE_STORY)/VintagestoryServer.dll\" --tracelog --addModPath \"$(ProjectDir)/bin/$(Configuration)/Mods\"",
-      "workingDirectory": "$(VINTAGE_STORY)"
+      "commandLineArgs": "\"$(VINTAGE_STORY_1_19_8)/VintagestoryServer.dll\" --tracelog --addModPath \"$(ProjectDir)/bin/$(Configuration)/Mods\"",
+      "workingDirectory": "$(VINTAGE_STORY_1_19_8)"
     }
   }
 }

@@ -108,7 +108,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
     public ItemStack GetBaseMaterial(ItemStack stack)
     {
         Core.Logger.VerboseDebug("[ItemWorkableNugget#GetBaseMaterial] {0}", BaseMaterial.Code);
-        if (stack.Collectible is ItemWorkableNugget workableNugget)
+        if (stack.Collectible is ItemWorkableNugget)
         {
             if (!IsBlisterSteelLike) return new ItemStack(BaseMaterial);
             var refinedVariant = BaseMaterial.Attributes["refinedVariant"].AsString("steel");

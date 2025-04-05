@@ -51,7 +51,6 @@ public class BitsRecoveryPatches
         Core.Logger.VerboseDebug("[BitsRecovery] Attempting to recover bits from {0}", workItemStack);
         var metalVariant = ItemDamagedPatches.GetMetalOrMaterial(__instance.SelectedRecipe.Output.ResolvedItemstack) ??
                            ItemDamagedPatches.GetMetalOrMaterial(__instance.WorkItemStack);
-        ;
         var metalbit = byPlayer.Entity.World.GetItem(new AssetLocation("game:metalbit-copper"))
             .ItemWithVariant("metal", metalVariant);
         if (metalbit == null)

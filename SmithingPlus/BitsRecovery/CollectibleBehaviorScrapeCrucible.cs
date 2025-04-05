@@ -57,13 +57,13 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         var outputUnits = crucibleStack.Attributes.GetInt("units");
         var outputBitCount = outputUnits / 5;
         var (metalVariant, metalTier) = GetMetalVariantAndTier(byEntity, outputStack);
-        var metalBitStack = new ItemStack(world.GetItem("game:metalbit-copper").ItemWithVariant("metal", metalVariant),
+        var metalBitStack = new ItemStack(world.GetItem(new AssetLocation("game:metalbit-copper")).ItemWithVariant("metal", metalVariant),
             outputBitCount);
         metalBitStack.SetTemperatureFrom(world, crucibleStack);
         var emptyCrucibleStack =
             new ItemStack(world.GetBlock(crucibleStack.Collectible.CodeWithVariant("type", "burned")));
         if (!playerInventory.TryGiveItemstack(metalBitStack, true))
-            world.SpawnItemEntity(metalBitStack, blockSel.Position);
+            world.SpawnItemEntity(metalBitStack, blockSel.Position.ToVec3d());
         crucibleSlot.Itemstack = emptyCrucibleStack;
         crucibleSlot.MarkDirty();
         groundStorage.MarkDirty();

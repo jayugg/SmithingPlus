@@ -17,7 +17,7 @@ public class HammerTweaksNetwork : ModSystem
     /// </summary>
     public static int? OriginalToolModesCount { get; set; }
 
-    public override bool ShouldLoad(ICoreAPI api)
+    public override bool ShouldLoad(EnumAppSide forSide)
     {
         return ConfigLoader.Config?.HammerTweaks ?? false;
     }

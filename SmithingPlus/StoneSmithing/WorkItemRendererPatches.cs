@@ -21,7 +21,7 @@ public static class RegenMeshPostfixPatch
         bool[,,] recipeToOutlineVoxels
     )
     {
-        return;
+        /*
         ___api?.Logger?.Warning("RegenMesh_Postfix called");
         var yOffset = 0.1f; // workitemStack.Attributes.GetFloat("yOffset");
         ___workItemMeshRef?.Dispose();
@@ -37,6 +37,7 @@ public static class RegenMeshPostfixPatch
         if (recipeOutlineMeshData.VerticesCount <= 0)
             return;
         ___recipeOutlineMeshRef = ___api?.Render.UploadMesh(recipeOutlineMeshData);
+        */
     }
 
     public static MeshData GenOutlineMesh(ICoreClientAPI capi, bool[,,] recipeToOutlineVoxels, byte[,,] voxels)

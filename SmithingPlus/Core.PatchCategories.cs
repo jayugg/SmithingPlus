@@ -27,6 +27,7 @@ public static class PatchExtensions
     /// </summary>
     /// <param name="patchCategory">String HarmonyPatchCategory to patch.</param>
     /// <param name="configFlag">Boolean flag to determine if the patch should be applied.</param>
+    /// <param name="withDebugLogs"></param>
     public static void PatchIfEnabled(this string patchCategory, bool configFlag, bool withDebugLogs = true)
     {
         if (!configFlag) return;

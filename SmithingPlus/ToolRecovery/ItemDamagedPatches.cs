@@ -1,5 +1,6 @@
 using System.Linq;
 using HarmonyLib;
+using JetBrains.Annotations;
 using SmithingPlus.Compat;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
@@ -9,8 +10,8 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus.ToolRecovery;
 
-[HarmonyPatch(typeof(CollectibleObject))]
-[HarmonyPatchCategory(Core.ToolRecoveryCategory)]
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+[HarmonyPatch(typeof(CollectibleObject)), HarmonyPatchCategory(Core.ToolRecoveryCategory)]
 public class ItemDamagedPatches
 {
     [HarmonyPostfix]
@@ -63,7 +64,7 @@ public class ItemDamagedPatches
         var durability = itemslot?.Itemstack?.GetDurability();
         if (!durability.HasValue || durability > amount) return;
         if (itemslot.Itemstack?.Collectible.HasBehavior<CollectibleBehaviorRepairableTool>() != true) return;
-        Core.Logger.VerboseDebug("Broken tool in InventoryID: {0}, Entity: {1}", itemslot?.Inventory?.InventoryID,
+        Core.Logger.VerboseDebug("Broken tool in InventoryID: {0}, Entity: {1}", itemslot.Inventory?.InventoryID,
             byEntity.GetName());
         var entityPlayer = byEntity as EntityPlayer;
         var itemStack = itemslot.Itemstack;
