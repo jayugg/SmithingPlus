@@ -58,12 +58,12 @@ public class ItemStoneHammer : ItemHammer
         return intHardness;
     }
 
-    public float GetHitHardness()
+    private float GetHitHardness()
     {
         return Attributes["hitHardnessByType"]?.AsFloat(1.3f) ?? 1.3f;
     }
 
-    public static bool HitVoxelAndCheck(ItemStack stack, int selectionBoxIndex, int hardness = 1)
+    private static bool HitVoxelAndCheck(ItemStack stack, int selectionBoxIndex, int hardness = 1)
     {
         var hitCount = GetVoxelHitCount(stack, selectionBoxIndex) + hardness;
         if (hitCount >= MaxHitCount)
@@ -76,14 +76,14 @@ public class ItemStoneHammer : ItemHammer
         return false;
     }
 
-    public static void SetVoxelHitCount(ItemStack stack, int selectionBoxIndex, int hitCount)
+    private static void SetVoxelHitCount(ItemStack stack, int selectionBoxIndex, int hitCount)
     {
         var hitCounts = GetVoxelHitCounts(stack);
         hitCounts[selectionBoxIndex] = hitCount;
         SetVoxelHitCounts(stack, hitCounts);
     }
 
-    public static void SetVoxelHitCounts(ItemStack stack, Dictionary<int, int> hitCounts)
+    private static void SetVoxelHitCounts(ItemStack stack, Dictionary<int, int> hitCounts)
     {
         var byteArray = new byte[hitCounts.Count * 2];
         var index = 0;
@@ -96,9 +96,9 @@ public class ItemStoneHammer : ItemHammer
         stack.TempAttributes.SetBytes("sp:voxelHitCounts", byteArray);
     }
 
-    public static Dictionary<int, int> GetVoxelHitCounts(ItemStack stack)
+    private static Dictionary<int, int> GetVoxelHitCounts(ItemStack stack)
     {
-        var byteArray = stack.TempAttributes.GetBytes("sp:voxelHitCounts", new byte[0]);
+        var byteArray = stack.TempAttributes.GetBytes("sp:voxelHitCounts", Array.Empty<byte>());
         var hitCounts = new Dictionary<int, int>();
         for (var i = 0; i < byteArray.Length; i += 2)
         {

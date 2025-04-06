@@ -5,8 +5,7 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus.StoneSmithing;
 
-[HarmonyPatch(typeof(BlockEntityAnvil))]
-[HarmonyPatchCategory(Core.StoneSmithingCategory)]
+[HarmonyPatch(typeof(BlockEntityAnvil)), HarmonyPatchCategory(Core.StoneSmithingCategory)]
 public class AnvilHitDisplayPatch
 {
     [HarmonyPostfix]
@@ -22,9 +21,8 @@ public class AnvilHitDisplayPatch
     }
 }
 
-[HarmonyPatch(typeof(BlockEntityAnvilPart))]
-[HarmonyPatchCategory(Core.StoneSmithingCategory)]
-public class AnvilPartPatch
+[HarmonyPatch(typeof(BlockEntityAnvilPart)), HarmonyPatchCategory(Core.StoneSmithingCategory)]
+public class AnvilPartHitDisplayPatch
 {
     [HarmonyPostfix]
     [HarmonyPatch(nameof(BlockEntityAnvil.GetBlockInfo))]
