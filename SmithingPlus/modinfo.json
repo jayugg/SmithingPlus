@@ -4,6 +4,6 @@
   "name": "SmithingPlus",
   "authors": [ "jayu" ],
   "description": "Add bits when smithing and other tweaks",
-  "version": "1.5.5",
+  "version": "1.5.6",
   "dependencies": { "game": "" }
 }
