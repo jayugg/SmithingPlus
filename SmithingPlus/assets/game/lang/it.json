@@ -1,0 +1,17 @@
+{
+  "trait-sp:smith": "<font color=\"#84ff84\">• Fabbro </font>",
+  "trait-sp:drosshand": "<font color=\"#ff8484\">• Mani maldestre </font>",
+  "traitname-sp:smith": "Fabbro",
+  "traitname-sp:drosshand": "Mani maldestre",
+  "traitdesc-sp:smith": "Fabbro nato, ha penali di riparazione degli attrezzi più basse e una qualità di fabbricazione più alta",
+  "traitdesc-sp:drosshand": "La fabbricazione non è il tuo forte, ha penali di riparazione degli attrezzi più alte e una qualità di forgiatura più bassa",
+  "charattribute-sp:toolRepairPenalty-0.2": "Riduce le penali di riparazione degli attrezzi del 20%",
+  "charattribute-sp:toolRepairPenalty--0.1": "Aumenta le penali di riparazione degli attrezzi del 10%",
+  "charattribute-sp:smithingQuality-0.2": "Aumenta la durabilità degli attrezzi forgiati del 20%",
+  "charattribute-sp:smithingQuality--0.1": "Diminuisce la durabilità degli attrezzi forgiati del 10%",
+  "Requires {0} voxels": "Richiede {0} voxel",
+  "with": "con",
+  "Mold for": "Stampo per",
+  "Requires for casting": "Richiede per lo stampaggio",
+  "Can be cast in": "Può essere stampato in"
+}

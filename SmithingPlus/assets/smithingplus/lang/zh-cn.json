@@ -44,5 +44,5 @@
   "item-forlornblade-meteoriciron": "Estoc 刀刃",
   "itemdesc-item-forlornblade-meteoriciron": "此配方不应可见，刀刃只能修理",
   "itemcraftdesc-item-forlornblade-meteoriciron": "此配方不应可见，刀刃只能修理",
-  "heldhelp-scrapecrucible": "<i>用 <hk>右键</hk> 刮擦以恢复碎片</i>"
+  "heldhelp-scrapecrucible": "<i>用 <hk>rightmouse</hk> 刮擦以恢复碎片</i>"
 }
