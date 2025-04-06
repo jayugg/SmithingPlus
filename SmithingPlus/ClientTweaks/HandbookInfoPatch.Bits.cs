@@ -2,17 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
+using JetBrains.Annotations;
 using SmithingPlus.SmithWithBits;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 
 namespace SmithingPlus.ClientTweaks;
+#nullable enable
 
+[UsedImplicitly]
 public partial class HandbookInfoPatch
 {
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(CollectibleBehaviorHandbookTextAndExtraInfo), "addCreatedByInfo")]
+    [HarmonyPostfix, HarmonyPatch(typeof(CollectibleBehaviorHandbookTextAndExtraInfo), "addCreatedByInfo")]
     public static void PatchBitsInfo(
         CollectibleBehaviorHandbookTextAndExtraInfo __instance,
         ICoreClientAPI capi,
@@ -22,11 +24,11 @@ public partial class HandbookInfoPatch
         List<RichTextComponentBase> components)
     {
         if (stack.Collectible is not (ItemNugget or ItemWorkableNugget)) return;
-        MaxFuelTemp ??= allStacks
+        Core.MaxFuelBurnTemp ??= allStacks
             .Where(s => s.Collectible.CombustibleProps?.BurnTemperature > 0)
             .OrderByDescending(s => s.Collectible.CombustibleProps.BurnTemperature)
             .FirstOrDefault()?.Collectible.CombustibleProps?.BurnTemperature ?? 0;
-        if (stack.Collectible.CombustibleProps?.MeltingPoint > MaxFuelTemp) return;
+        if (stack.Collectible.CombustibleProps?.MeltingPoint > Core.MaxFuelBurnTemp) return;
         var moldStacks = allStacks.Where(s =>
                 s.Collectible is BlockToolMold &&
                 GetStackForVariant(capi, s, stack.Collectible.LastCodePart()) != null)

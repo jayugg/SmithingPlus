@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
+using SmithingPlus.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -9,10 +10,10 @@ using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
 namespace SmithingPlus.ClientTweaks;
+#nullable enable
 
 public partial class HandbookInfoPatch
 {
-    public static float? MaxFuelTemp { get; set; }
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(CollectibleBehaviorHandbookTextAndExtraInfo), "addCreatedByInfo")]
@@ -37,12 +38,16 @@ public partial class HandbookInfoPatch
             break;
         }
 
-        var moldStacks = allStacks.Where(s =>
-                s.Collectible is BlockToolMold &&
-                stack.Collectible.FirstCodePart().Equals(ToolMoldType(s.Collectible)))
-            .OrderBy(s => s.Collectible.Code.Domain == "game" ? -100 : 0)
-            .ThenBy(s => s.ItemAttributes["requiredUnits"].AsInt())
-            .ToArray();
+        var moldStacks = CacheHelper.GetOrAdd(
+            Core.MoldStacksCache,
+            stack.Collectible.Code.ToString(),
+            () => allStacks.Where(s =>
+                    s.Collectible is BlockToolMold &&
+                    stack.Collectible.FirstCodePart().Equals(ToolMoldType(s.Collectible)))
+                .OrderBy(s => s.Collectible.Code.Domain == "game" ? -100 : 0)
+                .ThenBy(s => s.ItemAttributes["requiredUnits"].AsInt())
+                .ToArray()
+        );
         if (moldStacks.Length <= 0) return;
         var moldingSectionExists = moldingSectionIndex >= 0;
         if (!moldingSectionExists)
@@ -85,24 +90,29 @@ public partial class HandbookInfoPatch
         List<RichTextComponentBase> components)
     {
         if (stack.Collectible is not BlockToolMold) return;
-        MaxFuelTemp ??= allStacks
+        Core.MaxFuelBurnTemp ??= allStacks
             .Where(s => s.Collectible.CombustibleProps?.BurnTemperature > 0)
             .OrderByDescending(s => s.Collectible.CombustibleProps.BurnTemperature)
             .FirstOrDefault()?.Collectible.CombustibleProps?.BurnTemperature ?? 0;
 
         var mold = stack.Collectible;
         var requiredUnits = mold.Attributes["requiredUnits"].AsInt();
-        mold.Attributes["drop"].AsObject<JsonItemStack>(null, mold.Code.Domain);
+        mold.Attributes["drop"].AsObject(new JsonItemStack(), mold.Code.Domain);
         var castStacks = StacksFromCode(capi, stack, out var existingMetalVariants);
         // Use linq search to find all metal bit stacks
-        var metalBitStacks = allStacks.Where(s =>
-            s.Collectible.Code.Path.Contains("metalbit") &&
-            Enumerable.Contains(existingMetalVariants, s.Collectible.LastCodePart()) &&
-            s.Collectible.CombustibleProps?.SmeltedStack?.ResolvedItemstack != null &&
-            s.Collectible.CombustibleProps.SmeltingType == EnumSmeltType.Smelt &&
-            s.Collectible.CombustibleProps.MeltingPoint <= MaxFuelTemp
+        var metalBitStacks =
+            Core.MetalBitStacksCache ??=
+                allStacks.Where(s =>
+                s.Collectible.Code.Path.Contains("metalbit") &&
+                Enumerable.Contains(existingMetalVariants, s.Collectible.LastCodePart()) &&
+                s.Collectible.CombustibleProps?.SmeltedStack?.ResolvedItemstack != null &&
+                s.Collectible.CombustibleProps.SmeltingType == EnumSmeltType.Smelt &&
+                s.Collectible.CombustibleProps.MeltingPoint <= Core.MaxFuelBurnTemp
         ).ToArray();
-        var castableMetalVariants = metalBitStacks.Select(s => s.Collectible.Variant["metal"]).ToArray();
+        var castableMetalVariants =
+            Core.CastableMetalVariantsCache ??=
+                metalBitStacks.Select(s => s.Collectible.Variant["metal"]).ToArray();
+        
         castStacks = castStacks.Where(s => castableMetalVariants.Contains(s.Collectible.LastCodePart())).ToArray();
 
         var haveText = components.Count > 0;

@@ -37,10 +37,13 @@ public partial class HandbookInfoPatch
             break;
         }
 
-        var smallestSmithingRecipe = capi.GetSmithingRecipes()
-            .FindAll(recipe => recipe.Output.Matches(capi.World, stack))
-            .OrderBy(recipe => recipe.Voxels.VoxelCount())
-            .FirstOrDefault();
+        var smallestSmithingRecipe = CacheHelper.GetOrAdd(
+            Core.SmallestSmithingRecipeCache,
+            stack.Collectible.Code,
+            () => capi.GetSmithingRecipes()
+                .FindAll(recipe => recipe.Output.Matches(capi.World, stack))
+                .OrderBy(recipe => recipe.Voxels.VoxelCount())
+                .FirstOrDefault());
         if (smallestSmithingRecipe == null) return;
         var voxelCount = smallestSmithingRecipe.Voxels.VoxelCount();
         var bitsCount = (int)Math.Ceiling(voxelCount / Core.Config.VoxelsPerBit);
