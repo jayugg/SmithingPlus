@@ -1,14 +1,11 @@
 TODO:
 - TODO [Code Tweak] Standardise fetching metal variant / type and relevant ingot
-- TODO [Performance Tweak] Cache handbook data
 - TODO [Tweak] Config option to disable iron bloom modifications from helve hammers
 - TODO [Compatibility] Stop knapster from autocompleting when hitting in flip tool mode
 - TODO Fight cheating players that try to remove tongs while setting the tool mode
 - TODO Store overall transform for flip tool mode to properly reconstruct recipe outline rotation.
     Current method can have bugs and is harder to maintain.
 
-- [Fix] Flip item action overhaul. Now recipe outline will follow
-  the item when flipping. This should also fix the issue of items
-  flipping when right clicking in any other tool mode.
-- [Tweak] Added config option to disable flip tool mode and right-click
-  workitem rotation unless holding tongs (or other heat resistant gear).
+- [Localisation] Added zh-cn localisation
+- [Performance Tweak] Cache handbook data
+- [Fix] Crash with cache cleanup when exiting the game in singleplayer

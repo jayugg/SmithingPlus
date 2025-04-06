@@ -1,0 +1,19 @@
+{
+  "trait-sp:smith": "<font color=\"#84ff84\">• 锻造 </font>",
+  "trait-sp:drosshand": "<font color=\"#ff8484\">• 劣手 </font>",
+  "traitname-sp:smith": "锻造",
+  "traitname-sp:drosshand": "劣手",
+  "traitdesc-sp:smith": "天生的锻造师，工具修理惩罚更低，锻造质量更高",
+  "traitdesc-sp:drosshand": "锻造不是你的强项，工具修理惩罚更高，锻造质量更低",
+  "charattribute-sp:toolRepairPenalty-0.2": "减少工具修理惩罚20%",
+  "charattribute-sp:toolRepairPenalty--0.1": "增加工具修理惩罚10%",
+  "charattribute-sp:smithingQuality-0.2": "增加锻造项目耐久度20%",
+  "charattribute-sp:smithingQuality--0.1": "减少锻造项目耐久度10%",
+
+  "Requires {0} voxels": "需要 {0} 体素",
+  "with": "与",
+
+  "Mold for": "模具",
+  "Requires for casting": "铸造需要",
+  "Can be cast in": "可以铸造于"
+}
