@@ -1,0 +1,19 @@
+{
+  "trait-sp:smith": "<font color=\"#84ff84\">• Kowal  </font>",
+  "trait-sp:drosshand": "<font color=\"#ff8484\">• Niezdarna ręka </font>",
+  "traitname-sp:smith": "Kowal",
+  "traitname-sp:drosshand": "Niezdarna ręka",
+  "traitdesc-sp:smith": "Urodzony kowal, ma mniejsze kary do naprawy narzędzi i wyższą jakość kowalstwa",
+  "traitdesc-sp:drosshand": "Kowalstwo nie jest twoją mocną stroną, masz wyższe kary do naprawy narzędzi i niższą jakość kowalstwa",
+  "charattribute-sp:toolRepairPenalty-0.2": "Zmniejsza kary do naprawy narzędzi o 20%",
+  "charattribute-sp:toolRepairPenalty--0.1": "Zwiększa kary do naprawy narzędzi o 10%",
+  "charattribute-sp:smithingQuality-0.2": "Zwiększa trwałość projektów kowalskich o 20%",
+  "charattribute-sp:smithingQuality--0.1": "Zmniejsza trwałość projektów kowalskich o 10%%",
+
+  "Requires {0} voxels": "Wymaga {0} wokseli",
+  "with": "z",
+
+  "Mold for": "Forma do",
+  "Requires for casting": "Wymagane do odlewania",
+  "Can be cast in": "Można odlać w"
+}

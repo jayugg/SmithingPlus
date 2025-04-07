@@ -6,6 +6,4 @@ TODO:
 - TODO Store overall transform for flip tool mode to properly reconstruct recipe outline rotation.
     Current method can have bugs and is harder to maintain.
 
-- [Localisation] Added it and zh-cn localisation
-- [Performance Tweak] Cache handbook data
-- [Fix] Crash with cache cleanup when exiting the game in singleplayer
+- [Localisation] Added pl localisation
