@@ -6,4 +6,7 @@ TODO:
 - TODO Store overall transform for flip tool mode to properly reconstruct recipe outline rotation.
     Current method can have bugs and is harder to maintain.
 
+- [Client Tweak] Overhaul of recipe ingredient count client tweak
 - [Localisation] Added pl localisation
+- [Handbook] Added en handbook guide
+- [Fix] Cache clearing errors on unload

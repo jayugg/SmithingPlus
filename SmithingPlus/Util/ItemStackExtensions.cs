@@ -100,6 +100,10 @@ public static class ItemStackExtensions
         return stack?.Collectible is IAnvilWorkable workable ? workable.GetBaseMaterial(stack) : stack;
     }
     
+    public static ItemStack GetMetalMaterialStack(this ItemStack stack, ICoreAPI api = null)
+    {
+        return stack.Collectible.GetMetalMaterialStack(api);
+    }
     
     public static float GetWorkableTemperature(this ItemStack stack)
     {

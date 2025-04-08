@@ -169,6 +169,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
                 !(r.Ingredient.RecipeAttributes?[ModRecipeAttributes.RepairOnly]?.AsBool() ?? false)
             )
             .OrderBy(r => r.Output.ResolvedItemstack.Collectible.Code)
+            .ThenBy(r => r.Output.ResolvedItemstack.StackSize)
             .Select(r =>
             {
                 var p = r.Clone();

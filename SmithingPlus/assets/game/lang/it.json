@@ -9,7 +9,7 @@
   "charattribute-sp:toolRepairPenalty--0.1": "Aumenta le penali di riparazione degli attrezzi del 10%",
   "charattribute-sp:smithingQuality-0.2": "Aumenta la durabilità degli attrezzi forgiati del 20%",
   "charattribute-sp:smithingQuality--0.1": "Diminuisce la durabilità degli attrezzi forgiati del 10%",
-  "Requires {0} voxels": "Richiede {0} voxel",
+  "Requires any of: ": "Richiede uno qualsiasi di: ",
   "with": "con",
   "Mold for": "Stampo per",
   "Requires for casting": "Richiede per lo stampaggio",

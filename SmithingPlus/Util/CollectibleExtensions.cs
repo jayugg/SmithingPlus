@@ -33,6 +33,13 @@ public static class CollectibleExtensions
         var ingotItem = api?.World.GetItem(new AssetLocation("game:ingot-" + collObj.GetMetalOrMaterial()));
         return ingotItem?.Variant["metal"] ?? ingotItem?.Variant["material"];
     }
+    
+    public static ItemStack GetMetalMaterialStack(this CollectibleObject collObj, ICoreAPI api = null)
+    {
+        api ??= Core.Api;
+        var ingotItem = api?.World.GetItem(new AssetLocation("game:ingot-" + collObj.GetMetalOrMaterial()));
+        return new ItemStack(ingotItem);
+    }
 
     public static bool HasMetalMaterial(this CollectibleObject collObj, ICoreAPI api = null)
     {
@@ -42,7 +49,7 @@ public static class CollectibleExtensions
     /*
      Regex matching is slow.
      Only use when first assigning behaviors.
-     On runtime, check for CollectibleBehaviorRepairableTool instead.
+     At runtime, check for CollectibleBehaviorRepairableTool instead.
     */
     public static bool IsRepairableTool(this CollectibleObject collObj, bool verbose = false)
     {
@@ -51,7 +58,7 @@ public static class CollectibleExtensions
         return repairable;
     }
     
-    // Same as above, use CollectibleBehaviorRepairableToolHead instead
+    // Same as above, check for CollectibleBehaviorRepairableToolHead instead
     public static bool IsRepairableToolHead(this CollectibleObject collObj, bool verbose = false)
     {
         var repairable = WildcardUtil.Match(Core.Config.ToolHeadSelector, collObj.Code.ToString());

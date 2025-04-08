@@ -33,30 +33,23 @@ public partial class Core
         get => Api.ObjectCache.TryGetValue(MaxFuelBurnTempCacheKey, out var temperature) ? (float?)temperature : null;
         set => Api.ObjectCache[MaxFuelBurnTempCacheKey] = value;
     }
-    
+
     public static Dictionary<string, ItemStack[]> MoldStacksCache =>
         ObjectCacheUtil.GetOrCreate(Api, MoldStacksCacheKey, () => new Dictionary<string, ItemStack[]>());
-    
+
     public static ItemStack[]? MetalBitStacksCache
     {
         get => Api.ObjectCache.TryGetValue(MetalBitStacksCacheKey, out var stacks) ? (ItemStack[])stacks : null;
         set => Api.ObjectCache[MetalBitStacksCacheKey] = value;
     }
-    
+
     public static string[]? CastableMetalVariantsCache
     {
         get => Api.ObjectCache.TryGetValue(CastableMetalVariantsCacheKey, out var variants) ? (string[])variants : null;
         set => Api.ObjectCache[CastableMetalVariantsCacheKey] = value;
     }
-    
-    public static Dictionary<string, SmithingRecipe> SmallestSmithingRecipeCache =>
-        ObjectCacheUtil.GetOrCreate(Api, SmallestSmithingRecipeCacheKey, () => new Dictionary<string, SmithingRecipe>());
 
-    private static void ClearCache()
-    {
-        // Other caches are handled by the API
-        MaxFuelBurnTemp = null;
-        MetalBitStacksCache = null;
-        CastableMetalVariantsCache = null;
-    }
+    public static Dictionary<string, SmithingRecipe> SmallestSmithingRecipeCache =>
+        ObjectCacheUtil.GetOrCreate(Api, SmallestSmithingRecipeCacheKey,
+            () => new Dictionary<string, SmithingRecipe>());
 }

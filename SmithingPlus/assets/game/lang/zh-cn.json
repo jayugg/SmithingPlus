@@ -10,7 +10,7 @@
   "charattribute-sp:smithingQuality-0.2": "增加锻造项目耐久度20%",
   "charattribute-sp:smithingQuality--0.1": "减少锻造项目耐久度10%",
 
-  "Requires {0} voxels": "需要 {0} 体素",
+  "Requires any of: ": "需要任意： ",
   "with": "与",
 
   "Mold for": "模具",

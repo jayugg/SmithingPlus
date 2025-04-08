@@ -131,7 +131,6 @@ public partial class Core : ModSystem
     public override void Dispose()
     {
         Unpatch();
-        ClearCache();
         Logger = null;
         Api = null;
         base.Dispose();

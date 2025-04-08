@@ -10,7 +10,7 @@
   "charattribute-sp:smithingQuality-0.2": "Zwiększa trwałość projektów kowalskich o 20%",
   "charattribute-sp:smithingQuality--0.1": "Zmniejsza trwałość projektów kowalskich o 10%%",
 
-  "Requires {0} voxels": "Wymaga {0} wokseli",
+  "Requires any of: ": "Wymaga jednego z: ",
   "with": "z",
 
   "Mold for": "Forma do",

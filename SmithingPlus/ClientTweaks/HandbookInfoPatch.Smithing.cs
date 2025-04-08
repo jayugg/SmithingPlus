@@ -51,24 +51,7 @@ public partial class HandbookInfoPatch
             .FirstOrDefault(ing => ing.Code.Path.Contains("ingot"))
             ?.ResolvedItemstack.GetBaseMaterial();
         if (baseMaterial == null) return;
-        var allMaterialCollectibles = capi.World.Collectibles
-            .Where(collectible =>
-                collectible is IAnvilWorkable and not ItemWorkItem &&
-                collectible.CombustibleProps?.SmeltedStack?.Resolve(capi.World, "worldForResolving") != null &&
-                !collectible.Equals(stack.Collectible) &&
-                collectible.Satisfies(collectible.CombustibleProps?.SmeltedStack?.ResolvedItemstack, baseMaterial))
-            .OrderBy(collectible => collectible.Code.Domain == "game" ? -100 : 0)
-            .ThenByDescending(collectible => collectible.CombustibleProps?.SmeltedRatio ?? 1)
-            .ToList();
-        var allMaterialStacks = allMaterialCollectibles
-            .Select(collectible => new ItemStack(collectible, collectible switch
-            {
-                ItemMetalPlate => (int)Math.Ceiling(voxelCount / 81.0),
-                ItemXWorkableNugget => (int)Math.Ceiling(voxelCount / 2.0),
-                ItemWorkableNugget => bitsCount,
-                _ => (int)Math.Ceiling(voxelCount * collectible.CombustibleProps.SmeltedRatio / 42.0)
-            }))
-            .ToList();
+        var allMaterialStacks = GetSmithingIngredientStacks(capi, stack, baseMaterial, voxelCount, bitsCount, smallestSmithingRecipe.RecipeId);
         if (allMaterialStacks.Count <= 0) return;
         // If Smithing section was found, add custom info
         var smithingSectionExists = smithingSectionIndex >= 0;
@@ -102,5 +85,31 @@ public partial class HandbookInfoPatch
                 components.Insert(smithingSectionIndex, itemstackTextComponent);
             }
         }
+    }
+
+    public static List<ItemStack> GetSmithingIngredientStacks(ICoreClientAPI capi, ItemStack stack, ItemStack baseMaterial,
+        int voxelCount, int bitsCount, int recipeId)
+    {
+        var allMaterialCollectibles = capi.World.Collectibles
+            .Where(collectible =>
+                collectible is IAnvilWorkable and not ItemWorkItem &&
+                collectible.CombustibleProps?.SmeltedStack?.Resolve(capi.World, "worldForResolving") != null &&
+                !collectible.Equals(stack.Collectible) &&
+                collectible.Satisfies(collectible.CombustibleProps?.SmeltedStack?.ResolvedItemstack, baseMaterial) &&
+                ((IAnvilWorkable)collectible).GetMatchingRecipes(new ItemStack(collectible))
+                .Any(recipe => recipe.RecipeId == recipeId))
+            .OrderBy(collectible => collectible.Code.Domain == "game" ? -100 : 0)
+            .ThenByDescending(collectible => collectible.CombustibleProps?.SmeltedRatio ?? 1)
+            .ToList();
+        var allMaterialStacks = allMaterialCollectibles
+            .Select(collectible => new ItemStack(collectible, collectible switch
+            {
+                ItemMetalPlate => (int)Math.Ceiling(voxelCount / 81.0),
+                ItemXWorkableNugget => (int)Math.Ceiling(voxelCount / 2.0),
+                ItemWorkableNugget => bitsCount,
+                _ => (int)Math.Ceiling(voxelCount * collectible.CombustibleProps.SmeltedRatio / 42.0)
+            }))
+            .ToList();
+        return allMaterialStacks;
     }
 }
