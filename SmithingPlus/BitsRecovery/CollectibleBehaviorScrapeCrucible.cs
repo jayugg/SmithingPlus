@@ -17,7 +17,7 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         EntitySelection entitySel,
         bool firstEvent, ref EnumHandHandling handHandling, ref EnumHandling handling)
     {
-        if (byEntity is not EntityPlayer entityPlayer) return;
+        if (byEntity is null || byEntity is not EntityPlayer entityPlayer) return;
         if (blockSel?.Position is null) return;
         handHandling = EnumHandHandling.NotHandled;
         // Check if player can access the block

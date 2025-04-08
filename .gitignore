@@ -8,3 +8,4 @@ riderModule.iml
 /.idea/**/*
 /Releases/**/*
 *.sln.DotSettings.user
+.vscode
