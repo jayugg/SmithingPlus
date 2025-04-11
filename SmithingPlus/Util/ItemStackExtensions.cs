@@ -27,15 +27,6 @@ public static class ItemStackExtensions
         itemStack.Attributes.SetInt(ModAttributes.BrokenCount, brokenCount + extraCount);
     }
     
-    internal static void CloneAttributeFrom(this ItemStack itemStack, string attributeKey, ItemStack fromStack)
-    {
-        IAttribute attributeValue = null;
-        itemStack.Attributes?.TryGetAttribute(attributeKey, out attributeValue);
-        if (attributeValue == null) return;
-        if (itemStack.Attributes != null)
-            itemStack.Attributes[attributeKey] = fromStack.Attributes[attributeKey];
-    }
-    
     internal static void SetRepairedToolStack(this ItemStack itemStack, ItemStack fromStack)
     {
         itemStack.Attributes.SetItemstack(ModAttributes.RepairedToolStack, fromStack);
@@ -94,16 +85,6 @@ public static class ItemStackExtensions
     {
         return stack.Collectible.Code.Equals(that.Collectible.Code);
     } 
-    
-    public static ItemStack GetBaseMaterial(this ItemStack stack)
-    {
-        return stack?.Collectible is IAnvilWorkable workable ? workable.GetBaseMaterial(stack) : stack;
-    }
-    
-    public static ItemStack GetMetalMaterialStack(this ItemStack stack, ICoreAPI api = null)
-    {
-        return stack.Collectible.GetMetalMaterialStack(api);
-    }
     
     public static float GetWorkableTemperature(this ItemStack stack)
     {

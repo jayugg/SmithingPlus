@@ -47,9 +47,7 @@ public partial class HandbookInfoPatch
         if (smallestSmithingRecipe == null) return;
         var voxelCount = smallestSmithingRecipe.Voxels.VoxelCount();
         var bitsCount = (int)Math.Ceiling(voxelCount / Core.Config.VoxelsPerBit);
-        var baseMaterial = smallestSmithingRecipe.Ingredients
-            .FirstOrDefault(ing => ing.Code.Path.Contains("ingot"))
-            ?.ResolvedItemstack.GetBaseMaterial();
+        var baseMaterial = stack.GetMetalMaterial(capi)?.IngotStack;
         if (baseMaterial == null) return;
         var allMaterialStacks = GetSmithingIngredientStacks(capi, stack, baseMaterial, voxelCount, bitsCount, smallestSmithingRecipe.RecipeId);
         if (allMaterialStacks.Count <= 0) return;

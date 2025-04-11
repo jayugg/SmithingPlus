@@ -1,5 +1,6 @@
 using System.Linq;
 using HarmonyLib;
+using JetBrains.Annotations;
 using SmithingPlus.Compat;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
@@ -9,8 +10,8 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus.ToolRecovery;
 
-[HarmonyPatch(typeof(CollectibleObject))]
-[HarmonyPatchCategory(Core.ToolRecoveryCategory)]
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+[HarmonyPatch(typeof(CollectibleObject)), HarmonyPatchCategory(Core.ToolRecoveryCategory)]
 public class ItemDamagedPatches
 {
     [HarmonyPostfix]
@@ -63,7 +64,7 @@ public class ItemDamagedPatches
         var durability = itemslot?.Itemstack?.GetDurability();
         if (!durability.HasValue || durability > amount) return;
         if (itemslot.Itemstack?.Collectible.HasBehavior<CollectibleBehaviorRepairableTool>() != true) return;
-        Core.Logger.VerboseDebug("Broken tool in InventoryID: {0}, Entity: {1}", itemslot?.Inventory?.InventoryID,
+        Core.Logger.VerboseDebug("Broken tool in InventoryID: {0}, Entity: {1}", itemslot.Inventory?.InventoryID,
             byEntity.GetName());
         var entityPlayer = byEntity as EntityPlayer;
         var itemStack = itemslot.Itemstack;
@@ -76,17 +77,16 @@ public class ItemDamagedPatches
             return;
         }
 
-        var metal = smithingRecipe.Output.ResolvedItemstack.Collectible.GetMetalOrMaterial();
-        var workItemCode = new AssetLocation(itemStack?.Collectible.Code.Domain, $"workitem-{metal}");
-        var workItem = world.GetItem(workItemCode);
-        workItem ??= world.GetItem(new AssetLocation("game:workitem-" + metal));
+        var metalMaterial = itemStack?.GetMetalMaterial(byEntity.Api);
+        var workItem = metalMaterial?.WorkItem;
         if (workItem is null)
         {
-            Core.Logger.VerboseDebug("Work item not found: {0}, {1}", workItemCode, "game:workitem-" + metal);
+            Core.Logger.VerboseDebug(
+                $"Work item not found. Metal material: {metalMaterial?.IngotCode}, " +
+                $"collectible: {itemStack?.Collectible.Code}");
             return;
         }
-
-        Core.Logger.VerboseDebug("Found work item: {0}", workItemCode);
+        Core.Logger.VerboseDebug("Found work item: {0}", workItem.Code);
         var wItemStack = new ItemStack(workItem);
         Core.Logger.VerboseDebug("Found smithing recipe: {0}",
             smithingRecipe.Output.ResolvedItemstack.Collectible.Code);
@@ -124,10 +124,10 @@ public class ItemDamagedPatches
 
     private static ItemStack GetToolHead(IWorldAccessor world, ItemStack itemStack)
     {
-        var toolRecipe = world.GridRecipes
+        var toolRecipe = itemStack.Collectible
+            .GetGridRecipes(world.Api)
             .FirstOrDefault(r =>
-                r.Output.ResolvedItemstack.StackSize == 1 &&
-                r.Output.ResolvedItemstack.Collectible.Code.Equals(itemStack?.Collectible.Code));
+                r.Output.ResolvedItemstack.StackSize == 1);
         var toolHead = toolRecipe?.resolvedIngredients
             .FirstOrDefault(k =>
                 k?.ResolvedItemstack?.Collectible?.HasBehavior<CollectibleBehaviorRepairableToolHead>() ?? false)
@@ -137,14 +137,8 @@ public class ItemDamagedPatches
             toolHead = itemStack;
             Core.Logger.VerboseDebug("Tool head not found for: {0}", itemStack);
         }
-
         Core.Logger.VerboseDebug("Tool head: {0}", toolHead);
         return toolHead;
-    }
-
-    public static string GetMetalOrMaterial(ItemStack itemStack)
-    {
-        return itemStack.Collectible.Variant["metal"] ?? itemStack.Collectible.Variant["material"];
     }
 
     private static byte[,,] ByteVoxelsFromRecipe(SmithingRecipe recipe, int stackSize = 1)

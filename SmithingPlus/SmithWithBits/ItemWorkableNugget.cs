@@ -78,10 +78,12 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
         else
         {
             if (!Core.Config.BitsTopUp) return null;
+            var nuggetMaterial = stack.GetMetalMaterial(api);
+            var workItemMaterial = beAnvil.WorkItemStack.GetMetalMaterialProcessed(api);
             Core.Logger.VerboseDebug(
                 "[ItemWorkableNugget#TryPlaceOn] nugget base material: {0}, workItem base material: {1}",
-                stack.GetBaseMaterial().Collectible.Code, beAnvil.WorkItemStack.GetBaseMaterial().Collectible.Code);
-            if (!beAnvil.WorkItemStack.GetBaseMaterial().CodeMatches(stack.GetBaseMaterial()))
+                nuggetMaterial?.IngotCode, workItemMaterial?.IngotCode);
+            if (!workItemMaterial?.Equals(nuggetMaterial) ?? false)
             {
                 if (api.Side == EnumAppSide.Client)
                     ((ICoreClientAPI)api).TriggerIngameError(this, "notequal",
@@ -108,7 +110,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
     public ItemStack GetBaseMaterial(ItemStack stack)
     {
         Core.Logger.VerboseDebug("[ItemWorkableNugget#GetBaseMaterial] {0}", BaseMaterial.Code);
-        if (stack.Collectible is ItemWorkableNugget workableNugget)
+        if (stack.Collectible is ItemWorkableNugget)
         {
             if (!IsBlisterSteelLike) return new ItemStack(BaseMaterial);
             var refinedVariant = BaseMaterial.Attributes["refinedVariant"].AsString("steel");
@@ -145,16 +147,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
 
         base.OnCreatedByCrafting(allInputslots, outputSlot, byRecipe);
     }
-
-    private static ItemStack GetRecipeStack(ItemStack stack)
-    {
-        if (stack.ItemAttributes[ModAttributes.IsPureMetal].AsBool() &&
-            stack.Collectible.CombustibleProps?.SmeltedStack?.ResolvedItemstack?.Collectible is ItemIngot itemIngot)
-            return new ItemStack(itemIngot);
-        return stack;
-    }
-
-
+    
     public List<SmithingRecipe> GetMatchingRecipes(ICoreAPI coreApi)
     {
         var ingotStack = Attributes[ModAttributes.IsPureMetal].AsBool() &&
@@ -183,7 +176,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
             .ToList();
     }
 
-    public static void CreateVoxelsFromNugget(
+    protected static void CreateVoxelsFromNugget(
         ICoreAPI api,
         ref byte[,,] voxels,
         bool withExtraBitChance = true)
@@ -197,7 +190,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
             voxels[8, 1, 7] = 1;
     }
 
-    public static int AddVoxelsFromNugget(
+    protected static int AddVoxelsFromNugget(
         ICoreAPI api,
         ref byte[,,] voxels,
         bool withExtraBitChance = true)

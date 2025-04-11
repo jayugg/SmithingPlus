@@ -56,9 +56,14 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         if (!TryGetOutputStack(crucibleStack, world, out var outputStack)) return;
         var outputUnits = crucibleStack.Attributes.GetInt("units");
         var outputBitCount = outputUnits / 5;
-        var (metalVariant, metalTier) = GetMetalVariantAndTier(byEntity, outputStack);
-        var metalBitStack = new ItemStack(world.GetItem("game:metalbit-copper").ItemWithVariant("metal", metalVariant),
-            outputBitCount);
+        var metalMaterial = outputStack.GetMetalMaterial(byEntity.Api);
+        if (metalMaterial == null)
+        {
+            Core.Logger.VerboseDebug($"[CollectibleBehaviorScrapeCrucible#OnHeldInteractStop] {outputStack.GetName()} has no valid metal material.");
+            return;
+        }
+        var metalTier = metalMaterial.Tier;
+        var metalBitStack = metalMaterial.MetalBitStack;
         metalBitStack.SetTemperatureFrom(world, crucibleStack);
         var emptyCrucibleStack =
             new ItemStack(world.GetBlock(crucibleStack.Collectible.CodeWithVariant("type", "burned")));
@@ -71,17 +76,6 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         activeSlot.Itemstack.Collectible.DamageItem(world, entityPlayer, activeSlot, chiselDamage);
         activeSlot.MarkDirty();
     }
-
-    private static (string metalVariant, int metalTier) GetMetalVariantAndTier(EntityAgent byEntity,
-        ItemStack outputStack)
-    {
-        var metalVariant = outputStack.Collectible.GetMetalMaterial();
-        byEntity.Api.ModLoader.GetModSystem<SurvivalCoreSystem>().metalsByCode
-            .TryGetValue(metalVariant, out var metalProperty);
-        var metalTier = metalProperty?.Tier ?? 0;
-        return (metalVariant, metalTier);
-    }
-
     private static bool TryGetOutputStack(ItemStack crucibleStack, IWorldAccessor world, out ItemStack outputStack)
     {
         outputStack = null;

@@ -9,13 +9,12 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
-using Delegate = System.Delegate;
 
 namespace SmithingPlus.ClientTweaks;
 
 [UsedImplicitly]
 [HarmonyPatchCategory(Core.ClientTweaksCategories.AnvilShowRecipeVoxels)]
-public static class RecipeVoxelCountPatch
+public static class RecipeIngredientCountPatch
 {
     private static List<SmithingRecipe> _selectedRecipes = new();
 
@@ -63,13 +62,14 @@ public static class RecipeVoxelCountPatch
             .EndChildElements()
             .Compose();
         
-        __instance.SingleComposer.GetSkillItemGrid("skillitemgrid").OnSlotOver = OnSlotOver(__instance, ___skillItems, ___prevSlotOver, ___capi);
+        __instance.SingleComposer.GetSkillItemGrid("skillitemgrid").OnSlotOver = num =>
+            OnSlotOver(__instance, ___skillItems, ___prevSlotOver, ___capi, num);
         _selectedRecipes.Clear();
         return false;
     }
     
     [HarmonyReversePatch, HarmonyPatch(typeof(GuiDialogBlockEntityRecipeSelector), "OnTitleBarClose")]
-    private static void OnTitleBarClose_Reverse(GuiDialogBlockEntityRecipeSelector __instance)
+    private static void OnTitleBarClose_Reverse([UsedImplicitly] GuiDialogBlockEntityRecipeSelector __instance)
     {
         throw new NotImplementedException("Reverse patch stub.");
     }
@@ -80,7 +80,7 @@ public static class RecipeVoxelCountPatch
     }
     
     [HarmonyReversePatch, HarmonyPatch(typeof(GuiDialogBlockEntityRecipeSelector), "OnSlotClick")]
-    private static void OnSlotClick_Reverse(GuiDialogBlockEntityRecipeSelector __instance, int num)
+    private static void OnSlotClick_Reverse(GuiDialogBlockEntityRecipeSelector __instance, [UsedImplicitly] int num)
     {
         throw new NotImplementedException("Reverse patch stub.");
     }
@@ -90,31 +90,31 @@ public static class RecipeVoxelCountPatch
         return num => OnSlotClick_Reverse(recipeSelector, num);
     }
 
-    private static Action<int> OnSlotOver(GuiDialogBlockEntityRecipeSelector recipeSelector, List<SkillItem> skillItems, int prevSlotOver, ICoreClientAPI capi)
+    private static void OnSlotOver(GuiDialogBlockEntityRecipeSelector recipeSelector, List<SkillItem> skillItems, int prevSlotOver,
+        ICoreClientAPI capi, int num)
     {
-        return num =>
+        if (num >= skillItems.Count || num == prevSlotOver || num >= _selectedRecipes.Count)
+            return;
+        var selectedRecipe = _selectedRecipes[num];
+        var recipeId = selectedRecipe.RecipeId;
+        var voxelCount = CacheHelper.GetOrAdd(Core.RecipeVoxelCountCache, recipeId,
+            () =>  capi.GetSmithingRecipes().Find(recipe => recipe.RecipeId == recipeId).Voxels.VoxelCount());
+        var baseMaterial = selectedRecipe.Output.ResolvedItemstack.GetMetalMaterial(capi)?.IngotStack;
+        var currentSkillItem = skillItems[num];
+        recipeSelector.SingleComposer.GetDynamicText("name").SetNewText(currentSkillItem.Name);
+        recipeSelector.SingleComposer.GetDynamicText("desc").SetNewText(currentSkillItem.Description);
+        recipeSelector.SingleComposer.GetDynamicText("ingredientDesc").SetNewText(Lang.Get("Requires any of: "));
+        if (baseMaterial == null)
         {
-            if (num >= skillItems.Count || num == prevSlotOver || num >= _selectedRecipes.Count)
-                return;
-            var selectedRecipe = _selectedRecipes[num];
-            var recipeId = selectedRecipe.RecipeId;
-            var voxelCount = CacheHelper.GetOrAdd(Core.RecipeVoxelCountCache, recipeId,
-                () =>  capi.GetSmithingRecipes().Find(recipe => recipe.RecipeId == recipeId).Voxels.VoxelCount());
-            var baseMaterial = selectedRecipe.Output.ResolvedItemstack.GetMetalMaterialStack(capi);
-            var bitsCount = (int) Math.Ceiling(voxelCount / Core.Config.VoxelsPerBit);
-            var countDesc = Lang.Get("Requires any of: ");
-            var currentSkillItem = skillItems[num];
-            recipeSelector.SingleComposer.GetDynamicText("name").SetNewText(currentSkillItem.Name);
-            recipeSelector.SingleComposer.GetDynamicText("desc").SetNewText(currentSkillItem.Description);
-            recipeSelector.SingleComposer.GetDynamicText("ingredientDesc").SetNewText(countDesc);
-            
-            var onStackClickedAction = new Action<ItemStack>(cs => capi.LinkProtocols["handbook"]?.DynamicInvoke(new LinkTextComponent("handbook://" +GuiHandbookItemStackPage.PageCodeForStack(cs))));
-            
-            var allMaterialStacks = HandbookInfoPatch.GetSmithingIngredientStacks(capi, selectedRecipe.Output.ResolvedItemstack, baseMaterial, voxelCount, bitsCount, recipeId);
-            var ingotStackComponents = allMaterialStacks.Select(itemStack =>
-                new ItemstackTextComponent(capi, itemStack, 40, 5.0, EnumFloat.Inline, onStackClickedAction) { ShowStacksize = true });
-            var stackComponentsText =  VtmlUtil.Richtextify(capi, "", CairoFont.WhiteDetailText()).Concat(ingotStackComponents).ToArray();
-            recipeSelector.SingleComposer.GetRichtext("ingredientCounts").SetNewText(stackComponentsText);
-        };
+            recipeSelector.SingleComposer.GetRichtext("ingredientCounts").SetNewText(Array.Empty<RichTextComponentBase>());
+            return;
+        }
+        var bitsCount = (int) Math.Ceiling(voxelCount / Core.Config.VoxelsPerBit);
+        var onStackClickedAction = new Action<ItemStack>(cs => capi.LinkProtocols["handbook"]?.DynamicInvoke(new LinkTextComponent("handbook://" +GuiHandbookItemStackPage.PageCodeForStack(cs))));
+        var allMaterialStacks = HandbookInfoPatch.GetSmithingIngredientStacks(capi, selectedRecipe.Output.ResolvedItemstack, baseMaterial, voxelCount, bitsCount, recipeId);
+        var ingotStackComponents = allMaterialStacks.Select(itemStack =>
+            new ItemstackTextComponent(capi, itemStack, 40, 5.0, EnumFloat.Inline, onStackClickedAction) { ShowStacksize = true });
+        var stackComponentsText =  VtmlUtil.Richtextify(capi, "", CairoFont.WhiteDetailText()).Concat(ingotStackComponents).ToArray();
+        recipeSelector.SingleComposer.GetRichtext("ingredientCounts").SetNewText(stackComponentsText);
     }
 }

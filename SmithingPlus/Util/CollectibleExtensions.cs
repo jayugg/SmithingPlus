@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Vintagestory.API.Common;
 using Vintagestory.API.Util;
@@ -6,13 +7,18 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus.Util;
 
+#nullable enable
 public static class CollectibleExtensions
 {
     public static void AddBehavior<T>(this CollectibleObject collectible) where T : CollectibleBehavior
     {
         var existingBehavior = collectible.CollectibleBehaviors.FirstOrDefault(b => b.GetType() == typeof(T));
         collectible.CollectibleBehaviors.Remove(existingBehavior);
-        var behavior = (T) Activator.CreateInstance(typeof(T), collectible);
+        if (Activator.CreateInstance(typeof(T), collectible) is not T behavior)
+        {
+            Core.Logger.Error("[CollectibleExtensions] Failed to create behavior {0} for {1}", typeof(T).Name, collectible.Code);
+            return;
+        }
         collectible.CollectibleBehaviors = collectible.CollectibleBehaviors.Append(behavior);
     }
     
@@ -20,30 +26,6 @@ public static class CollectibleExtensions
     {
         if (!condition) return;
         collectible.AddBehavior<T>();
-    }
-    
-    public static string GetMetalOrMaterial(this CollectibleObject collObj)
-    {
-        return collObj.Variant["metal"] ?? collObj.Variant["material"];
-    }
-    
-    public static string GetMetalMaterial(this CollectibleObject collObj, ICoreAPI api = null)
-    {
-        api ??= Core.Api;
-        var ingotItem = api?.World.GetItem(new AssetLocation("game:ingot-" + collObj.GetMetalOrMaterial()));
-        return ingotItem?.Variant["metal"] ?? ingotItem?.Variant["material"];
-    }
-    
-    public static ItemStack GetMetalMaterialStack(this CollectibleObject collObj, ICoreAPI api = null)
-    {
-        api ??= Core.Api;
-        var ingotItem = api?.World.GetItem(new AssetLocation("game:ingot-" + collObj.GetMetalOrMaterial()));
-        return new ItemStack(ingotItem);
-    }
-
-    public static bool HasMetalMaterial(this CollectibleObject collObj, ICoreAPI api = null)
-    {
-        return collObj.GetMetalMaterial(api) != null;
     }
     
     /*
@@ -66,13 +48,45 @@ public static class CollectibleExtensions
         return repairable;
     }
     
-    public static SmithingRecipe GetSmithingRecipe(this CollectibleObject collectible, IWorldAccessor world)
+    public static SmithingRecipe? GetSmithingRecipe(this CollectibleObject collObj, ICoreAPI api)
     {
-        var smithingRecipe = world.Api.ModLoader
+        var smithingRecipe = api.ModLoader
             .GetModSystem<RecipeRegistrySystem>()
             .SmithingRecipes
-            .FirstOrDefault(r => r.Output.ResolvedItemstack.Collectible.Code.Equals(collectible.Code));
+            .FirstOrDefault(r => r.Output.ResolvedItemstack.Collectible.Code.Equals(collObj.Code));
         return smithingRecipe;
+    }
+
+    public static IEnumerable<GridRecipe> GetGridRecipes(this CollectibleObject collObj, ICoreAPI api)
+    {
+        var gridRecipes =
+            from recipe in api.World.GridRecipes
+            where recipe.Output.ResolvedItemstack.Collectible.Code.Equals(collObj.Code)
+            select recipe;
+        return gridRecipes;
+    }
+    
+    public static IEnumerable<SmithingRecipe> GetSmithingRecipesAsIngredient(this CollectibleObject collObj, ICoreAPI api)
+    {
+        var smithingRecipes = 
+            from recipe in api.ModLoader.GetModSystem<RecipeRegistrySystem>().SmithingRecipes
+                from ing in recipe.Ingredients
+                where ing.ResolvedItemstack is not null &&
+                      ing.ResolvedItemstack.Collectible.Code.Equals(collObj.Code)
+                select recipe;
+        return smithingRecipes;
+    }
+    
+    public static IEnumerable<GridRecipe> GetGridRecipesAsIngredient(this CollectibleObject collObj, ICoreAPI api)
+    {
+        var gridRecipes =
+            from recipe in api.World.GridRecipes
+            where recipe.resolvedIngredients != null
+            from ing in recipe.resolvedIngredients
+            where ing is { ResolvedItemstack.Collectible: not null } &&
+                  ing.ResolvedItemstack.Collectible.Code.Equals(collObj.Code)
+            select recipe;
+        return gridRecipes;
     }
 
 }

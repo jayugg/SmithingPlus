@@ -1,12 +1,12 @@
-TODO:
-- TODO [Code Tweak] Standardise fetching metal variant / type and relevant ingot
 - TODO [Tweak] Config option to disable iron bloom modifications from helve hammers
 - TODO [Compatibility] Stop knapster from autocompleting when hitting in flip tool mode
-- TODO Fight cheating players that try to remove tongs while setting the tool mode
+- TODO [Minor] Fight cheating players that try to remove tongs while setting the tool mode
 - TODO Store overall transform for flip tool mode to properly reconstruct recipe outline rotation.
     Current method can have bugs and is harder to maintain.
+- TODO [Feature] Helve hammer bit recovery
 
-- [Client Tweak] Overhaul of recipe ingredient count client tweak
-- [Localisation] Added pl localisation
-- [Handbook] Added en handbook guide
-- [Fix] Cache clearing errors on unload
+Pre-release:
+- [Code Tweak] (Massive change. Not fully tested. Might cause unexpected behavior)
+    Standardise fetching metal variant / type and relevant ingot. Impact:
+    - Iron bits can be placed on iron bloom
+    - Fix crashes in smithing recipe GUI

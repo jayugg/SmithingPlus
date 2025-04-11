@@ -29,17 +29,18 @@ public class ItemXWorkableNugget : ItemWorkableNugget
         else
         {
             if (!Core.Config.BitsTopUp) return null;
+            var nuggetMaterial = stack.GetMetalMaterial(api);
+            var workItemMaterial = beAnvil.WorkItemStack.GetMetalMaterialProcessed(api);
             Core.Logger.VerboseDebug(
-                "[ItemWorkableNugget#TryPlaceOn] nugget base material: {0}, workItem base material: {1}",
-                stack.GetBaseMaterial().Collectible.Code, beAnvil.WorkItemStack.GetBaseMaterial().Collectible.Code);
-            if (!beAnvil.WorkItemStack.GetBaseMaterial().CodeMatches(stack.GetBaseMaterial()))
+                "[ItemWorkableNugget#TryPlaceOn] nugget metal material: {0}, workItem metal material: {1}",
+                nuggetMaterial?.IngotCode, workItemMaterial?.IngotCode);
+            if (!workItemMaterial?.Equals(nuggetMaterial) ?? false)
             {
                 if (api.Side == EnumAppSide.Client)
                     ((ICoreClientAPI)api).TriggerIngameError(this, "notequal",
                         Lang.Get("Must be the same metal to add voxels"));
                 return null;
             }
-
             var bits = AddVoxelsFromNugget(api, ref beAnvil.Voxels, false);
             if (bits != 0)
             {

@@ -72,16 +72,17 @@ public class ItemWorkableRod : Item, IAnvilWorkable
         else
         {
             if (!Core.Config.BitsTopUp) return null;
-            Core.Logger.VerboseDebug("[ItemWorkableRod#TryPlaceOn] rod base material: {0}, workItem base material: {1}",
-                stack.GetBaseMaterial().Collectible.Code, beAnvil.WorkItemStack.GetBaseMaterial().Collectible.Code);
-            if (!beAnvil.WorkItemStack.GetBaseMaterial().CodeMatches(stack.GetBaseMaterial()))
+            var rodMaterial = stack.GetMetalMaterial(api);
+            var workItemMaterial = beAnvil.WorkItemStack.GetMetalMaterialProcessed(api);
+            Core.Logger.VerboseDebug("[ItemWorkableRod#TryPlaceOn] rod metal material: {0}, workItem metal material: {1}",
+                rodMaterial?.IngotCode, workItemMaterial?.IngotCode);
+            if (!workItemMaterial?.Equals(rodMaterial) ?? false)
             {
                 if (api.Side == EnumAppSide.Client)
                     ((ICoreClientAPI)api).TriggerIngameError(this, "notequal",
                         Lang.Get("Must be the same metal to add voxels"));
                 return null;
             }
-
             var addedVoxelCount = AddVoxelsFromRod(ref beAnvil.Voxels, RecipeVoxels ?? new bool[16, 6, 16]);
             if (addedVoxelCount != 0)
             {
@@ -89,7 +90,6 @@ public class ItemWorkableRod : Item, IAnvilWorkable
                     beAnvil.WorkItemStack.AddToCustomWorkData(addedVoxelCount);
                 return itemstack;
             }
-
             if (api.Side == EnumAppSide.Client)
                 ((ICoreClientAPI)api).TriggerIngameError(this, "requireshammering",
                     Lang.Get("Try hammering down before adding additional voxels"));
@@ -170,7 +170,7 @@ public class ItemWorkableRod : Item, IAnvilWorkable
 
     private ItemStack GetMetalStack()
     {
-        var metalOrMaterial = this.GetMetalOrMaterial();
+        var metalOrMaterial = this.GetMetalVariant();
         return new ItemStack(api.World.GetItem(new AssetLocation(Code.Domain, "ingot-" + metalOrMaterial)));
     }
 

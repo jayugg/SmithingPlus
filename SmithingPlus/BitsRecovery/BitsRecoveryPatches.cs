@@ -1,6 +1,5 @@
 using System;
 using HarmonyLib;
-using SmithingPlus.ToolRecovery;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -8,6 +7,7 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus.BitsRecovery;
 
+#nullable enable
 [HarmonyPatch(typeof(BlockEntityAnvil), "OnUseOver", typeof(IPlayer), typeof(Vec3i), typeof(BlockSelection))]
 [HarmonyPatchCategory(Core.BitsRecoveryCategory)]
 public class BitsRecoveryPatches
@@ -49,20 +49,15 @@ public class BitsRecoveryPatches
 
         __instance.WorkItemStack.SetSplitCount(Math.Max(splitCount - 1, 0));
         Core.Logger.VerboseDebug("[BitsRecovery] Attempting to recover bits from {0}", workItemStack);
-        var metalVariant = ItemDamagedPatches.GetMetalOrMaterial(__instance.SelectedRecipe.Output.ResolvedItemstack) ??
-                           ItemDamagedPatches.GetMetalOrMaterial(__instance.WorkItemStack);
-        ;
-        var metalbit = byPlayer.Entity.World.GetItem(new AssetLocation("game:metalbit-copper"))
-            .ItemWithVariant("metal", metalVariant);
-        if (metalbit == null)
+        var metalMaterial = workItemStack.GetMetalMaterialProcessed(byPlayer.Entity.Api);
+        if (!(metalMaterial?.Resolved ?? false))
         {
-            Core.Logger.VerboseDebug("[BitsRecovery] no metalbit found for variant {0}", metalVariant);
+            Core.Logger.VerboseDebug("[BitsRecovery#BEAnvil_OnUseOver_Postfix] No valid metal material found in work item.");
             return;
         }
-
-        var metalbitStack = new ItemStack(metalbit);
+        var metalbitStack = metalMaterial.MetalBitStack;
         var temperature = workItemStack.Collectible.GetTemperature(byPlayer.Entity.World, workItemStack);
-        metalbitStack.Collectible.SetTemperature(byPlayer.Entity.World, metalbitStack, temperature);
+        metalbitStack?.Collectible.SetTemperature(byPlayer.Entity.World, metalbitStack, temperature);
         if (byPlayer.InventoryManager.TryGiveItemstack(metalbitStack)) return;
         byPlayer.Entity.World.SpawnItemEntity(metalbitStack, byPlayer.Entity.Pos.XYZ);
     }

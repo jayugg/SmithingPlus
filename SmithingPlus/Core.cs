@@ -84,7 +84,7 @@ public partial class Core : ModSystem
             collObj.AddBehaviorIf<CollectibleBehaviorSmeltedContainer>(Config.RecoverBitsOnSplit &&
                                                                        collObj is BlockSmeltedContainer);
             if ((collObj.Tool != null || (collObj.IsRepairableTool() && !collObj.IsRepairableToolHead())) &&
-                collObj.HasMetalMaterial(api)) collObj.AddBehavior<CollectibleBehaviorRepairableTool>();
+                collObj.HasMetalMaterialSimple()) collObj.AddBehavior<CollectibleBehaviorRepairableTool>();
             else if (collObj.IsRepairableToolHead()) collObj.AddBehavior<CollectibleBehaviorRepairableToolHead>();
             else if (WildcardUtil.Match(Config.WorkItemSelector, collObj.Code.ToString()))
                 collObj.AddBehavior<CollectibleBehaviorBrokenToolHead>();

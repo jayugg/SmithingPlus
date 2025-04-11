@@ -22,14 +22,14 @@ public class RecyclableArrowBehavior : EntityBehavior
         if (entityProjectile.ProjectileStack is not { } stack ||
             !IsRecyclableArrow(entityProjectile)) return base.GetDrops(world, pos, byPlayer, ref handling);
         Core.Logger.VerboseDebug("Arrow died: {0}", stack);
-        var metalVariant = ItemDamagedPatches.GetMetalOrMaterial(stack);
+        var metalMaterial = stack.GetMetalMaterial(world.Api);
+        var metalVariant = metalMaterial?.Variant;
         if (metalVariant == null) return base.GetDrops(world, pos, byPlayer, ref handling);
         Core.Logger.VerboseDebug("Arrow metal: {0}", metalVariant);
-        var metalbit = world.GetItem(new AssetLocation("game:metalbit-copper")).ItemWithVariant("metal", metalVariant);
-        if (metalbit == null) return base.GetDrops(world, pos, byPlayer, ref handling);
+        var metalBitStack = metalMaterial.MetalBitStack;
+        if (metalBitStack == null) return base.GetDrops(world, pos, byPlayer, ref handling);
         handling = EnumHandling.PreventDefault;
-        var metalbitStack = new ItemStack(metalbit);
-        return new[] { metalbitStack };
+        return new[] { metalBitStack };
     }
     
     public static bool IsRecyclableArrow(EntityProjectile projectile)
