@@ -20,7 +20,7 @@ public class CastToolPenaltyPatch
             return;
         foreach (var stack in __result)
         {
-            if (stack.Collectible.GetMaxDurability(stack) <= 1) continue;
+            if (!stack.Collectible.HasBehavior<CollectibleBehaviorCastToolHead>()) continue;
             stack.Attributes ??= new TreeAttribute();
             stack.Attributes.SetBool(ModAttributes.CastTool, true);
         }

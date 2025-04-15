@@ -6,6 +6,7 @@ namespace SmithingPlus.Config;
 public class ServerConfig
 {
     public bool RecoverBitsOnSplit { get; set; } = true;
+    public bool HelveHammerBitsRecovery { get; set; } = true;
     public float VoxelsPerBit { get; set; } = 2.1f;
     public bool SmithWithBits { get; set; } = true;
     public bool BitsTopUp { get; set; } = true;

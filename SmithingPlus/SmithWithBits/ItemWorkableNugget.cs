@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SmithingPlus.Compat;
+using SmithingPlus.Metal;
 using SmithingPlus.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -36,7 +37,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
     }
 
     /// <summary>
-    /// Get all smithing recipes that match the given stack
+    ///     Get all smithing recipes that match the given stack
     /// </summary>
     /// <param name="stack"> The stack to match </param>
     /// <returns> A list of matching recipes </returns>
@@ -66,27 +67,27 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
         var obj = api.World.GetItem(new AssetLocation("workitem-" + MetalVariant));
         if (obj == null)
             return null;
-        var itemstack = new ItemStack(obj);
-        itemstack.Collectible.SetTemperature(api.World, itemstack, stack.Collectible.GetTemperature(api.World, stack));
+        var itemStack = new ItemStack(obj);
+        itemStack.Collectible.SetTemperature(api.World, itemStack, stack.Collectible.GetTemperature(api.World, stack));
         if (beAnvil.WorkItemStack == null)
         {
             if (!Core.Config.SmithWithBits) return null;
             CreateVoxelsFromNugget(api, ref beAnvil.Voxels);
             if (ThriftySmithingCompat.ThriftySmithingLoaded)
-                itemstack.AddToCustomWorkData(beAnvil.Voxels.MaterialCount());
+                itemStack.AddToCustomWorkData(beAnvil.Voxels.MaterialCount());
         }
         else
         {
             if (!Core.Config.BitsTopUp) return null;
-            var nuggetMaterial = stack.GetMetalMaterial(api);
+            var nuggetMaterial = stack.GetOrCacheMetalMaterial(api);
             var workItemMaterial = beAnvil.WorkItemStack.GetMetalMaterialProcessed(api);
             Core.Logger.VerboseDebug(
                 "[ItemWorkableNugget#TryPlaceOn] nugget base material: {0}, workItem base material: {1}",
                 nuggetMaterial?.IngotCode, workItemMaterial?.IngotCode);
             if (!workItemMaterial?.Equals(nuggetMaterial) ?? false)
             {
-                if (api.Side == EnumAppSide.Client)
-                    ((ICoreClientAPI)api).TriggerIngameError(this, "notequal",
+                if (api is ICoreClientAPI capi1)
+                    capi1.TriggerIngameError(this, "notequal",
                         Lang.Get("Must be the same metal to add voxels"));
                 return null;
             }
@@ -95,16 +96,16 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
             if (bits != 0)
             {
                 if (ThriftySmithingCompat.ThriftySmithingLoaded) beAnvil.WorkItemStack.AddToCustomWorkData(bits);
-                return itemstack;
+                return itemStack;
             }
 
-            if (api.Side == EnumAppSide.Client)
-                ((ICoreClientAPI)api).TriggerIngameError(this, "requireshammering",
+            if (api is ICoreClientAPI capi2)
+                capi2.TriggerIngameError(this, "requireshammering",
                     Lang.Get("Try hammering down before adding additional voxels"));
             return null;
         }
 
-        return itemstack;
+        return itemStack;
     }
 
     public ItemStack GetBaseMaterial(ItemStack stack)
@@ -147,7 +148,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
 
         base.OnCreatedByCrafting(allInputslots, outputSlot, byRecipe);
     }
-    
+
     public List<SmithingRecipe> GetMatchingRecipes(ICoreAPI coreApi)
     {
         var ingotStack = Attributes[ModAttributes.IsPureMetal].AsBool() &&

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using SmithingPlus.Compat;
+using SmithingPlus.Metal;
 using SmithingPlus.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -60,21 +61,22 @@ public class ItemWorkableRod : Item, IAnvilWorkable
         var obj = api.World.GetItem(new AssetLocation("workitem-" + MetalVariant));
         if (obj == null)
             return null;
-        var itemstack = new ItemStack(obj);
-        itemstack.Collectible.SetTemperature(api.World, itemstack, stack.Collectible.GetTemperature(api.World, stack));
+        var itemStack = new ItemStack(obj);
+        itemStack.Collectible.SetTemperature(api.World, itemStack, stack.Collectible.GetTemperature(api.World, stack));
         if (beAnvil.WorkItemStack == null)
         {
             if (!Core.Config.SmithWithBits) return null;
             CreateVoxelsFromRod(out beAnvil.Voxels, RecipeVoxels ?? new bool[16, 6, 16]);
             if (ThriftySmithingCompat.ThriftySmithingLoaded)
-                itemstack.AddToCustomWorkData(beAnvil.Voxels.MaterialCount());
+                itemStack.AddToCustomWorkData(beAnvil.Voxels.MaterialCount());
         }
         else
         {
             if (!Core.Config.BitsTopUp) return null;
-            var rodMaterial = stack.GetMetalMaterial(api);
+            var rodMaterial = stack.GetOrCacheMetalMaterial(api);
             var workItemMaterial = beAnvil.WorkItemStack.GetMetalMaterialProcessed(api);
-            Core.Logger.VerboseDebug("[ItemWorkableRod#TryPlaceOn] rod metal material: {0}, workItem metal material: {1}",
+            Core.Logger.VerboseDebug(
+                "[ItemWorkableRod#TryPlaceOn] rod metal material: {0}, workItem metal material: {1}",
                 rodMaterial?.IngotCode, workItemMaterial?.IngotCode);
             if (!workItemMaterial?.Equals(rodMaterial) ?? false)
             {
@@ -83,20 +85,22 @@ public class ItemWorkableRod : Item, IAnvilWorkable
                         Lang.Get("Must be the same metal to add voxels"));
                 return null;
             }
+
             var addedVoxelCount = AddVoxelsFromRod(ref beAnvil.Voxels, RecipeVoxels ?? new bool[16, 6, 16]);
             if (addedVoxelCount != 0)
             {
                 if (ThriftySmithingCompat.ThriftySmithingLoaded)
                     beAnvil.WorkItemStack.AddToCustomWorkData(addedVoxelCount);
-                return itemstack;
+                return itemStack;
             }
+
             if (api.Side == EnumAppSide.Client)
                 ((ICoreClientAPI)api).TriggerIngameError(this, "requireshammering",
                     Lang.Get("Try hammering down before adding additional voxels"));
             return null;
         }
 
-        return itemstack;
+        return itemStack;
     }
 
     public ItemStack GetBaseMaterial(ItemStack stack)

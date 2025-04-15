@@ -12,12 +12,8 @@ namespace SmithingPlus.ToolRecovery;
 
 [HarmonyPatch(typeof(ItemWorkItem))]
 [HarmonyPatchCategory(Core.ToolRecoveryCategory)]
-public class CollectibleBehaviorBrokenToolHead : CollectibleBehaviorRepairableTool
+public class CollectibleBehaviorBrokenToolHead(CollectibleObject collObj) : CollectibleBehaviorRepairableTool(collObj)
 {
-    public CollectibleBehaviorBrokenToolHead(CollectibleObject collObj) : base(collObj)
-    {
-    }
-
     protected override string LangKey => "Broken";
 
     public static bool IsBrokenToolHead(ItemStack itemStack)
@@ -40,8 +36,8 @@ public class CollectibleBehaviorBrokenToolHead : CollectibleBehaviorRepairableTo
             });
         dsc.Clear();
         dsc.AppendLine(toolName == null
-            ? Lang.Get("Unknown broken tool part")
-            : Lang.Get("Broken {0}", toolName.ToLower()));
+            ? Lang.Get($"{Core.ModId}:Unknown broken tool part")
+            : Lang.Get($"{Core.ModId}:Broken {{0}}", toolName.ToLower()));
     }
 
     public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)

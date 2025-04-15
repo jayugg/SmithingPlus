@@ -21,8 +21,8 @@ public class BitRecoveryPatches
     {
         if (outputSlot.Inventory.Api is not { } api) return;
         var world = api.World;
-        var smithingRecipe = allInputslots.FirstOrDefault(slot => slot.Itemstack?.GetSmithingRecipe(world) != null)
-            ?.Itemstack?.GetSmithingRecipe(world);
+        var smithingRecipe = allInputslots.FirstOrDefault(slot => slot.Itemstack?.GetSmithingRecipe(world.Api) != null)
+            ?.Itemstack?.GetSmithingRecipe(world.Api);
         if (smithingRecipe == null) return;
         if (outputSlot.Itemstack == null) return;
         var voxelCount = CacheHelper.GetOrAdd(Core.RecipeVoxelCountCache, smithingRecipe.RecipeId,

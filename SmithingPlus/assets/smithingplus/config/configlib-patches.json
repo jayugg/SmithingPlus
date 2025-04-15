@@ -12,6 +12,14 @@
       "default": true
     },
     {
+      "code": "HelveHammerBitsRecovery",
+      "ingui": "smithingplus:setting-helvehammerbitsrecovery",
+      "type": "boolean",
+      "weight": 1.98,
+      "comment": "Enable bits recovery from helve hammer",
+      "default": true
+    },
+    {
       "code": "VoxelsPerBit",
       "ingui": "smithingplus:setting-voxelsperbit",
       "type": "float",

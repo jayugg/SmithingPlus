@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
+using SmithingPlus.Metal;
 using SmithingPlus.SmithWithBits;
 using SmithingPlus.Util;
 using Vintagestory.API.Client;
@@ -47,9 +48,10 @@ public partial class HandbookInfoPatch
         if (smallestSmithingRecipe == null) return;
         var voxelCount = smallestSmithingRecipe.Voxels.VoxelCount();
         var bitsCount = (int)Math.Ceiling(voxelCount / Core.Config.VoxelsPerBit);
-        var baseMaterial = stack.GetMetalMaterial(capi)?.IngotStack;
+        var baseMaterial = stack.GetOrCacheMetalMaterial(capi)?.IngotStack;
         if (baseMaterial == null) return;
-        var allMaterialStacks = GetSmithingIngredientStacks(capi, stack, baseMaterial, voxelCount, bitsCount, smallestSmithingRecipe.RecipeId);
+        var allMaterialStacks = GetSmithingIngredientStacks(capi, stack, baseMaterial, voxelCount, bitsCount,
+            smallestSmithingRecipe.RecipeId);
         if (allMaterialStacks.Count <= 0) return;
         // If Smithing section was found, add custom info
         var smithingSectionExists = smithingSectionIndex >= 0;
@@ -85,7 +87,8 @@ public partial class HandbookInfoPatch
         }
     }
 
-    public static List<ItemStack> GetSmithingIngredientStacks(ICoreClientAPI capi, ItemStack stack, ItemStack baseMaterial,
+    public static List<ItemStack> GetSmithingIngredientStacks(ICoreClientAPI capi, ItemStack stack,
+        ItemStack baseMaterial,
         int voxelCount, int bitsCount, int recipeId)
     {
         var allMaterialCollectibles = capi.World.Collectibles

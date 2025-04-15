@@ -1,16 +1,25 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 
-namespace SmithingPlus.Util;
+namespace SmithingPlus.Metal;
 
 #nullable enable
 public static class MetalMaterialExtensions
 {
     #region CollectibleObject
-    
-    public static MetalMaterial? GetMetalMaterial(this CollectibleObject collObj, ICoreAPI api, int recursionDepth = 0)
+
+    public static MetalMaterial? GetOrCacheMetalMaterial(this CollectibleObject collObj, ICoreAPI api)
+    {
+        var metalMaterial =
+            CacheHelper.GetOrAdd(Core.MetalMaterialCache, collObj.Code, () => collObj.GetMetalMaterial(api));
+        return metalMaterial;
+    }
+
+    private static MetalMaterial? GetMetalMaterial(this CollectibleObject collObj, ICoreAPI api, int recursionDepth = 0)
     {
         // First try to grab the variant directly
         var ingotCode = collObj.GetMetalIngotCode();
@@ -18,12 +27,13 @@ public static class MetalMaterialExtensions
         if (metalMaterial.Resolved) return metalMaterial;
         // If that fails (coke oven door), try to get the variant from the smithing recipe
         var smithingRecipe = collObj.GetSmithingRecipe(api);
-        if (smithingRecipe is { Ingredient.ResolvedItemstack: var ingredientStack})
+        if (smithingRecipe is { Ingredient.ResolvedItemstack: var ingredientStack })
         {
             ingotCode = ingredientStack.Collectible.GetMetalIngotCode();
             metalMaterial = new MetalMaterial(api, ingotCode);
             if (metalMaterial.Resolved) return metalMaterial;
         }
+
         // If that fails, check if the ingredient can be crafted into metal bits or similar
         var childRecipes = collObj.GetGridRecipesAsIngredient(api);
         if (TryGetMetalMaterialFromIngredients(api, childRecipes, out metalMaterial))
@@ -33,11 +43,11 @@ public static class MetalMaterialExtensions
         if (TryGetMetalMaterialRecursively(api, parentRecipes, out metalMaterial, recursionDepth))
             return metalMaterial;
         // If that fails, return null
-        Core.Logger.Error("[MetalMaterial] Failed to find metal material {0}", ingotCode);
+        Debug.WriteLine("[MetalMaterial] Failed to find metal material {0}", ingotCode);
         return null;
     }
 
-    private static bool TryGetMetalMaterial(IEnumerable<GridRecipe> gridRecipes, 
+    private static bool TryGetMetalMaterial(IEnumerable<GridRecipe> gridRecipes,
         Func<CollectibleObject, MetalMaterial?> materialResolver, out MetalMaterial? metalMaterial)
     {
         metalMaterial = null;
@@ -56,10 +66,12 @@ public static class MetalMaterialExtensions
                 if (metalMaterial?.Resolved ?? false) break;
             }
         }
+
         return metalMaterial?.Resolved ?? false;
     }
 
-    private static bool TryGetMetalMaterialFromIngredients(ICoreAPI api, IEnumerable<GridRecipe> gridRecipes, out MetalMaterial? metalMaterial)
+    private static bool TryGetMetalMaterialFromIngredients(ICoreAPI api, IEnumerable<GridRecipe> gridRecipes,
+        out MetalMaterial? metalMaterial)
     {
         return TryGetMetalMaterial(gridRecipes, ingredient =>
         {
@@ -68,14 +80,16 @@ public static class MetalMaterialExtensions
         }, out metalMaterial);
     }
 
-    private static bool TryGetMetalMaterialRecursively(ICoreAPI api, IEnumerable<GridRecipe> gridRecipes, out MetalMaterial? metalMaterial, int recursionDepth = 0)
+    private static bool TryGetMetalMaterialRecursively(ICoreAPI api, IEnumerable<GridRecipe> gridRecipes,
+        out MetalMaterial? metalMaterial, int recursionDepth = 0)
     {
         // Stop recursion if the maximum depth is reached
         metalMaterial = null;
-        if (recursionDepth < 5)
+        const int maxRecursionDepth = 4;
+        if (recursionDepth < maxRecursionDepth)
             return TryGetMetalMaterial(gridRecipes, ingredient =>
                 ingredient.GetMetalMaterial(api, recursionDepth + 1), out metalMaterial);
-        Core.Logger.Warning("[MetalMaterial] Recursion depth limit reached while resolving metal material.");
+        Debug.WriteLine("[MetalMaterial] Recursion depth limit reached while resolving metal material.");
         return false;
     }
 
@@ -85,8 +99,8 @@ public static class MetalMaterialExtensions
         return new AssetLocation($"{collObj.Code.Domain}:ingot-{variant}");
     }
 
-    // Use when what matters is the processed result (e.g. iron bloom > iron, blister steel > steel)
-    public static MetalMaterial? GetMetalMaterialProcessed(this CollectibleObject collectibleObject, ICoreAPI api)
+    // Use when what matters is the processed result (e.g., iron bloom > iron, blister steel > steel)
+    private static MetalMaterial? GetMetalMaterialProcessed(this CollectibleObject collectibleObject, ICoreAPI api)
     {
         // This instead gets the metal material of the items created by smithing this item
         var smithingRecipes = collectibleObject.GetSmithingRecipesAsIngredient(api);
@@ -99,6 +113,7 @@ public static class MetalMaterialExtensions
             metalMaterial = new MetalMaterial(api, ingotCode);
             if (metalMaterial.Resolved) return metalMaterial;
         }
+
         return metalMaterial;
     }
 
@@ -106,17 +121,17 @@ public static class MetalMaterialExtensions
     {
         return collObj.Variant["metal"] ?? collObj.Variant["material"] ?? collObj.LastCodePart();
     }
-    
+
     public static bool HasMetalMaterialSimple(this CollectibleObject collObj)
     {
         return (collObj.Variant["metal"] ?? collObj.Variant["material"]) != null;
     }
 
     #endregion
-    
+
     #region ItemStack
-    
-    public static MetalMaterial? GetMetalMaterial(this ItemStack itemStack, ICoreAPI api)
+
+    public static MetalMaterial? GetOrCacheMetalMaterial(this ItemStack itemStack, ICoreAPI api)
     {
         var collObj = itemStack.Collectible;
         // Resort to the CollectibleObject method for items that are not anvil workable
@@ -124,10 +139,10 @@ public static class MetalMaterialExtensions
         // Grab from IAnvilWorkable
         var ingotStack = anvilWorkable.GetBaseMaterial(itemStack);
         var metalMaterial = new MetalMaterial(api, ingotStack);
-        return metalMaterial.Resolved ? metalMaterial : collObj.GetMetalMaterial(api);
+        return metalMaterial.Resolved ? metalMaterial : collObj.GetOrCacheMetalMaterial(api);
     }
-    
-    // Use when what matters is the processed result (e.g. iron bloom > iron, blister steel > steel)
+
+    // Use when what matters is the processed result (e.g., iron bloom > iron, blister steel > steel)
     public static MetalMaterial? GetMetalMaterialProcessed(this ItemStack itemStack, ICoreAPI api)
     {
         var collObj = itemStack.Collectible;
@@ -138,5 +153,6 @@ public static class MetalMaterialExtensions
         // Try to grab the processed material from the ingot stack
         return ingotStack.Collectible.GetMetalMaterialProcessed(api);
     }
+
     #endregion
 }

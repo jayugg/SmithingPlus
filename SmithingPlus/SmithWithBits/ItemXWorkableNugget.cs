@@ -1,4 +1,5 @@
 using SmithingPlus.Compat;
+using SmithingPlus.Metal;
 using SmithingPlus.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -17,19 +18,19 @@ public class ItemXWorkableNugget : ItemWorkableNugget
         var obj = api.World.GetItem(new AssetLocation("workitem-" + MetalVariant));
         if (obj == null)
             return null;
-        var itemstack = new ItemStack(obj);
-        itemstack.Collectible.SetTemperature(api.World, itemstack, stack.Collectible.GetTemperature(api.World, stack));
+        var itemStack = new ItemStack(obj);
+        itemStack.Collectible.SetTemperature(api.World, itemStack, stack.Collectible.GetTemperature(api.World, stack));
         if (beAnvil.WorkItemStack == null)
         {
             if (!Core.Config.SmithWithBits) return null;
             CreateVoxelsFromNugget(api, ref beAnvil.Voxels);
             if (ThriftySmithingCompat.ThriftySmithingLoaded)
-                itemstack.AddToCustomWorkData(beAnvil.Voxels.MaterialCount());
+                itemStack.AddToCustomWorkData(beAnvil.Voxels.MaterialCount());
         }
         else
         {
             if (!Core.Config.BitsTopUp) return null;
-            var nuggetMaterial = stack.GetMetalMaterial(api);
+            var nuggetMaterial = stack.GetOrCacheMetalMaterial(api);
             var workItemMaterial = beAnvil.WorkItemStack.GetMetalMaterialProcessed(api);
             Core.Logger.VerboseDebug(
                 "[ItemWorkableNugget#TryPlaceOn] nugget metal material: {0}, workItem metal material: {1}",
@@ -41,11 +42,12 @@ public class ItemXWorkableNugget : ItemWorkableNugget
                         Lang.Get("Must be the same metal to add voxels"));
                 return null;
             }
+
             var bits = AddVoxelsFromNugget(api, ref beAnvil.Voxels, false);
             if (bits != 0)
             {
                 if (ThriftySmithingCompat.ThriftySmithingLoaded) beAnvil.WorkItemStack.AddToCustomWorkData(bits);
-                return itemstack;
+                return itemStack;
             }
 
             if (api.Side == EnumAppSide.Client)
@@ -54,6 +56,6 @@ public class ItemXWorkableNugget : ItemWorkableNugget
             return null;
         }
 
-        return itemstack;
+        return itemStack;
     }
 }

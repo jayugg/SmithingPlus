@@ -11,9 +11,9 @@ namespace SmithingPlus.HammerTweaks;
 public class HammerTweaksNetwork : ModSystem
 {
     private const string ChannelName = $"{Core.ModId}:{Core.HammerTweaksCategory}";
-    
+
     /// <summary>
-    /// Always null on servers, stores the original tool modes count for the client.
+    ///     Always null on servers, stores the original tool modes count for the client.
     /// </summary>
     public static int? OriginalToolModesCount { get; set; }
 
@@ -22,7 +22,10 @@ public class HammerTweaksNetwork : ModSystem
         return ConfigLoader.Config?.HammerTweaks ?? false;
     }
 
-    public override double ExecuteOrder() => base.ExecuteOrder() + 0.01;
+    public override double ExecuteOrder()
+    {
+        return base.ExecuteOrder() + 0.01;
+    }
 
     public override void Start(ICoreAPI api)
     {
@@ -31,9 +34,19 @@ public class HammerTweaksNetwork : ModSystem
             .RegisterMessageType(typeof(FlipToolModePacket));
     }
 
+    public override void Dispose()
+    {
+        ClientChannel = null;
+        OriginalToolModesCount = null;
+        base.Dispose();
+    }
+
     #region Client
 
+    // ReSharper disable once UnusedAutoPropertyAccessor.Local
     private IClientNetworkChannel ClientChannel { get; set; }
+
+    // ReSharper disable once UnusedAutoPropertyAccessor.Local
     private ICoreClientAPI Capi { get; set; }
 
     public override void StartClientSide(ICoreClientAPI api)
@@ -69,11 +82,4 @@ public class HammerTweaksNetwork : ModSystem
     }
 
     #endregion
-    
-    public override void Dispose()
-    {
-        ClientChannel = null;
-        OriginalToolModesCount = null;
-        base.Dispose();
-    }
 }

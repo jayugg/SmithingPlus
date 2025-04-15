@@ -1,3 +1,4 @@
+using SmithingPlus.Metal;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -56,12 +57,14 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         if (!TryGetOutputStack(crucibleStack, world, out var outputStack)) return;
         var outputUnits = crucibleStack.Attributes.GetInt("units");
         var outputBitCount = outputUnits / 5;
-        var metalMaterial = outputStack.GetMetalMaterial(byEntity.Api);
+        var metalMaterial = outputStack.GetOrCacheMetalMaterial(byEntity.Api);
         if (metalMaterial == null)
         {
-            Core.Logger.VerboseDebug($"[CollectibleBehaviorScrapeCrucible#OnHeldInteractStop] {outputStack.GetName()} has no valid metal material.");
+            Core.Logger.VerboseDebug(
+                $"[CollectibleBehaviorScrapeCrucible#OnHeldInteractStop] {outputStack.GetName()} has no valid metal material.");
             return;
         }
+
         var metalTier = metalMaterial.Tier;
         var metalBitStack = metalMaterial.MetalBitStack;
         metalBitStack.SetTemperatureFrom(world, crucibleStack);
@@ -76,6 +79,7 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         activeSlot.Itemstack.Collectible.DamageItem(world, entityPlayer, activeSlot, chiselDamage);
         activeSlot.MarkDirty();
     }
+
     private static bool TryGetOutputStack(ItemStack crucibleStack, IWorldAccessor world, out ItemStack outputStack)
     {
         outputStack = null;

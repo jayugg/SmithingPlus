@@ -1,5 +1,7 @@
 using System;
 using HarmonyLib;
+using JetBrains.Annotations;
+using SmithingPlus.Metal;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -8,6 +10,8 @@ using Vintagestory.GameContent;
 namespace SmithingPlus.BitsRecovery;
 
 #nullable enable
+
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 [HarmonyPatch(typeof(BlockEntityAnvil), "OnUseOver", typeof(IPlayer), typeof(Vec3i), typeof(BlockSelection))]
 [HarmonyPatchCategory(Core.BitsRecoveryCategory)]
 public class BitsRecoveryPatches
@@ -52,13 +56,15 @@ public class BitsRecoveryPatches
         var metalMaterial = workItemStack.GetMetalMaterialProcessed(byPlayer.Entity.Api);
         if (!(metalMaterial?.Resolved ?? false))
         {
-            Core.Logger.VerboseDebug("[BitsRecovery#BEAnvil_OnUseOver_Postfix] No valid metal material found in work item.");
+            Core.Logger.VerboseDebug(
+                "[BitsRecovery#BEAnvil_OnUseOver_Postfix] No valid metal material found in work item.");
             return;
         }
-        var metalbitStack = metalMaterial.MetalBitStack;
+
+        var metalBitStack = metalMaterial.MetalBitStack;
         var temperature = workItemStack.Collectible.GetTemperature(byPlayer.Entity.World, workItemStack);
-        metalbitStack?.Collectible.SetTemperature(byPlayer.Entity.World, metalbitStack, temperature);
-        if (byPlayer.InventoryManager.TryGiveItemstack(metalbitStack)) return;
-        byPlayer.Entity.World.SpawnItemEntity(metalbitStack, byPlayer.Entity.Pos.XYZ);
+        metalBitStack?.Collectible.SetTemperature(byPlayer.Entity.World, metalBitStack, temperature);
+        if (byPlayer.InventoryManager.TryGiveItemstack(metalBitStack)) return;
+        byPlayer.Entity.World.SpawnItemEntity(metalBitStack, byPlayer.Entity.Pos.XYZ);
     }
 }

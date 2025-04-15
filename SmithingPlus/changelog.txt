@@ -1,12 +1,12 @@
 - TODO [Tweak] Config option to disable iron bloom modifications from helve hammers
 - TODO [Compatibility] Stop knapster from autocompleting when hitting in flip tool mode
-- TODO [Minor] Fight cheating players that try to remove tongs while setting the tool mode
+- TODO [Minor] Fix edge case if players that try to remove tongs while setting the flip tool mode when they are required
 - TODO Store overall transform for flip tool mode to properly reconstruct recipe outline rotation.
     Current method can have bugs and is harder to maintain.
-- TODO [Feature] Helve hammer bit recovery
 
 Pre-release:
-- [Code Tweak] (Massive change. Not fully tested. Might cause unexpected behavior)
-    Standardise fetching metal variant / type and relevant ingot. Impact:
-    - Iron bits can be placed on iron bloom
-    - Fix crashes in smithing recipe GUI
+- [Feature] Helve hammer bit recovery (with config to disable)
+- [Performance] Cache detected metal material
+- [Fix] Cast tool durability penalty multiplier not applying
+- [Feature] Cast tool heads can be refined on an anvil 
+- [Tweak][Dev] Allow to edit inForgeTransforms with .tfedit command

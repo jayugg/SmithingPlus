@@ -2,16 +2,20 @@
 using HarmonyLib;
 using JetBrains.Annotations;
 using SmithingPlus.BitsRecovery;
+using SmithingPlus.CastingTweaks;
 using SmithingPlus.ClientTweaks;
 using SmithingPlus.Config;
+using SmithingPlus.Metal;
 using SmithingPlus.SmithWithBits;
 using SmithingPlus.StoneSmithing;
 using SmithingPlus.ToolRecovery;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
+using Vintagestory.Client.NoObf;
 using Vintagestory.GameContent;
 
 namespace SmithingPlus;
@@ -41,6 +45,7 @@ public partial class Core : ModSystem
         api.RegisterCollectibleBehaviorClass($"{ModId}:BrokenToolHead", typeof(CollectibleBehaviorBrokenToolHead));
         api.RegisterCollectibleBehaviorClass($"{ModId}:AnvilWorkable", typeof(CollectibleBehaviorAnvilWorkable));
         api.RegisterCollectibleBehaviorClass($"{ModId}:ScrapeCrucible", typeof(CollectibleBehaviorScrapeCrucible));
+        api.RegisterCollectibleBehaviorClass($"{ModId}:CastToolHead", typeof(CollectibleBehaviorCastToolHead));
         api.RegisterCollectibleBehaviorClass($"{ModId}:SmeltedContainer", typeof(CollectibleBehaviorSmeltedContainer));
         api.RegisterEntityBehaviorClass($"{ModId}:RecyclableArrow", typeof(RecyclableArrowBehavior));
         api.RegisterItemClass($"{ModId}:ItemStoneHammer", typeof(ItemStoneHammer));
@@ -48,6 +53,7 @@ public partial class Core : ModSystem
         if (api.ModLoader.IsModEnabled("xskills"))
             api.RegisterItemClass("ItemXWorkableNugget", typeof(ItemXWorkableNugget));
         Patch();
+        RegisterInForgeTransform();
     }
 
     public override void StartServerSide(ICoreServerAPI api)
@@ -69,7 +75,6 @@ public partial class Core : ModSystem
     {
         base.AssetsFinalize(api);
         if (api.Side.IsClient()) return;
-
         var ingotCode = new AssetLocation("game:ingot-copper");
         var ingotRecipe = api.ModLoader.GetModSystem<RecipeRegistrySystem>().SmithingRecipes
             .FirstOrDefault(r =>
@@ -83,9 +88,15 @@ public partial class Core : ModSystem
                                                                      collObj is ItemChisel);
             collObj.AddBehaviorIf<CollectibleBehaviorSmeltedContainer>(Config.RecoverBitsOnSplit &&
                                                                        collObj is BlockSmeltedContainer);
-            if ((collObj.Tool != null || (collObj.IsRepairableTool() && !collObj.IsRepairableToolHead())) &&
+            if (Config.MetalCastingTweaks && collObj.MatchesToolHeadSelector())
+            {
+                collObj.AddBehavior<CollectibleBehaviorCastToolHead>();
+                collObj.MakeForgeable();
+            }
+
+            if ((collObj.Tool != null || (collObj.IsRepairableTool() && !collObj.MatchesToolHeadSelector())) &&
                 collObj.HasMetalMaterialSimple()) collObj.AddBehavior<CollectibleBehaviorRepairableTool>();
-            else if (collObj.IsRepairableToolHead()) collObj.AddBehavior<CollectibleBehaviorRepairableToolHead>();
+            else if (collObj.MatchesToolHeadSelector()) collObj.AddBehavior<CollectibleBehaviorRepairableToolHead>();
             else if (WildcardUtil.Match(Config.WorkItemSelector, collObj.Code.ToString()))
                 collObj.AddBehavior<CollectibleBehaviorBrokenToolHead>();
 
@@ -108,17 +119,28 @@ public partial class Core : ModSystem
         if (HarmonyInstance != null) return;
         HarmonyInstance = new Harmony(ModId);
         Logger.VerboseDebug("Patching...");
-
+        AlwaysPatchCategory.PatchIfEnabled(true);
         ToolRecoveryCategory.PatchIfEnabled(Config.EnableToolRecovery);
         ClientTweaksCategories.RememberHammerToolMode.PatchIfEnabled(Config.RememberHammerToolMode);
         ClientTweaksCategories.AnvilShowRecipeVoxels.PatchIfEnabled(Config.AnvilShowRecipeVoxels);
         ClientTweaksCategories.ShowWorkablePatches.PatchIfEnabled(Config.ShowWorkableTemperature);
         ClientTweaksCategories.HandbookExtraInfo.PatchIfEnabled(Config.HandbookExtraInfo);
         BitsRecoveryCategory.PatchIfEnabled(Config.RecoverBitsOnSplit);
+        HelveHammerBitsRecoveryCategory.PatchIfEnabled(Config.HelveHammerBitsRecovery);
         CastingTweaksCategory.PatchIfEnabled(Config.MetalCastingTweaks);
         SmithingBitsCategory.PatchIfEnabled(Config.SmithWithBits || Config.BitsTopUp);
         HammerTweaksCategory.PatchIfEnabled(Config.HammerTweaks);
         //StoneSmithingCategory.PatchIfEnabled(true);
+    }
+
+    private static void RegisterInForgeTransform()
+    {
+        if (!GuiDialogTransformEditor.extraTransforms?.Any(x => x.AttributeName == "inForgeTransform") == true)
+            GuiDialogTransformEditor.extraTransforms.Add(new TransformConfig
+            {
+                Title = Lang.Get("transform-inforge"),
+                AttributeName = "inForgeTransform"
+            });
     }
 
     private static void Unpatch()

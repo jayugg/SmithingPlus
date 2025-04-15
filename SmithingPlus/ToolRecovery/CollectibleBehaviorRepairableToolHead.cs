@@ -2,9 +2,5 @@ using Vintagestory.API.Common;
 
 namespace SmithingPlus.ToolRecovery;
 
-public class CollectibleBehaviorRepairableToolHead : CollectibleBehaviorRepairableTool
-{
-    public CollectibleBehaviorRepairableToolHead(CollectibleObject collObj) : base(collObj)
-    {
-    }
-}
+public class CollectibleBehaviorRepairableToolHead(CollectibleObject collObj)
+    : CollectibleBehaviorRepairableTool(collObj);

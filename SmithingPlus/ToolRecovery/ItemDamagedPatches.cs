@@ -2,6 +2,7 @@ using System.Linq;
 using HarmonyLib;
 using JetBrains.Annotations;
 using SmithingPlus.Compat;
+using SmithingPlus.Metal;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -11,7 +12,8 @@ using Vintagestory.GameContent;
 namespace SmithingPlus.ToolRecovery;
 
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-[HarmonyPatch(typeof(CollectibleObject)), HarmonyPatchCategory(Core.ToolRecoveryCategory)]
+[HarmonyPatch(typeof(CollectibleObject))]
+[HarmonyPatchCategory(Core.ToolRecoveryCategory)]
 public class ItemDamagedPatches
 {
     [HarmonyPostfix]
@@ -70,14 +72,14 @@ public class ItemDamagedPatches
         var itemStack = itemslot.Itemstack;
         var toolCode = itemStack?.Collectible.Code.ToString();
         var smithingRecipe = CacheHelper.GetOrAdd(Core.ToolToRecipeCache, toolCode,
-            () => GetHeadSmithingRecipe(world, itemStack));
+            () => GetHeadSmithingRecipe(world.Api, itemStack));
         if (smithingRecipe == null)
         {
             Core.Logger.VerboseDebug("Head or tool smithing recipe not found for: {0}", toolCode);
             return;
         }
 
-        var metalMaterial = itemStack?.GetMetalMaterial(byEntity.Api);
+        var metalMaterial = itemStack?.GetOrCacheMetalMaterial(byEntity.Api);
         var workItem = metalMaterial?.WorkItem;
         if (workItem is null)
         {
@@ -86,6 +88,7 @@ public class ItemDamagedPatches
                 $"collectible: {itemStack?.Collectible.Code}");
             return;
         }
+
         Core.Logger.VerboseDebug("Found work item: {0}", workItem.Code);
         var wItemStack = new ItemStack(workItem);
         Core.Logger.VerboseDebug("Found smithing recipe: {0}",
@@ -115,17 +118,17 @@ public class ItemDamagedPatches
         itemslot.MarkDirty();
     }
 
-    private static SmithingRecipe GetHeadSmithingRecipe(IWorldAccessor world, ItemStack itemStack)
+    private static SmithingRecipe GetHeadSmithingRecipe(ICoreAPI api, ItemStack itemStack)
     {
-        var toolHead = GetToolHead(world, itemStack);
-        var smithingRecipe = toolHead.GetSmithingRecipe(world);
+        var toolHead = GetToolHead(api, itemStack);
+        var smithingRecipe = toolHead.GetSmithingRecipe(api);
         return smithingRecipe;
     }
 
-    private static ItemStack GetToolHead(IWorldAccessor world, ItemStack itemStack)
+    private static ItemStack GetToolHead(ICoreAPI api, ItemStack itemStack)
     {
         var toolRecipe = itemStack.Collectible
-            .GetGridRecipes(world.Api)
+            .GetGridRecipes(api)
             .FirstOrDefault(r =>
                 r.Output.ResolvedItemstack.StackSize == 1);
         var toolHead = toolRecipe?.resolvedIngredients
@@ -137,6 +140,7 @@ public class ItemDamagedPatches
             toolHead = itemStack;
             Core.Logger.VerboseDebug("Tool head not found for: {0}", itemStack);
         }
+
         Core.Logger.VerboseDebug("Tool head: {0}", toolHead);
         return toolHead;
     }
@@ -149,7 +153,6 @@ public class ItemDamagedPatches
         var currentVoxelCount = totalVoxels;
 
         var byteVoxels = recipeVoxels.ToByteArray();
-
         var layer = 0;
         while (currentVoxelCount > targetVoxelCount)
         {

@@ -7,12 +7,8 @@ using Vintagestory.API.Util;
 
 namespace SmithingPlus.ToolRecovery;
 
-public class CollectibleBehaviorRepairableTool : CollectibleBehavior 
+public class CollectibleBehaviorRepairableTool(CollectibleObject collObj) : CollectibleBehavior(collObj)
 {
-    public CollectibleBehaviorRepairableTool(CollectibleObject collObj) : base(collObj)
-    {
-    }
-    
     protected virtual string LangKey => "Repaired";
 
     public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
@@ -22,14 +18,16 @@ public class CollectibleBehaviorRepairableTool : CollectibleBehavior
         AssetLocation code;
         try
         {
-            if (inSlot?.Itemstack?.Collectible?.Code == null) throw new NullReferenceException("Itemstack or Collectible is null");
+            if (inSlot.Itemstack?.Collectible?.Code == null)
+                throw new NullReferenceException("Itemstack or Collectible is null");
             code = inSlot.Itemstack.Collectible.Code;
         }
         catch (Exception e)
         {
-            Core.Logger.Error("Failed to get code for {0}: {1}", inSlot?.Itemstack, e);
+            Core.Logger.Error("Failed to get code for {0}: {1}", inSlot.Itemstack, e);
             return;
         }
+
         if (!WildcardUtil.Match(Core.Config.RepairableToolSelector, code?.ToString()))
             return;
         var brokenCount = inSlot.Itemstack.GetBrokenCount();

@@ -1,4 +1,4 @@
-using SmithingPlus.Util;
+using SmithingPlus.Metal;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
@@ -7,22 +7,22 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus.ToolRecovery;
 
-public class RecyclableArrowBehavior : EntityBehavior
+public class RecyclableArrowBehavior(Entity entity) : EntityBehavior(entity)
 {
-    public RecyclableArrowBehavior(Entity entity) : base(entity)
+    public override string PropertyName()
     {
+        return $"{Core.ModId}:recyclablearrow";
     }
 
-    public override string PropertyName() => $"{Core.ModId}:recyclablearrow";
-
-    public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, ref EnumHandling handling)
+    public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer,
+        ref EnumHandling handling)
     {
         Core.Logger.VerboseDebug("GetDrops: {0}", entity.Code);
         if (entity is not EntityProjectile entityProjectile) return base.GetDrops(world, pos, byPlayer, ref handling);
         if (entityProjectile.ProjectileStack is not { } stack ||
             !IsRecyclableArrow(entityProjectile)) return base.GetDrops(world, pos, byPlayer, ref handling);
         Core.Logger.VerboseDebug("Arrow died: {0}", stack);
-        var metalMaterial = stack.GetMetalMaterial(world.Api);
+        var metalMaterial = stack.GetOrCacheMetalMaterial(world.Api);
         var metalVariant = metalMaterial?.Variant;
         if (metalVariant == null) return base.GetDrops(world, pos, byPlayer, ref handling);
         Core.Logger.VerboseDebug("Arrow metal: {0}", metalVariant);
@@ -31,7 +31,7 @@ public class RecyclableArrowBehavior : EntityBehavior
         handling = EnumHandling.PreventDefault;
         return new[] { metalBitStack };
     }
-    
+
     public static bool IsRecyclableArrow(EntityProjectile projectile)
     {
         var projectileItem = projectile.ProjectileStack?.Collectible;
