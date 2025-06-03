@@ -101,6 +101,7 @@ public static class RecipeVoxelCountPatch
             var voxelCount = CacheHelper.GetOrAdd(Core.RecipeVoxelCountCache, recipeId,
                 () =>  capi.GetSmithingRecipes().Find(recipe => recipe.RecipeId == recipeId).Voxels.VoxelCount());
             var baseMaterial = selectedRecipe.Output.ResolvedItemstack.GetMetalMaterialStack(capi);
+            if (baseMaterial == null) return;
             var bitsCount = (int) Math.Ceiling(voxelCount / Core.Config.VoxelsPerBit);
             var countDesc = Lang.Get("Requires any of: ");
             var currentSkillItem = skillItems[num];

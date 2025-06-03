@@ -37,7 +37,13 @@ public static class CollectibleExtensions
     public static ItemStack GetMetalMaterialStack(this CollectibleObject collObj, ICoreAPI api = null)
     {
         api ??= Core.Api;
-        var ingotItem = api?.World.GetItem(new AssetLocation("game:ingot-" + collObj.GetMetalOrMaterial()));
+        var metalOrMaterial = collObj.GetMetalOrMaterial();
+        if (metalOrMaterial == null)
+        {
+            api.Logger.Warning("Collectible {0} has no metal or material variant set", collObj.Code);
+            return null;
+        }
+        var ingotItem = api?.World.GetItem(new AssetLocation("game:ingot-" + metalOrMaterial));
         return new ItemStack(ingotItem);
     }
 
