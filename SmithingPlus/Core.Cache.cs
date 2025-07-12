@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using SmithingPlus.Metal;
 using Vintagestory.API.Common;
 using Vintagestory.API.Util;
@@ -8,7 +7,6 @@ using Vintagestory.GameContent;
 namespace SmithingPlus;
 #nullable enable
 
-[UsedImplicitly]
 public partial class Core
 {
     private const string RecipeOutputNameCacheKey = $"{ModId}:recipeOutputName";

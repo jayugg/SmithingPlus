@@ -7,20 +7,14 @@ namespace SmithingPlus.Util;
 
 public static class ItemStackExtensions
 {
-    internal static int? GetDurability(this ItemStack itemStack)
+    internal static int? GetRemainingDurability(this ItemStack itemStack)
     {
-        if (itemStack?.Attributes == null)
-            return null;
-        return itemStack.Attributes.HasAttribute("durability")
-            ? itemStack.Attributes.GetInt("durability", itemStack.Item?.Durability ?? 1)
-            : null;
+        return itemStack.Collectible.GetRemainingDurability(itemStack);
     }
 
     internal static void SetDurability(this ItemStack itemStack, int number)
     {
-        if (!itemStack.Attributes.HasAttribute("durability"))
-            return;
-        itemStack.Attributes.SetInt("durability", number);
+        itemStack.Collectible.SetDurability(itemStack, number);
     }
 
     internal static void CloneBrokenCount(this ItemStack itemStack, ItemStack fromStack, int extraCount = 0)

@@ -20,7 +20,7 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus;
 
-[MeansImplicitUse]
+[UsedImplicitly(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature)]
 public partial class Core : ModSystem
 {
     public const string ModId = "smithingplus";

@@ -63,7 +63,7 @@ public class ItemDamagedPatches
     {
         if (world.Api.Side.IsClient())
             return;
-        var durability = itemslot?.Itemstack?.GetDurability();
+        var durability = itemslot?.Itemstack?.GetRemainingDurability();
         if (!durability.HasValue || durability > amount) return;
         if (itemslot.Itemstack?.Collectible.HasBehavior<CollectibleBehaviorRepairableTool>() != true) return;
         Core.Logger.VerboseDebug("Broken tool in InventoryID: {0}, Entity: {1}", itemslot.Inventory?.InventoryID,
