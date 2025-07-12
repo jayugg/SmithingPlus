@@ -98,6 +98,17 @@ public static class ItemStackExtensions
         return smithingRecipe;
     }
 
+    // Gets smithing recipe only if the ouput itemstack has a single item
+    public static SmithingRecipe GetSingleSmithingRecipe(this ItemStack toolHead, ICoreAPI api)
+    {
+        var smithingRecipe = api.ModLoader
+            .GetModSystem<RecipeRegistrySystem>()
+            .SmithingRecipes
+            .FirstOrDefault(r =>
+                r.Output.ResolvedItemstack.Satisfies(toolHead) && r.Output.ResolvedItemstack.StackSize == 1);
+        return smithingRecipe;
+    }
+
     public static float GetSplitCount(this ItemStack stack)
     {
         var splitCount = stack.TempAttributes.GetFloat(ModAttributes.SplitCount);
@@ -132,6 +143,7 @@ public static class ItemStackExtensions
 
     public static bool IsCastTool(this ItemStack stack)
     {
+        Core.Logger.VerboseDebug("[ItemStackExtensions#IsCastTool] {0}", stack.Collectible.Code);
         return stack.Attributes.GetBool(ModAttributes.CastTool);
     }
 }

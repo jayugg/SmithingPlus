@@ -3,7 +3,7 @@
   "modid": "smithingplus",
   "name": "SmithingPlus",
   "authors": [ "jayu" ],
-  "description": "Add bits when smithing and other tweaks",
+  "description": "Smithing tweaks and QOL improvements.",
   "version": "1.6.0-rc.3",
   "dependencies": { "game": "" }
 }

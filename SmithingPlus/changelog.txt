@@ -7,3 +7,4 @@
 Pre-release:
 - Fix occasional crucible scraping crash
 - Merge PR to facilitate Knapster compatibility
+- Fix small metal dupe bug (won't disclose details for server security)

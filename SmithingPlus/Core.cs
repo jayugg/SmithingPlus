@@ -135,6 +135,7 @@ public partial class Core : ModSystem
 
     private static void RegisterInForgeTransform()
     {
+        // Trans(form) rights! :3
         if (!GuiDialogTransformEditor.extraTransforms?.Any(x => x.AttributeName == "inForgeTransform") == true)
             GuiDialogTransformEditor.extraTransforms.Add(new TransformConfig
             {
