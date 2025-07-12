@@ -8,3 +8,5 @@ riderModule.iml
 /.idea/**/*
 /Releases/**/*
 *.sln.DotSettings.user
+/.vs/SmithingPlus
+/.vs/ProjectEvaluation

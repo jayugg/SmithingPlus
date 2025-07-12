@@ -41,7 +41,11 @@ public class BitsRecoveryPatches
             Core.Logger.VerboseDebug("[BitsRecovery] Non-metal voxel type: {0}", voxelType);
             return;
         }
+        RecoverBitsFromWorkItem(__instance, byPlayer, workItemStack);
+    }
 
+    private static void RecoverBitsFromWorkItem(BlockEntityAnvil __instance, IPlayer byPlayer, ItemStack workItemStack)
+    {
         var splitCount = __instance.WorkItemStack.GetSplitCount();
         var bitsPerVoxel = 1f / Core.Config.VoxelsPerBit;
         splitCount += bitsPerVoxel;
@@ -56,8 +60,7 @@ public class BitsRecoveryPatches
         var metalMaterial = workItemStack.GetMetalMaterialProcessed(byPlayer.Entity.Api);
         if (!(metalMaterial?.Resolved ?? false))
         {
-            Core.Logger.VerboseDebug(
-                "[BitsRecovery#BEAnvil_OnUseOver_Postfix] No valid metal material found in work item.");
+            Core.Logger.VerboseDebug("[BitsRecovery#BEAnvil_OnUseOver_Postfix] No valid metal material found in work item.");
             return;
         }
 
