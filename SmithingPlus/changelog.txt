@@ -5,8 +5,5 @@
     Current method can have bugs and is harder to maintain.
 
 Pre-release:
-- [Feature] Helve hammer bit recovery (with config to disable)
-- [Performance] Cache detected metal material
-- [Fix] Cast tool durability penalty multiplier not applying
-- [Feature] Cast tool heads can be refined on an anvil 
-- [Tweak][Dev] Allow to edit inForgeTransforms with .tfedit command
+- Fix occasional crucible scraping crash
+- Merge PR to facilitate Knapster compatibility

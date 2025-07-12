@@ -1,18 +1,13 @@
 using SmithingPlus.Metal;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
-using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 
 namespace SmithingPlus.BitsRecovery;
 
-public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
+public class CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : CollectibleBehavior(collObj)
 {
     public const float MaxScrapeTemperature = 50;
-
-    public CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : base(collObj)
-    {
-    }
 
     public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel,
         EntitySelection entitySel,
@@ -58,15 +53,21 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         var outputUnits = crucibleStack.Attributes.GetInt("units");
         var outputBitCount = outputUnits / 5;
         var metalMaterial = outputStack.GetOrCacheMetalMaterial(byEntity.Api);
+        var metalBitStack = metalMaterial?.MetalBitStack;
         if (metalMaterial == null)
         {
             Core.Logger.VerboseDebug(
                 $"[CollectibleBehaviorScrapeCrucible#OnHeldInteractStop] {outputStack.GetName()} has no valid metal material.");
             return;
         }
-
+        if (metalBitStack == null)
+        {
+            Core.Logger.VerboseDebug(
+                $"[CollectibleBehaviorScrapeCrucible#OnHeldInteractStop] {metalMaterial.IngotCode} has no valid metal bit stack.");
+            return;
+        }
         var metalTier = metalMaterial.Tier;
-        var metalBitStack = metalMaterial.MetalBitStack;
+        metalBitStack.StackSize = outputBitCount;
         metalBitStack.SetTemperatureFrom(world, crucibleStack);
         var emptyCrucibleStack =
             new ItemStack(world.GetBlock(crucibleStack.Collectible.CodeWithVariant("type", "burned")));
@@ -80,16 +81,14 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         activeSlot.MarkDirty();
     }
 
-    private static bool TryGetOutputStack(ItemStack crucibleStack, IWorldAccessor world, out ItemStack outputStack)
+    private static bool TryGetOutputStack(ItemStack crucibleStack, IWorldAccessor world, out ItemStack output)
     {
-        outputStack = null;
-        if (!crucibleStack.Attributes.TryGetAttribute("output", out var output) ||
+        output = crucibleStack.Attributes.GetItemstack("output");
+        output?.ResolveBlockOrItem(world); // Vanilla does this in BlockSmeltedContainer.GetContents
+        if (output is null ||
             crucibleStack.Attributes.TryGetInt("units") is < 5)
             return false;
-        var outputJsonItemStack = JsonObject.FromJson(output.ToJsonToken()).AsObject<JsonItemStack>();
-        if (!outputJsonItemStack.Resolve(world, $"[{Core.ModId}] CollectibleBehaviorScrapeCrucible.TryGetOutputStack"))
-            return false;
-        outputStack = outputJsonItemStack.ResolvedItemstack;
+        Core.Logger.Warning("Output: {0}", output.Collectible.Code);
         return true;
     }
 
