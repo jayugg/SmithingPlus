@@ -12,7 +12,7 @@ namespace SmithingPlus.BitsRecovery;
 
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 [HarmonyPatch(typeof(BlockEntityAnvil))]
-[HarmonyPatchCategory(Core.BitsRecoveryCategory)]
+[HarmonyPatchCategory(Core.HelveHammerBitsRecoveryCategory)]
 public class HelveHammerRecoveryPatches
 {
     [HarmonyPrefix]

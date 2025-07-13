@@ -100,6 +100,10 @@ public partial class Core : ModSystem
             else if (WildcardUtil.Match(Config.WorkItemSelector, collObj.Code.ToString()))
                 collObj.AddBehavior<CollectibleBehaviorBrokenToolHead>();
 
+            // Adds metalbit-only smithing recipes to make ingots. This is a bit hacky as metalbit crafting uses the original
+            // ingot recipes, so to have these recipes be present we need ingot -> ingot recipes. These won't show up when smithing with
+            // ingots however, since the original ingot recipe (in the smithingplus domain) has "recipeAttributes": { "nuggetRecipe": true }
+            // A better solution would be to define the recipe with code instead of cloning an ingot recipe defined in the assets
             if (ingotRecipe == null) continue;
             if (!WildcardUtil.Match(Config.IngotSelector, collObj.Code.ToString())) continue;
             if (api.ModLoader.GetModSystem<RecipeRegistrySystem>().SmithingRecipes

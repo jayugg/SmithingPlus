@@ -1,3 +1,4 @@
+using System;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
@@ -5,7 +6,7 @@ using Vintagestory.GameContent;
 namespace SmithingPlus.Metal;
 
 #nullable enable
-public class MetalMaterial
+public class MetalMaterial : IEquatable<MetalMaterial>
 {
     private readonly ICoreAPI _api;
     private ItemStack? _ingotStack;
@@ -14,7 +15,6 @@ public class MetalMaterial
     {
         _api = api;
         IngotCode = ingotCode;
-        _ingotStack = IngotStack;
         if (!Resolved)
             Core.Logger.Error("[MetalMaterial] Failed to load ingot item {0}", IngotCode);
     }
@@ -24,12 +24,12 @@ public class MetalMaterial
         _api = api;
         _ingotStack = ingotStack;
         IngotCode = ingotStack.Collectible.Code;
-
         if (!Resolved)
             Core.Logger.Error("[MetalMaterial] Failed to load ingot item {0}", IngotCode);
     }
 
     public AssetLocation IngotCode { get; }
+
     public string Variant => IngotCode.EndVariant();
 
     public int Tier => _api.GetModSystem<SurvivalCoreSystem>()?.metalsByCode
@@ -37,13 +37,20 @@ public class MetalMaterial
         ? metalProperty?.Tier ?? 0
         : 0;
 
-    public bool Resolved => IngotItem != null;
+    public bool Resolved => IngotItem is not null;
     private ItemIngot? IngotItem => _api.World.GetItem(IngotCode) as ItemIngot;
     private Item? MetalBitItem => TryGetItem("metalbit");
     public ItemWorkItem? WorkItem => TryGetItem("workitem") as ItemWorkItem;
     public ItemStack? MetalBitStack => MetalBitItem != null ? new ItemStack(MetalBitItem) : null;
     public ItemStack? IngotStack => _ingotStack ??= IngotItem != null ? new ItemStack(IngotItem) : null;
-    public ItemStack? WorkItemStack => WorkItem == null ? null : new ItemStack(WorkItem);
+    public ItemStack? WorkItemStack => WorkItem != null ? new ItemStack(WorkItem) : null;
+
+    public bool Equals(MetalMaterial? other)
+    {
+        if (other is null) return false;
+        return IngotCode.Equals(other.IngotCode) ||
+               (IngotStack?.Collectible.Code.Equals(other.IngotStack?.Collectible.Code) ?? false);
+    }
 
     private Item? TryGetItem(string firstPathPart)
     {
@@ -53,10 +60,13 @@ public class MetalMaterial
                _api.World.GetItem(new AssetLocation($"game:{firstPathPart}-{IngotCode.Path}"));
     }
 
-    public bool Equals(MetalMaterial? other)
+    public override bool Equals(object? obj)
     {
-        if (other == null) return false;
-        if (IngotCode.Equals(other.IngotCode)) return true;
-        return IngotStack?.Collectible.Code.Equals(other.IngotStack?.Collectible.Code) ?? false;
+        return Equals(obj as MetalMaterial);
+    }
+
+    public override int GetHashCode()
+    {
+        return IngotCode.GetHashCode();
     }
 }
