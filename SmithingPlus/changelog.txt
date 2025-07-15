@@ -5,8 +5,4 @@
     Current method can have bugs and is harder to maintain.
 
 Done:
-- Fix occasional crucible scraping crash
-- Merge PR to facilitate Knapster compatibility
-- Lighter metal material detection
-- Reduced logspam
-- Compatibility additions for modder-defined metal/smithing materials that don't use default vanilla conventions
+- [Fix] Patch error in metal material equality check (no material was recognised as equal to itself)

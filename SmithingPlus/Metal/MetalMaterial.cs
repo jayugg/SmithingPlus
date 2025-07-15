@@ -31,7 +31,7 @@ public class MetalMaterial : IEquatable<MetalMaterial>
 
     public bool Equals(MetalMaterial? other)
     {
-        return other is not null && Code.Equals(other._ingotCode);
+        return other is not null && Code.Equals(other.Code);
     }
 
     /// <summary>
