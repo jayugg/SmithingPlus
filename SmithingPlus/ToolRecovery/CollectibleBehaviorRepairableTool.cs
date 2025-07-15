@@ -7,8 +7,12 @@ using Vintagestory.API.Util;
 
 namespace SmithingPlus.ToolRecovery;
 
-public class CollectibleBehaviorRepairableTool(CollectibleObject collObj) : CollectibleBehavior(collObj)
+public class CollectibleBehaviorRepairableTool : CollectibleBehavior
 {
+    public CollectibleBehaviorRepairableTool(CollectibleObject collObj) : base(collObj)
+    {
+    }
+
     protected virtual string LangKey => "Repaired";
 
     public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)

@@ -74,14 +74,14 @@ public static class VoxelExtensions
     {
         if (voxels[x, y, z] != 0) return false;
         int dimX = voxels.GetLength(0), dimY = voxels.GetLength(1), dimZ = voxels.GetLength(2);
-        var offsets = new int[][]
+        var offsets = new[]
         {
-            [-1, 0, 0],
-            [1, 0, 0],
-            [0, -1, 0],
-            [0, 1, 0],
-            [0, 0, -1],
-            [0, 0, 1]
+            new[] { -1, 0, 0 },
+            new[] { 1, 0, 0 },
+            new[] { 0, -1, 0 },
+            new[] { 0, 1, 0 },
+            new[] { 0, 0, -1 },
+            new[] { 0, 0, 1 }
         };
         foreach (var offset in offsets)
         {

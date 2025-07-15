@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using HarmonyLib;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.GameContent;
 
@@ -14,6 +15,40 @@ namespace SmithingPlus.ToolRecovery;
 [HarmonyPatchCategory(Core.ToolRecoveryCategory)]
 public class ToolHeadRepairPatches
 {
+    // Clamp durability if configs changed max durability
+    private static void ClampDurability(ItemStack itemstack)
+    {
+        var maxDurability = itemstack.Collectible.GetMaxDurability(itemstack);
+        if (!itemstack.Attributes.HasAttribute("durability")) return;
+        var durability = itemstack.Attributes.GetInt("durability");
+        itemstack.Attributes.SetInt("durability", Math.Min(durability, maxDurability));
+    }
+    
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(CollectibleObject), nameof(CollectibleObject.SetDurability))]
+    public static void Postfix_SetDurability(ItemStack itemstack, int amount)
+    {
+        if (!itemstack.Collectible.HasBehavior<CollectibleBehaviorRepairableTool>()) return;
+        var brokenCount = itemstack.GetBrokenCount();
+        if (brokenCount < 0) return;
+        ClampDurability(itemstack);
+    }
+
+    // Clamp durability if configs changed max durability
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(CollectibleObject), nameof(CollectibleObject.DamageItem))]
+    public static void Postfix_DamageItemy(IWorldAccessor world,
+        Entity byEntity,
+        ItemSlot itemslot,
+        int amount = 1)
+    {
+        var itemstack = itemslot.Itemstack;
+        if (!itemstack.Collectible.HasBehavior<CollectibleBehaviorRepairableTool>()) return;
+        var brokenCount = itemstack.GetBrokenCount();
+        if (brokenCount < 0) return;
+        ClampDurability(itemstack);
+    }
+    
     [HarmonyPostfix]
     [HarmonyPatch(typeof(CollectibleObject), nameof(CollectibleObject.GetMaxDurability))]
     [HarmonyPriority(int.MinValue)]
@@ -27,12 +62,6 @@ public class ToolHeadRepairPatches
         var toolRepairPenaltyModifier = itemstack.Attributes.GetFloat(ModAttributes.ToolRepairPenaltyModifier);
         var toolRepairPenalty = brokenCount * Core.Config.DurabilityPenaltyPerRepair * (1 - toolRepairPenaltyModifier);
         var reducedDurability = (int)(__result * multiplier * (1 - toolRepairPenalty));
-        if (itemstack.Attributes.HasAttribute("durability"))
-        {
-            var durability = itemstack.Attributes.GetInt("durability");
-            itemstack.SetDurability(Math.Min(durability, reducedDurability));
-        }
-
         __result = Math.Max(reducedDurability, 1);
     }
 

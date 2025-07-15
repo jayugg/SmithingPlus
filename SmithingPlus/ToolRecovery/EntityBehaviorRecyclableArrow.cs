@@ -7,8 +7,12 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus.ToolRecovery;
 
-public class RecyclableArrowBehavior(Entity entity) : EntityBehavior(entity)
+public class RecyclableArrowBehavior : EntityBehavior
 {
+    public RecyclableArrowBehavior(Entity entity) : base(entity)
+    {
+    }
+
     public override string PropertyName()
     {
         return $"{Core.ModId}:recyclablearrow";
@@ -28,7 +32,7 @@ public class RecyclableArrowBehavior(Entity entity) : EntityBehavior(entity)
         var metalBitStack = metalMaterial.MetalBitStack;
         if (metalBitStack == null) return base.GetDrops(world, pos, byPlayer, ref handling);
         handling = EnumHandling.PreventDefault;
-        return [metalBitStack];
+        return new[] { metalBitStack };
     }
 
     public static bool IsRecyclableArrow(EntityProjectile projectile)

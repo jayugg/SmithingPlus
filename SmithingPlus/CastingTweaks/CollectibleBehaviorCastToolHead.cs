@@ -11,9 +11,14 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus.CastingTweaks;
 
-public class CollectibleBehaviorCastToolHead(CollectibleObject collObj) : CollectibleBehavior(collObj), IAnvilWorkable
+public class CollectibleBehaviorCastToolHead : CollectibleBehavior, IAnvilWorkable
 {
-    private ICoreAPI Api { get; set; } = collObj.GetField<ICoreAPI>("api");
+    public CollectibleBehaviorCastToolHead(CollectibleObject collObj) : base(collObj)
+    {
+        Api = collObj.GetField<ICoreAPI>("api");
+    }
+
+    private ICoreAPI Api { get; set; }
 
     public int GetRequiredAnvilTier(ItemStack stack)
     {
@@ -22,7 +27,7 @@ public class CollectibleBehaviorCastToolHead(CollectibleObject collObj) : Collec
 
     public List<SmithingRecipe> GetMatchingRecipes(ItemStack stack)
     {
-        return [stack.GetSmithingRecipe(Api)];
+        return new List<SmithingRecipe> { stack.GetSmithingRecipe(Api) };
     }
 
     public bool CanWork(ItemStack stack)

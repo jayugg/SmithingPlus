@@ -5,4 +5,4 @@
     Current method can have bugs and is harder to maintain.
 
 Done:
-- [Fix] Patch error in metal material equality check (no material was recognised as equal to itself)
+- [Compatibility] Fix crash with toolsmith

@@ -54,7 +54,7 @@ public class ItemDamagedPatches
     }
 
     [HarmonyPrefix]
-    [HarmonyPatch("DamageItem")]
+    [HarmonyPatch(nameof(CollectibleObject.DamageItem))]
     private static void Prefix_DamageItem(
         IWorldAccessor world,
         Entity byEntity,

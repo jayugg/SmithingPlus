@@ -120,11 +120,11 @@ public class AnvilWorkablePatches
     {
         var blockEntityAnvil = api.World.BlockAccessor.GetBlockEntity(blockSelection.Position) as BlockEntityAnvil;
         if (blockEntityAnvil?.WorkItemStack == null) return null;
-        return
-        [
+        return new[]
+        {
             blockEntityAnvil.WorkItemStack.Collectible
                 .GetCollectibleInterface<IAnvilWorkable>()
                 .GetBaseMaterial(blockEntityAnvil.WorkItemStack)
-        ];
+        };
     }
 }

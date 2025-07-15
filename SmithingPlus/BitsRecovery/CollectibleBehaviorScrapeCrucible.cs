@@ -5,9 +5,13 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus.BitsRecovery;
 
-public class CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : CollectibleBehavior(collObj)
+public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
 {
     public const float MaxScrapeTemperature = 50;
+
+    public CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : base(collObj)
+    {
+    }
 
     public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel,
         EntitySelection entitySel,
@@ -60,12 +64,14 @@ public class CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : Coll
                 $"[CollectibleBehaviorScrapeCrucible#OnHeldInteractStop] {outputStack.GetName()} has no valid metal material.");
             return;
         }
+
         if (metalBitStack == null)
         {
             Core.Logger.VerboseDebug(
                 $"[CollectibleBehaviorScrapeCrucible#OnHeldInteractStop] {metalMaterial.IngotCode} has no valid metal bit stack.");
             return;
         }
+
         var metalTier = metalMaterial.Tier;
         metalBitStack.StackSize = outputBitCount;
         metalBitStack.SetTemperatureFrom(world, crucibleStack);
