@@ -18,18 +18,17 @@ public class RecyclableArrowBehavior(Entity entity) : EntityBehavior(entity)
         ref EnumHandling handling)
     {
         Core.Logger.VerboseDebug("GetDrops: {0}", entity.Code);
-        if (entity is not EntityProjectile entityProjectile) return base.GetDrops(world, pos, byPlayer, ref handling);
-        if (entityProjectile.ProjectileStack is not { } stack ||
+        if (entity is not EntityProjectile { ProjectileStack: { } stack } entityProjectile ||
             !IsRecyclableArrow(entityProjectile)) return base.GetDrops(world, pos, byPlayer, ref handling);
         Core.Logger.VerboseDebug("Arrow died: {0}", stack);
         var metalMaterial = stack.GetOrCacheMetalMaterial(world.Api);
-        var metalVariant = metalMaterial?.Variant;
+        var metalVariant = metalMaterial?.Code;
         if (metalVariant == null) return base.GetDrops(world, pos, byPlayer, ref handling);
         Core.Logger.VerboseDebug("Arrow metal: {0}", metalVariant);
         var metalBitStack = metalMaterial.MetalBitStack;
         if (metalBitStack == null) return base.GetDrops(world, pos, byPlayer, ref handling);
         handling = EnumHandling.PreventDefault;
-        return new[] { metalBitStack };
+        return [metalBitStack];
     }
 
     public static bool IsRecyclableArrow(EntityProjectile projectile)

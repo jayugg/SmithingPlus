@@ -4,7 +4,9 @@
 - TODO Store overall transform for flip tool mode to properly reconstruct recipe outline rotation.
     Current method can have bugs and is harder to maintain.
 
-Pre-release:
+Done:
 - Fix occasional crucible scraping crash
 - Merge PR to facilitate Knapster compatibility
-- Fix small metal dupe bug (won't disclose details for server security)
+- Lighter metal material detection
+- Reduced logspam
+- Compatibility additions for modder-defined metal/smithing materials that don't use default vanilla conventions

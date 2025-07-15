@@ -7,6 +7,7 @@ using System.Reflection.Emit;
 using HarmonyLib;
 using JetBrains.Annotations;
 using SmithingPlus.Metal;
+using SmithingPlus.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Util;
@@ -86,20 +87,23 @@ public class AnvilWorkablePatches
     {
         if (___api is not ICoreClientAPI capi)
             return;
-        var metalMaterial = __instance.GetOrCacheMetalMaterial(capi);
-        var viableTier = metalMaterial?.Tier != null;
-        var workableStackList = capi.World.Items.Where(i => i.Code != null && i is ItemIngot && viableTier)
+        var metalVariant = __instance.GetMetalVariant();
+        var metalTier = ___api.GetModSystem<SurvivalCoreSystem>()?.metalsByCode
+            .TryGetValue(metalVariant, out var metalProperty) == true
+            ? metalProperty?.Tier ?? 0
+            : 0;
+        var workableStackList = capi.World.Items.Where(i => i.Code != null && i is ItemIngot)
             .Select(i => new ItemStack(i)).ToList();
         var badInteraction = ___interactions.FirstOrDefault(i => i.ActionLangCode == "blockhelp-anvil-addvoxels");
         if (badInteraction == null) return;
         var newInteraction = ObjectCacheUtil.GetOrCreate(
             capi,
-            "sp:anvilBlockInteractions" + (metalMaterial?.Tier ?? 0),
-            () => CreateAnvilInteraction(capi, metalMaterial, workableStackList));
+            "sp:anvilBlockInteractions" + metalTier,
+            () => CreateAnvilInteraction(capi, workableStackList));
         ___interactions[Array.IndexOf(___interactions, badInteraction)] = newInteraction;
     }
 
-    private static WorldInteraction CreateAnvilInteraction(ICoreClientAPI api, MetalMaterial? metalMaterial,
+    private static WorldInteraction CreateAnvilInteraction(ICoreClientAPI api,
         List<ItemStack> workableStackList)
     {
         return new WorldInteraction

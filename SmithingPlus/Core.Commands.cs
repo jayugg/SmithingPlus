@@ -1,8 +1,10 @@
 using System;
 using System.Linq;
+using SmithingPlus.Metal;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
+using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
 namespace SmithingPlus;
@@ -47,6 +49,17 @@ public partial class Core
             .WithArgs(api.ChatCommands.Parsers.Word("attributeKey"), api.ChatCommands.Parsers.Word("attributeValue"),
                 api.ChatCommands.Parsers.OptionalWord("playerName"))
             .HandleWith(args => OnSetHeldAttributeCommand(api, args));
+        api.ChatCommands
+            .Create("getMetalMaterial")
+            .WithDescription("Get the metal material of held item.")
+            .RequiresPrivilege("controlserver")
+            .WithArgs(api.ChatCommands.Parsers.OptionalWord("playerName"))
+            .HandleWith(args => OnGetMetalMaterialCommand(api, args));
+        api.ChatCommands
+            .Create("resetMetalMaterialCache")
+            .WithDescription("Reset the metal material cache.")
+            .RequiresPrivilege("controlserver")
+            .HandleWith(args => ResetMetalMaterialCache(api, args));
     }
 
     private static TextCommandResult OnSetHeldAttributeCommand(ICoreServerAPI api, TextCommandCallingArgs args)
@@ -173,6 +186,37 @@ public partial class Core
         var smithingQuality = targetPlayer.Entity.Stats.GetBlended("sp:smithingQuality");
         return TextCommandResult.Success(
             $"Smithing quality for player '{targetPlayer?.PlayerName}' is {smithingQuality}.");
+    }
+
+
+    private static TextCommandResult OnGetMetalMaterialCommand(ICoreServerAPI api, TextCommandCallingArgs args)
+    {
+        var playerName = args[0] as string;
+        IServerPlayer targetPlayer;
+        if (string.IsNullOrEmpty(playerName))
+        {
+            targetPlayer = args.Caller.Player as IServerPlayer;
+        }
+        else
+        {
+            targetPlayer = GetPlayerByName(api, playerName);
+            if (targetPlayer == null) return TextCommandResult.Error($"Player '{playerName}' not found.");
+        }
+
+        if (targetPlayer == null) return TextCommandResult.Error("Player not found.");
+        var heldStack = targetPlayer.InventoryManager.ActiveHotbarSlot.Itemstack;
+        if (heldStack == null) return TextCommandResult.Error($"Player '{targetPlayer.PlayerName}' has no held item.");
+        var metalMaterial = heldStack.Collectible.GetOrCacheMetalMaterial(api);
+        if (metalMaterial == null)
+            return TextCommandResult.Error($"Held item '{heldStack.GetName()}' is not a metal item.");
+        return TextCommandResult.Success(
+            $"Held item '{heldStack.GetName()}' has metal material {metalMaterial.Code} with ingot {metalMaterial.IngotCode}.");
+    }
+
+    private static TextCommandResult ResetMetalMaterialCache(ICoreServerAPI api, TextCommandCallingArgs args)
+    {
+        ObjectCacheUtil.Delete(Api, MetalMaterialCacheKey);
+        return TextCommandResult.Success("Metal material cache has been reset.");
     }
 
     private static IServerPlayer GetPlayerByName(ICoreServerAPI api, string playerName)
