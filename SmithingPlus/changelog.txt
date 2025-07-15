@@ -5,4 +5,6 @@
     Current method can have bugs and is harder to maintain.
 
 Done:
-- [Compatibility] Fix crash with toolsmith
+- [Fix] Sometimes items wouldn't break and get negative durability
+- [Fix] Hot item color issues
+- [Tweak] Improved debug logging

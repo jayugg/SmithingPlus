@@ -41,7 +41,6 @@ public class BitsRecoveryPatches
             Core.Logger.VerboseDebug("[BitsRecovery] Non-metal voxel type: {0}", voxelType);
             return;
         }
-
         RecoverBitsFromWorkItem(__instance, byPlayer, workItemStack);
     }
 
@@ -52,6 +51,7 @@ public class BitsRecoveryPatches
         splitCount += bitsPerVoxel;
         if (splitCount < 1)
         {
+            Core.Logger.VerboseDebug($"[BitsRecovery] Split count below 1 ({splitCount}), not recovering bits");
             __instance.WorkItemStack.SetSplitCount(splitCount);
             return;
         }

@@ -143,7 +143,6 @@ public static class ItemStackExtensions
 
     public static bool IsCastTool(this ItemStack stack)
     {
-        Core.Logger.VerboseDebug("[ItemStackExtensions#IsCastTool] {0}", stack.Collectible.Code);
         return stack.Attributes.GetBool(ModAttributes.CastTool);
     }
 }
