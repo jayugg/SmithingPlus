@@ -36,7 +36,7 @@ public class HelveHammerRecoveryPatches
         if (voxelCount == __instance.Voxels.MaterialCount()) return;
         var workItemStack = __instance.WorkItemStack;
         var api = __instance.Api;
-        var metalMaterial = workItemStack.GetOrCacheMetalMaterial(api);
+        var metalMaterial = workItemStack.GetMetalMaterialProcessed(api);
         var splitCount = workItemStack.GetSplitCount();
         var bitsPerVoxel = 1f / Core.Config.VoxelsPerBit;
         splitCount += bitsPerVoxel;

@@ -3,7 +3,7 @@
   "modid": "smithingplus",
   "name": "SmithingPlus",
   "authors": [ "jayu" ],
-  "description": "Smithing tweaks and QOL improvements.",
-  "version": "1.6.3",
-  "dependencies": { "game": "" }
+  "description": "Metal tool repair, smithing tweaks and QOL improvements.",
+  "version": "1.6.4",
+  "dependencies": { "game": "1.20.7" }
 }

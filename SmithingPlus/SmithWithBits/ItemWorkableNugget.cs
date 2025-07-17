@@ -60,7 +60,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
     }
 
 
-    public ItemStack TryPlaceOn(ItemStack stack, BlockEntityAnvil beAnvil)
+    public virtual ItemStack TryPlaceOn(ItemStack stack, BlockEntityAnvil beAnvil)
     {
         if (!CanWork(stack) || (beAnvil.WorkItemStack != null && !beAnvil.CanWorkCurrent))
             return null;

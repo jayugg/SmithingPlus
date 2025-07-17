@@ -11,7 +11,7 @@ namespace SmithingPlus.SmithWithBits;
 public class ItemXWorkableNugget : ItemWorkableNugget
 {
     // Used for xskills bits compatibility
-    public new ItemStack TryPlaceOn(ItemStack stack, BlockEntityAnvil beAnvil)
+    public override ItemStack TryPlaceOn(ItemStack stack, BlockEntityAnvil beAnvil)
     {
         if (!CanWork(stack) || (beAnvil.WorkItemStack != null && !beAnvil.CanWorkCurrent))
             return null;

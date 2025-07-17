@@ -35,16 +35,15 @@ public class CollectibleBehaviorCastToolHead : CollectibleBehavior, IAnvilWorkab
         if (!stack.IsCastTool())
             return false;
         var temperature = stack.Collectible.GetTemperature(Api.World, stack);
-        var meltingPoint = stack.Collectible.GetMeltingPoint(Api.World, null, new DummySlot(stack));
-        var attributes = stack.Collectible.Attributes;
-        return (attributes != null ? attributes["workableTemperature"].Exists ? 1 : 0 : 0) != 0
-            ? stack.Collectible.Attributes["workableTemperature"].AsFloat(meltingPoint / 2f) <= (double)temperature
-            : temperature >= meltingPoint / 2.0;
+        var threshold = GetWorkableTemperature(stack);
+        Core.Logger.VerboseDebug(
+            $"[CollectibleBehaviorCastToolHead#CanWork] {stack.Collectible.Code} - Temperature: {temperature}, Threshold: {threshold}");
+        return temperature >= threshold;
     }
 
     public ItemStack? TryPlaceOn(ItemStack stack, BlockEntityAnvil beAnvil)
     {
-        if (beAnvil.WorkItemStack != null)
+        if (beAnvil.WorkItemStack != null || !CanWork(stack))
             return null;
         var recipe = stack.GetSingleSmithingRecipe(Api);
         var voxels = recipe.Voxels.ToByteArray();
@@ -93,5 +92,31 @@ public class CollectibleBehaviorCastToolHead : CollectibleBehavior, IAnvilWorkab
         dsc.AppendLine(Lang.Get($"{Core.ModId}:setting-casttooldurabilitypenalty") +
                        $": {100 * Core.Config.CastToolDurabilityPenalty}%");
         dsc.AppendLine(Lang.Get($"{Core.ModId}:itemdesc-needsrefining"));
+        var workableTemp = GetWorkableTemperature(inSlot.Itemstack);
+        var temperature = inSlot.Itemstack?.Collectible.GetTemperature(world, inSlot.Itemstack);
+        dsc.AppendLine(Lang.Get("Workable Temperature: {0}",
+            workableTemp > 0
+                ? temperature > workableTemp
+                    ? $"<font color=\"{Constants.AnvilWorkableColor}\">{Math.Round(workableTemp)}\u00B0C</font>"
+                    : $"{Math.Round(workableTemp)}\u00B0C"
+                : Lang.Get($"{Core.ModId}:itemdesc-temp-always")));
+    }
+
+    public float GetWorkableTemperature(ItemStack itemStack)
+    {
+        var metalIngot = itemStack.GetOrCacheMetalMaterial(Api)?.IngotItem;
+        var querySlot = new DummySlot(itemStack);
+
+        var meltingPoint = metalIngot?
+                               .GetMeltingPoint(Api.World, null, querySlot)
+                           ?? itemStack.Collectible
+                               .GetMeltingPoint(Api.World, null, querySlot);
+
+        var defaultWorkableTemp = meltingPoint / 2f;
+        var workableAttr = metalIngot?.Attributes?["workableTemperature"];
+
+        return workableAttr?.Exists == true
+            ? workableAttr.AsFloat(defaultWorkableTemp)
+            : defaultWorkableTemp;
     }
 }

@@ -146,7 +146,7 @@ public static class MetalMaterialExtensions
     {
         var collObj = itemStack.Collectible;
         // Resort to the CollectibleObject method for items that are not anvil workable
-        if (collObj is not IAnvilWorkable anvilWorkable) return collObj?.GetMetalMaterial(api);
+        if (collObj is not IAnvilWorkable anvilWorkable) return collObj?.GetOrCacheMetalMaterial(api);
         // Grab from IAnvilWorkable
         var ingotStack = anvilWorkable.GetBaseMaterial(itemStack);
         // Try to grab the processed material from the ingot stack

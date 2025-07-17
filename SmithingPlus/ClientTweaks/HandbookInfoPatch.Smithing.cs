@@ -94,9 +94,10 @@ public partial class HandbookInfoPatch
         var allMaterialCollectibles = capi.World.Collectibles
             .Where(collectible =>
                 collectible is IAnvilWorkable and not ItemWorkItem &&
-                collectible.CombustibleProps?.SmeltedStack?.Resolve(capi.World, "worldForResolving") != null &&
                 !collectible.Equals(stack.Collectible) &&
-                collectible.Satisfies(collectible.CombustibleProps?.SmeltedStack?.ResolvedItemstack, baseMaterial) &&
+                collectible.CombustibleProps?.SmeltedStack?.Resolve(capi.World, "worldForResolving") == true &&
+                collectible.CombustibleProps?.SmeltedStack?.ResolvedItemstack is { } smeltedStack &&
+                collectible.Satisfies(smeltedStack, baseMaterial) &&
                 ((IAnvilWorkable)collectible).GetMatchingRecipes(new ItemStack(collectible))
                 .Any(recipe => recipe.RecipeId == recipeId))
             .OrderBy(collectible => collectible.Code.Domain == "game" ? -100 : 0)
