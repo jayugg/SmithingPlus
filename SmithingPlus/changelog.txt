@@ -4,8 +4,5 @@
 - TODO Store overall transform for flip tool mode to properly reconstruct recipe outline rotation.
     Current method can have bugs and is harder to maintain.
 
-Done:
-- [Fix] Now cannot place non-cast castable toolheads on anvils (was a mistake)
-- [Fix] Now require cast tool heads to be above workable temperature to be placed on anvils
-- [Tweak] Cast tool heads display workable temperature in their tooltips
-- [Fix] Client tweaks crashes with some mods with items with broken smelted stack data
+v.1.6.5
+- [Fix] Fix rod not being able to be placed in forge

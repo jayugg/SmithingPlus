@@ -3,7 +3,11 @@
     "file": "game:itemtypes/part/rod.json",
     "op": "addmerge",
     "path": "/attributes",
-    "value": { "isPureMetal": true },
+    "value": {
+      "isPureMetal": true,
+      "forgable": true,
+      "inForgeTransform": { "translation": { "x": 0, "y": 0, "z": 0.005 }, "scale": 0.95 }
+    },
     "side": "Server"
   },
   {
