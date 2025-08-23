@@ -68,6 +68,11 @@ public class CollectibleBehaviorCastToolHead : CollectibleBehavior, IAnvilWorkab
         return EnumHelveWorkableMode.TestSufficientVoxelsWorkable;
     }
 
+    public int VoxelCountForHandbook(ItemStack stack)
+    {
+        return stack.GetSmithingRecipe(Api)?.Voxels?.VoxelCount() ?? 0;
+    }
+
     public override void OnLoaded(ICoreAPI api)
     {
         base.OnLoaded(api);

@@ -128,6 +128,11 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
         return EnumHelveWorkableMode.NotWorkable;
     }
 
+    public int VoxelCountForHandbook(ItemStack stack)
+    {
+        return 2;
+    }
+
     public override void OnCreatedByCrafting(
         ItemSlot[] allInputslots,
         ItemSlot outputSlot,

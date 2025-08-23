@@ -123,6 +123,11 @@ public class ItemWorkableRod : Item, IAnvilWorkable
         return EnumHelveWorkableMode.NotWorkable;
     }
 
+    public int VoxelCountForHandbook(ItemStack stack)
+    {
+        return RecipeVoxels?.VoxelCount() ?? 0;
+    }
+
     public override void OnLoaded(ICoreAPI coreApi)
     {
         base.OnLoaded(coreApi);

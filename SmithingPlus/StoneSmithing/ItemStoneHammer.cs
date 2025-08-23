@@ -9,7 +9,7 @@ namespace SmithingPlus.StoneSmithing;
 public class ItemStoneHammer : ItemHammer
 {
     public const int MaxHitCount = 3;
-    protected override void strikeAnvil(EntityAgent byEntity, ItemSlot slot)
+    protected override void strikeAnvil(EntityAgent byEntity, ItemSlot slot, ItemStack strikingItem)
     {
         var player = (byEntity as EntityPlayer)?.Player;
         var currentBlockSelection = player?.CurrentBlockSelection;
