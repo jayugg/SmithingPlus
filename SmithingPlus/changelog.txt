@@ -5,11 +5,8 @@
 - TODO [Minor] Bug in client tweak for anvil ingredient count. The first time the dialog is opened, the tweak doesn't get applied.
 
 v1.6.7-pre.7
-- [Localisation] Add Russian (ru) localisation. (Apologies, I forgot who sent the file to me. If you see this, please let me know so I can credit you.)
-- [Update] Updated framework to .NET 8
-- [Update] Implemented voxel count methods for IAnvilWorkable, preventing crashes due to missing methods
-- [Update] Moved traits to config/traits.json instead of patching the vanilla file, as required by new guidelines
-- [Update] Adapt handbook tweaks as vanilla implemented some of them, causing duplicate entries
-- [Update] Removed transpilers to use GetCollectibleInterface for IAnvilWorkable since vanilla now uses it
-- [Tweak] Less spammy log messages
-- [Fix] Fix possible anvil bug when placing cast tool heads without well defined metal material
+- [Update] Finish update cleanup
+- [Fix] Don't ship JetBrains Annotations with the mod (not needed at runtime)
+- [Fix] Balance output of grid recipes that output nuggets based on largest smithing recipe
+    of input and its output count (to balance chiseling down items to nuggets.
+    Applies to any recipe, modded or not, that uses nuggets with the ItemWorkableNugget class.
