@@ -24,7 +24,7 @@ public partial class Core
 public static class PatchExtensions
 {
     /// <summary>
-    ///     Patches the category if the boolean flag is enabled.
+    /// Patches the category if the boolean flag is enabled.
     /// </summary>
     /// <param name="patchCategory">String HarmonyPatchCategory to patch.</param>
     /// <param name="configFlag">Boolean flag to determine if the patch should be applied.</param>
