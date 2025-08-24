@@ -157,7 +157,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
         var sourceSlot = inputWorkItemSlot ?? inputSmithedItemSlot;
         if (sourceSlot == null) return;
 
-        var temperature = outputSlot.Itemstack.Collectible.GetTemperature(api.World, sourceSlot.Itemstack);
+        var temperature = sourceSlot.Itemstack.Collectible.GetTemperature(api.World, sourceSlot.Itemstack);
         outputSlot.Itemstack.Collectible.SetTemperature(api.World, outputSlot.Itemstack, temperature);
     }
     
