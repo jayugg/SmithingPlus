@@ -131,22 +131,36 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
         ItemSlot outputSlot,
         GridRecipe byRecipe)
     {
-        var itemSlot =
-            allInputslots.FirstOrDefault(
-                (System.Func<ItemSlot, bool>)(slot => slot.Itemstack?.Collectible is ItemWorkItem));
-        if (itemSlot != null && outputSlot.Itemstack is not null)
-        {
-            var voxels = BlockEntityAnvil.deserializeVoxels(itemSlot.Itemstack.Attributes.GetBytes("voxels"));
-            var voxelCount = voxels.MaterialCount();
-            var ratio = 2f + 0.1 * (voxelCount / 42f);
-            outputSlot.Itemstack.StackSize = Math.Max((int)(voxelCount / ratio), 1);
-            var temperature = outputSlot.Itemstack.Collectible.GetTemperature(api.World, itemSlot.Itemstack);
-            outputSlot.Itemstack.Collectible.SetTemperature(api.World, outputSlot.Itemstack, temperature);
-        }
-
         base.OnCreatedByCrafting(allInputslots, outputSlot, byRecipe);
-    }
+        if (outputSlot.Itemstack == null) return;
 
+        var voxelCount = 0;
+        
+        var inputWorkItemSlot = allInputslots.FirstOrDefault(slot => slot.Itemstack?.Collectible is ItemWorkItem);
+        if (inputWorkItemSlot != null)
+        {
+            var voxels = BlockEntityAnvil.deserializeVoxels(inputWorkItemSlot.Itemstack.Attributes.GetBytes("voxels"));
+            voxelCount = voxels.MaterialCount();
+        }
+        
+        var inputSmithedItemSlot = allInputslots.FirstOrDefault(slot => slot.Itemstack?.GetLargestSmithingRecipe(api) != null);
+        if (voxelCount == 0 && inputSmithedItemSlot != null)
+        {
+            var largestRecipe = inputSmithedItemSlot.Itemstack.GetLargestSmithingRecipe(api);
+            var largestOutput = Math.Max(largestRecipe.Output.ResolvedItemstack.StackSize, 1);
+            var totalVoxels = largestRecipe.Voxels.ToByteArray().MaterialCount();
+            voxelCount = totalVoxels / largestOutput;
+        }
+        
+        outputSlot.Itemstack.StackSize = Math.Max((int)(voxelCount / Core.Config.VoxelsPerBit), 1);
+        
+        var sourceSlot = inputWorkItemSlot ?? inputSmithedItemSlot;
+        if (sourceSlot == null) return;
+
+        var temperature = outputSlot.Itemstack.Collectible.GetTemperature(api.World, sourceSlot.Itemstack);
+        outputSlot.Itemstack.Collectible.SetTemperature(api.World, outputSlot.Itemstack, temperature);
+    }
+    
     public List<SmithingRecipe> GetMatchingRecipes(ICoreAPI coreApi)
     {
         var ingotStack = Attributes[ModAttributes.IsPureMetal].AsBool() &&

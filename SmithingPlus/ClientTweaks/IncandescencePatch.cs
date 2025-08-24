@@ -6,7 +6,7 @@ using Vintagestory.API.MathTools;
 namespace SmithingPlus.ClientTweaks;
 
 [UsedImplicitly]
-// [HarmonyPatchCategory(Core.AlwaysPatchCategory)] Turn off patch for now, need to tweak values further
+[HarmonyPatchCategory(Core.NeverPatchCategory)] // Turn off patch for now, need to tweak values further
 public class IncandescencePatch
 {
     // Wien's displacement constant (m·K)
@@ -58,7 +58,7 @@ public class IncandescencePatch
     }
 
     /// <summary>
-    ///     Returns an RGBA color (components 0–1) approximating black‐body incandescence at the given temperature (°C).
+    /// Returns an RGBA color (components 0–1) approximating black‐body incandescence at the given temperature (°C).
     /// </summary>
     public static float[] GetIncandescenceColor(int temperatureC)
     {

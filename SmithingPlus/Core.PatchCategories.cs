@@ -3,6 +3,7 @@ namespace SmithingPlus;
 public partial class Core
 {
     internal const string AlwaysPatchCategory = "always";
+    internal const string NeverPatchCategory = "never";
     internal const string ToolRecoveryCategory = "toolRecovery";
     internal const string SmithingBitsCategory = "smithingBits";
     internal const string StoneSmithingCategory = "stoneSmithing";
