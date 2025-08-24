@@ -98,6 +98,19 @@ public static class ItemStackExtensions
         return smithingRecipe;
     }
 
+    // Gets smithing recipe with the largest output stack that satisfies the tool head
+    public static SmithingRecipe GetLargestSmithingRecipe(this ItemStack toolHead, ICoreAPI api)
+    {
+        var smithingRecipe = api.ModLoader
+                .GetModSystem<RecipeRegistrySystem>()
+                .SmithingRecipes
+                .Where(r => r.Output.ResolvedItemstack.Satisfies(toolHead))
+                .OrderByDescending(r => r.Output.ResolvedItemstack.StackSize)
+                .FirstOrDefault()
+            ;
+        return smithingRecipe;
+    }
+
     // Gets smithing recipe only if the ouput itemstack has a single item
     public static SmithingRecipe GetSingleSmithingRecipe(this ItemStack toolHead, ICoreAPI api)
     {
