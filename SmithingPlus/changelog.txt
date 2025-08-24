@@ -5,9 +5,10 @@
 - TODO [Minor] Bug in client tweak for anvil ingredient count. The first time the dialog is opened, the tweak doesn't get applied.
 
 v.1.6.6-pre.7
-- [Localisation] Add ru localisation (sorry, I forgot who sent them, but if you see this, please let me know so I can credit you)
-- [Update] Updated dotnet version
+- [Localisation] Add Russian (ru) localisation. (Apologies, I forgot who sent the file to me. If you see this, please let me know so I can credit you.)
+- [Update] Updated framework to .NET 8
 - [Update] Implemented voxel count methods for IAnvilWorkable, preventing crashes due to missing methods
-- [Update] Moved traits to config/traits.json instead of patching the vanilla file
+- [Update] Moved traits to config/traits.json instead of patching the vanilla file, as required by new guidelines
 - [Update] Adapt handbook tweaks as vanilla implemented some of them, causing duplicate entries
 - [Tweak] Less spammy log messages
+- [Fix] Fix possible anvil bug when placing cast tool heads without well defined metal material
