@@ -13,7 +13,7 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus.ClientTweaks;
 
-[UsedImplicitly]
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 [HarmonyPatchCategory(Core.ClientTweaksCategories.AnvilShowRecipeVoxels)]
 public static class RecipeIngredientCountPatch
 {

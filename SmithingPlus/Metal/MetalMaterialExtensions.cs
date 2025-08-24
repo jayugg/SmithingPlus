@@ -18,7 +18,7 @@ public static class MetalMaterialExtensions
         return metalMaterial;
     }
 
-    internal static MetalMaterial? GetMetalMaterial(this CollectibleObject collObj, ICoreAPI api)
+    private static MetalMaterial? GetMetalMaterial(this CollectibleObject collObj, ICoreAPI api)
     {
         var metalMaterial = GetMetalMaterialDirect(collObj, api);
         if (metalMaterial != null) return metalMaterial;
@@ -35,7 +35,7 @@ public static class MetalMaterialExtensions
 
         // If that fails, check if the ingredient can be crafted into metal bits or similar
         var childRecipes = collObj.GetGridRecipesAsIngredient(api);
-        Core.Logger.Notification(
+        Core.Logger.VerboseDebug(
             $"[MetalMaterial] CollectibleObject {collObj.Code} has no metal material defined, trying to resolve from {childRecipes.Count()} recipes (as ingredient).");
         if (TryGetMetalMaterialFromIngredients(api, childRecipes, out metalMaterial))
             return metalMaterial;
@@ -49,7 +49,7 @@ public static class MetalMaterialExtensions
     // To get the metal material directly from the CollectibleObject's attributes or its code, if possible
     private static MetalMaterial? GetMetalMaterialDirect(this CollectibleObject collObj, ICoreAPI api)
     {
-        Core.Logger.Notification(
+        Core.Logger.VerboseDebug(
             $"[MetalMaterial] Trying to resolve metal material for CollectibleObject {collObj.Code} directly.");
         MetalMaterial? metalMaterial;
         // First get the material from attributes, if available
@@ -58,7 +58,7 @@ public static class MetalMaterialExtensions
             var materialCode = collObj.Attributes["metalMaterial"].AsString();
             metalMaterial = MetalMaterialLoader.GetMaterial(api, materialCode);
             if (metalMaterial != null) return metalMaterial;
-            Core.Logger.Warning(
+            Core.Logger.VerboseDebug(
                 $"[MetalMaterial] CollectibleObject {collObj.Code} has metalMaterial attribute with code {materialCode}, but no matching material found.");
         }
 

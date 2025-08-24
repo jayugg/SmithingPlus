@@ -14,7 +14,6 @@ namespace SmithingPlus.ClientTweaks;
 
 public partial class HandbookInfoPatch
 {
-
     [HarmonyPostfix]
     [HarmonyPatch(typeof(CollectibleBehaviorHandbookTextAndExtraInfo), "addCreatedByInfo")]
     public static void PatchFromMoldInfo(
@@ -103,16 +102,16 @@ public partial class HandbookInfoPatch
         var metalBitStacks =
             Core.MetalBitStacksCache ??=
                 allStacks.Where(s =>
-                s.Collectible.Code.Path.Contains("metalbit") &&
-                Enumerable.Contains(existingMetalVariants, s.Collectible.LastCodePart()) &&
-                s.Collectible.CombustibleProps?.SmeltedStack?.ResolvedItemstack != null &&
-                s.Collectible.CombustibleProps.SmeltingType == EnumSmeltType.Smelt &&
-                s.Collectible.CombustibleProps.MeltingPoint <= Core.MaxFuelBurnTemp
-        ).ToArray();
+                    s.Collectible.Code.Path.Contains("metalbit") &&
+                    Enumerable.Contains(existingMetalVariants, s.Collectible.LastCodePart()) &&
+                    s.Collectible.CombustibleProps?.SmeltedStack?.ResolvedItemstack != null &&
+                    s.Collectible.CombustibleProps.SmeltingType == EnumSmeltType.Smelt &&
+                    s.Collectible.CombustibleProps.MeltingPoint <= Core.MaxFuelBurnTemp
+                ).ToArray();
         var castableMetalVariants =
             Core.CastableMetalVariantsCache ??=
                 metalBitStacks.Select(s => s.Collectible.Variant["metal"]).ToArray();
-        
+
         castStacks = castStacks.Where(s => castableMetalVariants.Contains(s.Collectible.LastCodePart())).ToArray();
 
         var haveText = components.Count > 0;

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using HarmonyLib;
+using JetBrains.Annotations;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -8,6 +9,7 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus.CastingTweaks;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 [HarmonyPatchCategory(Core.CastingTweaksCategory)]
 public class CastToolPenaltyPatch
 {

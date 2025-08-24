@@ -8,39 +8,39 @@
 
     <ItemGroup>
         <Reference Include="VintagestoryAPI">
-            <HintPath>$(VINTAGE_STORY)/VintagestoryAPI.dll</HintPath>
+            <HintPath>$(VINTAGE_STORY_1_20_12)/VintagestoryAPI.dll</HintPath>
             <Private>false</Private>
         </Reference>
         <Reference Include="VSSurvivalMod">
-            <HintPath>$(VINTAGE_STORY)/Mods/VSSurvivalMod.dll</HintPath>
+            <HintPath>$(VINTAGE_STORY_1_20_12)/Mods/VSSurvivalMod.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="VSEssentials">
-            <HintPath>$(VINTAGE_STORY)/Mods/VSEssentials.dll</HintPath>
+            <HintPath>$(VINTAGE_STORY_1_20_12)/Mods/VSEssentials.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="VSCreativeMod">
-            <HintPath>$(VINTAGE_STORY)/Mods/VSCreativeMod.dll</HintPath>
+            <HintPath>$(VINTAGE_STORY_1_20_12)/Mods/VSCreativeMod.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="Newtonsoft.Json">
-            <HintPath>$(VINTAGE_STORY)/Lib/Newtonsoft.Json.dll</HintPath>
+            <HintPath>$(VINTAGE_STORY_1_20_12)/Lib/Newtonsoft.Json.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="protobuf-net">
-            <HintPath>$(VINTAGE_STORY)/Lib/protobuf-net.dll</HintPath>
+            <HintPath>$(VINTAGE_STORY_1_20_12)/Lib/protobuf-net.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="0Harmony">
-            <HintPath>$(VINTAGE_STORY)/Lib/0Harmony.dll</HintPath>
+            <HintPath>$(VINTAGE_STORY_1_20_12)/Lib/0Harmony.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="VintagestoryLib">
-            <HintPath>$(VINTAGE_STORY)/VintagestoryLib.dll</HintPath>
+            <HintPath>$(VINTAGE_STORY_1_20_12)/VintagestoryLib.dll</HintPath>
             <Private>false</Private>
         </Reference>
         <Reference Include="cairo-sharp">
-            <HintPath>$(VINTAGE_STORY)/Lib/cairo-sharp.dll</HintPath>
+            <HintPath>$(VINTAGE_STORY_1_20_12)/Lib/cairo-sharp.dll</HintPath>
             <Private>False</Private>
         </Reference>
     </ItemGroup>
@@ -58,7 +58,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2024.3.0"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2024.3.0"
+                          PrivateAssets="all"
+                          IncludeAssets="compile"/>
     </ItemGroup>
 
 </Project>
