@@ -16,6 +16,7 @@ public partial class Core
     private const string MoldStacksCacheKey = $"{ModId}:moldStacks";
     private const string MetalBitStacksCacheKey = $"{ModId}:metalbitStacks";
     private const string CastableMetalVariantsCacheKey = $"{ModId}:castableMetalVariants";
+    private const string LargestSmithingRecipeCacheKey = $"{ModId}:largestSmithingRecipe";
     private const string MetalMaterialCacheKey = $"{ModId}:metalMaterial";
 
     public static Dictionary<int, string> RecipeOutputNameCache =>
@@ -29,6 +30,10 @@ public partial class Core
 
     public static Dictionary<string, MetalMaterial?> MetalMaterialCache =>
         ObjectCacheUtil.GetOrCreate(Api, MetalMaterialCacheKey, () => new Dictionary<string, MetalMaterial?>());
+
+    public static Dictionary<string, SmithingRecipe> LargestSmithingRecipeCache =>
+        ObjectCacheUtil.GetOrCreate(Api, LargestSmithingRecipeCacheKey,
+            () => new Dictionary<string, SmithingRecipe>());
 
     public static Dictionary<string, ItemStack[]> MoldStacksCache =>
         ObjectCacheUtil.GetOrCreate(Api, MoldStacksCacheKey, () => new Dictionary<string, ItemStack[]>());

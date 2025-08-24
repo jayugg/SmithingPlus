@@ -14,7 +14,6 @@ namespace SmithingPlus.ClientTweaks;
 
 public partial class HandbookInfoPatch
 {
-
     [HarmonyPostfix]
     [HarmonyPatch(typeof(CollectibleBehaviorHandbookTextAndExtraInfo), "addCreatedByInfo")]
     public static void PatchFromMoldInfo(
@@ -25,6 +24,19 @@ public partial class HandbookInfoPatch
         ItemStack stack,
         List<RichTextComponentBase> components)
     {
+        // Find where the "Metal molding" section is in the components list
+        var moldingSectionIndex = -1;
+        for (var i = 0; i < components.Count; i++)
+        {
+            if (components[i] is not LinkTextComponent linkComponent) continue;
+            var isMoldingHeader =
+                linkComponent.DisplayText != null && linkComponent.DisplayText.Contains(Lang.Get("Metal molding"));
+
+            if (!isMoldingHeader || i + 1 >= components.Count) continue;
+            moldingSectionIndex = i + 1;
+            break;
+        }
+
         var moldStacks = CacheHelper.GetOrAdd(
             Core.MoldStacksCache,
             stack.Collectible.Code.ToString(),
@@ -36,13 +48,34 @@ public partial class HandbookInfoPatch
                 .ToArray()
         );
         if (moldStacks.Length <= 0) return;
-        AddSubHeading(components, capi, openDetailPageFor,
-            $"{Lang.Get("Metal molding")} {Lang.Get("requires")}",
-            "craftinginfo-smelting");
-        var slideshowMolds = new SlideshowItemstackTextComponent(capi, moldStacks.ToArray(), 40, EnumFloat.Inline,
-                cs => openDetailPageFor(GuiHandbookItemStackPage.PageCodeForStack(cs)))
-            { PaddingLeft = 2 };
-        components.Add(slideshowMolds);
+        var moldingSectionExists = moldingSectionIndex >= 0;
+        if (!moldingSectionExists)
+        {
+            AddSubHeading(components, capi, openDetailPageFor,
+                $"{Lang.Get("Metal molding")} {Lang.Get("with")}\n",
+                "craftinginfo-smelting");
+            components.Add(new ClearFloatTextComponent(capi, 2f));
+            var slideshowMolds = new SlideshowItemstackTextComponent(capi, moldStacks.ToArray(), 40, EnumFloat.Inline,
+                    cs => openDetailPageFor(GuiHandbookItemStackPage.PageCodeForStack(cs)))
+                { PaddingLeft = 2 };
+            components.Add(slideshowMolds);
+            components.Add(new ClearFloatTextComponent(capi, 2f));
+        }
+        else
+        {
+            components.RemoveAt(moldingSectionIndex - 1);
+            components.Insert(moldingSectionIndex - 1,
+                new LinkTextComponent(capi, $"{Lang.Get("Metal molding")} {Lang.Get("with")}\n",
+                    CairoFont.WhiteSmallText(),
+                    _ => openDetailPageFor("craftinginfo-smelting")));
+            components.Insert(moldingSectionIndex, new ClearFloatTextComponent(capi, 2f));
+            var slideshowMolds = new SlideshowItemstackTextComponent(capi, moldStacks.ToArray(), 40,
+                    EnumFloat.Inline,
+                    cs => openDetailPageFor(GuiHandbookItemStackPage.PageCodeForStack(cs)))
+                { PaddingLeft = 2 };
+            components.Insert(moldingSectionIndex + 1, slideshowMolds);
+            components.Insert(moldingSectionIndex + 2, new ClearFloatTextComponent(capi, 2f));
+        }
     }
 
     [HarmonyPostfix]
@@ -69,16 +102,16 @@ public partial class HandbookInfoPatch
         var metalBitStacks =
             Core.MetalBitStacksCache ??=
                 allStacks.Where(s =>
-                s.Collectible.Code.Path.Contains("metalbit") &&
-                Enumerable.Contains(existingMetalVariants, s.Collectible.LastCodePart()) &&
-                s.Collectible.CombustibleProps?.SmeltedStack?.ResolvedItemstack != null &&
-                s.Collectible.CombustibleProps.SmeltingType == EnumSmeltType.Smelt &&
-                s.Collectible.CombustibleProps.MeltingPoint <= Core.MaxFuelBurnTemp
-        ).ToArray();
+                    s.Collectible.Code.Path.Contains("metalbit") &&
+                    Enumerable.Contains(existingMetalVariants, s.Collectible.LastCodePart()) &&
+                    s.Collectible.CombustibleProps?.SmeltedStack?.ResolvedItemstack != null &&
+                    s.Collectible.CombustibleProps.SmeltingType == EnumSmeltType.Smelt &&
+                    s.Collectible.CombustibleProps.MeltingPoint <= Core.MaxFuelBurnTemp
+                ).ToArray();
         var castableMetalVariants =
             Core.CastableMetalVariantsCache ??=
                 metalBitStacks.Select(s => s.Collectible.Variant["metal"]).ToArray();
-        
+
         castStacks = castStacks.Where(s => castableMetalVariants.Contains(s.Collectible.LastCodePart())).ToArray();
 
         var haveText = components.Count > 0;

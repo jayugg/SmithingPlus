@@ -113,7 +113,7 @@ public static class RecipeIngredientCountPatch
         if (baseMaterial == null)
         {
             recipeSelector.SingleComposer.GetRichtext("ingredientCounts")
-                .SetNewText([]);
+                .SetNewText(Array.Empty<RichTextComponentBase>());
             return;
         }
 

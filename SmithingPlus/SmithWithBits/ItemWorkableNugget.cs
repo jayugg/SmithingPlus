@@ -121,11 +121,6 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
         return EnumHelveWorkableMode.NotWorkable;
     }
 
-    public int VoxelCountForHandbook(ItemStack stack)
-    {
-        return 2;
-    }
-
     public override void OnCreatedByCrafting(
         ItemSlot[] allInputslots,
         ItemSlot outputSlot,
@@ -135,15 +130,16 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
         if (outputSlot.Itemstack == null) return;
 
         var voxelCount = 0;
-        
+
         var inputWorkItemSlot = allInputslots.FirstOrDefault(slot => slot.Itemstack?.Collectible is ItemWorkItem);
         if (inputWorkItemSlot != null)
         {
             var voxels = BlockEntityAnvil.deserializeVoxels(inputWorkItemSlot.Itemstack.Attributes.GetBytes("voxels"));
             voxelCount = voxels.MaterialCount();
         }
-        
-        var inputSmithedItemSlot = allInputslots.FirstOrDefault(slot => slot.Itemstack?.GetLargestSmithingRecipe(api) != null);
+
+        var inputSmithedItemSlot =
+            allInputslots.FirstOrDefault(slot => slot.Itemstack?.GetLargestSmithingRecipe(api) != null);
         if (voxelCount == 0 && inputSmithedItemSlot != null)
         {
             var largestRecipe = inputSmithedItemSlot.Itemstack.GetLargestSmithingRecipe(api);
@@ -151,16 +147,16 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
             var totalVoxels = largestRecipe.Voxels.ToByteArray().MaterialCount();
             voxelCount = totalVoxels / largestOutput;
         }
-        
+
         outputSlot.Itemstack.StackSize = Math.Max((int)(voxelCount / Core.Config.VoxelsPerBit), 1);
-        
+
         var sourceSlot = inputWorkItemSlot ?? inputSmithedItemSlot;
         if (sourceSlot == null) return;
 
         var temperature = sourceSlot.Itemstack.Collectible.GetTemperature(api.World, sourceSlot.Itemstack);
         outputSlot.Itemstack.Collectible.SetTemperature(api.World, outputSlot.Itemstack, temperature);
     }
-    
+
     public List<SmithingRecipe> GetMatchingRecipes(ICoreAPI coreApi)
     {
         var ingotStack = Attributes[ModAttributes.IsPureMetal].AsBool() &&
