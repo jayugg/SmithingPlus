@@ -47,18 +47,12 @@ public class CollectibleBehaviorCastToolHead : CollectibleBehavior, IAnvilWorkab
             return null;
         var recipe = stack.GetSingleSmithingRecipe(Api);
         var voxels = recipe.Voxels.ToByteArray();
-        var world = beAnvil.Api.World;
-        var random = world.Rand;
+        var random = beAnvil.Api.World.Rand;
         var slagCount = (int)Math.Ceiling(0.2f * voxels.MaterialCount());
         voxels.AddSlag(slagCount, random);
-        var workItemStack = stack.GetOrCacheMetalMaterial(beAnvil.Api)?.WorkItemStack;
-        if (workItemStack == null)
-            return null;
         beAnvil.Voxels = voxels;
         beAnvil.SelectedRecipeId = recipe.RecipeId;
-        var temperature = stack.Collectible.GetTemperature(world, stack);
-        workItemStack.Collectible.SetTemperature(world, workItemStack, temperature);
-        return workItemStack;
+        return stack.GetOrCacheMetalMaterial(Api)?.WorkItemStack;
     }
 
     public ItemStack? GetBaseMaterial(ItemStack stack)

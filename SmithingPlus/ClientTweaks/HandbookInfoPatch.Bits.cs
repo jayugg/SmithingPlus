@@ -11,7 +11,7 @@ using Vintagestory.GameContent;
 namespace SmithingPlus.ClientTweaks;
 #nullable enable
 
-[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+[UsedImplicitly]
 public partial class HandbookInfoPatch
 {
     [HarmonyPostfix, HarmonyPatch(typeof(CollectibleBehaviorHandbookTextAndExtraInfo), "addCreatedByInfo")]

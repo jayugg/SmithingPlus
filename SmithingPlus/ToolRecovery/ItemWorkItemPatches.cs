@@ -1,11 +1,9 @@
 using HarmonyLib;
-using JetBrains.Annotations;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 
 namespace SmithingPlus.ToolRecovery;
 
-[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 [HarmonyPatch(typeof (ItemWorkItem))]
 [HarmonyPatchCategory(Core.ToolRecoveryCategory)]
 public class ItemWorkItemPatches

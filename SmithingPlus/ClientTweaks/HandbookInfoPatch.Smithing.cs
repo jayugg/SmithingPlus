@@ -38,21 +38,20 @@ public partial class HandbookInfoPatch
             break;
         }
 
-        var largestSmithingRecipe = CacheHelper.GetOrAdd(
-            Core.LargestSmithingRecipeCache,
+        var smallestSmithingRecipe = CacheHelper.GetOrAdd(
+            Core.SmallestSmithingRecipeCache,
             stack.Collectible.Code,
             () => capi.GetSmithingRecipes()
-                .FindAll(recipe => recipe.Output.ResolvedItemstack.Satisfies(stack))
-                .OrderByDescending(recipe => recipe.Voxels.VoxelCount())
+                .FindAll(recipe => recipe.Output.Matches(capi.World, stack))
+                .OrderBy(recipe => recipe.Voxels.VoxelCount())
                 .FirstOrDefault());
-        if (largestSmithingRecipe == null) return;
-        var voxelCount = largestSmithingRecipe.Voxels.VoxelCount() /
-                         largestSmithingRecipe.Output.ResolvedItemstack.StackSize;
+        if (smallestSmithingRecipe == null) return;
+        var voxelCount = smallestSmithingRecipe.Voxels.VoxelCount();
         var bitsCount = (int)Math.Ceiling(voxelCount / Core.Config.VoxelsPerBit);
         var baseMaterial = stack.GetOrCacheMetalMaterial(capi)?.IngotStack;
         if (baseMaterial == null) return;
         var allMaterialStacks = GetSmithingIngredientStacks(capi, stack, baseMaterial, voxelCount, bitsCount,
-            largestSmithingRecipe.RecipeId);
+            smallestSmithingRecipe.RecipeId);
         if (allMaterialStacks.Count <= 0) return;
         // If Smithing section was found, add custom info
         var smithingSectionExists = smithingSectionIndex >= 0;
