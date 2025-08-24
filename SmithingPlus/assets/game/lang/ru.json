@@ -11,7 +11,7 @@
   "charattribute-sp:smithingQuality--0.1": "Снижает прочность кузнечных изделий на 10%",
 
   "Requires any of: ": "Требуется любой из: ",
-  "with": "с",
+  "requires": "требует",
 
   "Mold for": "Форма для",
   "Requires for casting": "Требуется для отливки",

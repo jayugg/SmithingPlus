@@ -47,12 +47,16 @@ public class CollectibleBehaviorCastToolHead : CollectibleBehavior, IAnvilWorkab
             return null;
         var recipe = stack.GetSingleSmithingRecipe(Api);
         var voxels = recipe.Voxels.ToByteArray();
-        var random = beAnvil.Api.World.Rand;
+        var world = beAnvil.Api.World;
+        var random = world.Rand;
         var slagCount = (int)Math.Ceiling(0.2f * voxels.MaterialCount());
         voxels.AddSlag(slagCount, random);
         beAnvil.Voxels = voxels;
         beAnvil.SelectedRecipeId = recipe.RecipeId;
-        return stack.GetOrCacheMetalMaterial(Api)?.WorkItemStack;
+        var workItemStack = stack.GetOrCacheMetalMaterial(beAnvil.Api)?.WorkItemStack;
+        var temperature = stack.Collectible.GetTemperature(world, stack);
+        workItemStack?.Collectible.SetTemperature(world, workItemStack, temperature);
+        return workItemStack;
     }
 
     public ItemStack? GetBaseMaterial(ItemStack stack)
@@ -66,6 +70,13 @@ public class CollectibleBehaviorCastToolHead : CollectibleBehavior, IAnvilWorkab
     public EnumHelveWorkableMode GetHelveWorkableMode(ItemStack stack, BlockEntityAnvil beAnvil)
     {
         return EnumHelveWorkableMode.TestSufficientVoxelsWorkable;
+    }
+
+    public int VoxelCountForHandbook(ItemStack stack)
+    {
+        var recipe = stack.GetSingleSmithingRecipe(Api);
+        var voxels = recipe.Voxels.ToByteArray();
+        return voxels.MaterialCount();
     }
 
     public override void OnLoaded(ICoreAPI api)

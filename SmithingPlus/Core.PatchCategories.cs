@@ -11,8 +11,6 @@ public partial class Core
     internal const string CastingTweaksCategory = "castingTweaks";
     internal const string HammerTweaksCategory = "hammerTweaks";
 
-    internal const string ThriftySmithingCompatCategory = "thriftySmithingCompat";
-
     internal static class ClientTweaksCategories
     {
         public const string AnvilShowRecipeVoxels = "anvilShowRecipeVoxels";

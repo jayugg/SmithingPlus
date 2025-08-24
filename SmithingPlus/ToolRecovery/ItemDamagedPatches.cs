@@ -1,7 +1,6 @@
 using System.Linq;
 using HarmonyLib;
 using JetBrains.Annotations;
-using SmithingPlus.Compat;
 using SmithingPlus.Metal;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
@@ -99,16 +98,6 @@ public class ItemDamagedPatches
         var cloneStack = itemStack?.Clone();
         cloneStack.CloneBrokenCount(itemStack, 1);
         wItemStack.SetRepairedToolStack(cloneStack);
-        if (ThriftySmithingCompat.ThriftySmithingLoaded)
-        {
-            var voxelCount = CacheHelper.GetOrAdd(Core.RecipeVoxelCountCache, smithingRecipe.RecipeId,
-                () =>
-                {
-                    Core.Logger.VerboseDebug("Calculating voxel count for: {0}", smithingRecipe.RecipeId);
-                    return smithingRecipe.Voxels.VoxelCount();
-                });
-            wItemStack.AddToCustomWorkData(voxelCount);
-        }
 
         var gaveStack = false;
         if (entityPlayer != null) gaveStack = entityPlayer.TryGiveItemStack(wItemStack);

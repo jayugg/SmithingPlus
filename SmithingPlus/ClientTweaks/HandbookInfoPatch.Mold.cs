@@ -25,19 +25,6 @@ public partial class HandbookInfoPatch
         ItemStack stack,
         List<RichTextComponentBase> components)
     {
-        // Find where the "Metal molding" section is in the components list
-        var moldingSectionIndex = -1;
-        for (var i = 0; i < components.Count; i++)
-        {
-            if (components[i] is not LinkTextComponent linkComponent) continue;
-            var isMoldingHeader =
-                linkComponent.DisplayText != null && linkComponent.DisplayText.Contains(Lang.Get("Metal molding"));
-
-            if (!isMoldingHeader || i + 1 >= components.Count) continue;
-            moldingSectionIndex = i + 1;
-            break;
-        }
-
         var moldStacks = CacheHelper.GetOrAdd(
             Core.MoldStacksCache,
             stack.Collectible.Code.ToString(),
@@ -49,34 +36,13 @@ public partial class HandbookInfoPatch
                 .ToArray()
         );
         if (moldStacks.Length <= 0) return;
-        var moldingSectionExists = moldingSectionIndex >= 0;
-        if (!moldingSectionExists)
-        {
-            AddSubHeading(components, capi, openDetailPageFor,
-                $"{Lang.Get("Metal molding")} {Lang.Get("with")}\n",
-                "craftinginfo-smelting");
-            components.Add(new ClearFloatTextComponent(capi, 2f));
-            var slideshowMolds = new SlideshowItemstackTextComponent(capi, moldStacks.ToArray(), 40, EnumFloat.Inline,
-                    cs => openDetailPageFor(GuiHandbookItemStackPage.PageCodeForStack(cs)))
-                { PaddingLeft = 2 };
-            components.Add(slideshowMolds);
-            components.Add(new ClearFloatTextComponent(capi, 2f));
-        }
-        else
-        {
-            components.RemoveAt(moldingSectionIndex - 1);
-            components.Insert(moldingSectionIndex - 1,
-                new LinkTextComponent(capi, $"{Lang.Get("Metal molding")} {Lang.Get("with")}\n",
-                    CairoFont.WhiteSmallText(),
-                    _ => openDetailPageFor("craftinginfo-smelting")));
-            components.Insert(moldingSectionIndex, new ClearFloatTextComponent(capi, 2f));
-            var slideshowMolds = new SlideshowItemstackTextComponent(capi, moldStacks.ToArray(), 40,
-                    EnumFloat.Inline,
-                    cs => openDetailPageFor(GuiHandbookItemStackPage.PageCodeForStack(cs)))
-                { PaddingLeft = 2 };
-            components.Insert(moldingSectionIndex + 1, slideshowMolds);
-            components.Insert(moldingSectionIndex + 2, new ClearFloatTextComponent(capi, 2f));
-        }
+        AddSubHeading(components, capi, openDetailPageFor,
+            $"{Lang.Get("Metal molding")} {Lang.Get("requires")}",
+            "craftinginfo-smelting");
+        var slideshowMolds = new SlideshowItemstackTextComponent(capi, moldStacks.ToArray(), 40, EnumFloat.Inline,
+                cs => openDetailPageFor(GuiHandbookItemStackPage.PageCodeForStack(cs)))
+            { PaddingLeft = 2 };
+        components.Add(slideshowMolds);
     }
 
     [HarmonyPostfix]

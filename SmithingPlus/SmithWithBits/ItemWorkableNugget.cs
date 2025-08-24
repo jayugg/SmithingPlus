@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SmithingPlus.Compat;
 using SmithingPlus.Metal;
 using SmithingPlus.Util;
 using Vintagestory.API.Client;
@@ -73,8 +72,6 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
         {
             if (!Core.Config.SmithWithBits) return null;
             CreateVoxelsFromNugget(api, ref beAnvil.Voxels);
-            if (ThriftySmithingCompat.ThriftySmithingLoaded)
-                itemStack.AddToCustomWorkData(beAnvil.Voxels.MaterialCount());
         }
         else
         {
@@ -93,11 +90,7 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
             }
 
             var bits = AddVoxelsFromNugget(api, ref beAnvil.Voxels);
-            if (bits != 0)
-            {
-                if (ThriftySmithingCompat.ThriftySmithingLoaded) beAnvil.WorkItemStack.AddToCustomWorkData(bits);
-                return itemStack;
-            }
+            if (bits != 0) return itemStack;
 
             if (api is ICoreClientAPI capi2)
                 capi2.TriggerIngameError(this, "requireshammering",
@@ -126,6 +119,11 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
     public EnumHelveWorkableMode GetHelveWorkableMode(ItemStack stack, BlockEntityAnvil beAnvil)
     {
         return EnumHelveWorkableMode.NotWorkable;
+    }
+
+    public int VoxelCountForHandbook(ItemStack stack)
+    {
+        return 2;
     }
 
     public override void OnCreatedByCrafting(

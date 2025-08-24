@@ -11,7 +11,7 @@
   "charattribute-sp:smithingQuality--0.1": "减少锻造项目耐久度10%",
 
   "Requires any of: ": "需要任意： ",
-  "with": "与",
+  "requires": "需要",
 
   "Mold for": "模具",
   "Requires for casting": "铸造需要",

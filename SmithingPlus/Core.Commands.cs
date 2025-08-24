@@ -185,7 +185,7 @@ public partial class Core
         if (targetPlayer == null) return TextCommandResult.Error("Player not found.");
         var smithingQuality = targetPlayer.Entity.Stats.GetBlended("sp:smithingQuality");
         return TextCommandResult.Success(
-            $"Smithing quality for player '{targetPlayer?.PlayerName}' is {smithingQuality}.");
+            $"Smithing quality for player '{targetPlayer.PlayerName}' is {smithingQuality}.");
     }
 
 

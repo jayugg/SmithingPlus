@@ -10,7 +10,7 @@
   "charattribute-sp:smithingQuality-0.2": "Aumenta la durabilità degli attrezzi forgiati del 20%",
   "charattribute-sp:smithingQuality--0.1": "Diminuisce la durabilità degli attrezzi forgiati del 10%",
   "Requires any of: ": "Richiede uno qualsiasi di: ",
-  "with": "con",
+  "requires": "richiede",
   "Mold for": "Stampo per",
   "Requires for casting": "Richiede per lo stampaggio",
   "Can be cast in": "Può essere stampato in",

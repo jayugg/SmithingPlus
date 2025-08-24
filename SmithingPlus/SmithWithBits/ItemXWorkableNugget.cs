@@ -1,4 +1,4 @@
-using SmithingPlus.Compat;
+
 using SmithingPlus.Metal;
 using SmithingPlus.Util;
 using Vintagestory.API.Client;
@@ -24,8 +24,6 @@ public class ItemXWorkableNugget : ItemWorkableNugget
         {
             if (!Core.Config.SmithWithBits) return null;
             CreateVoxelsFromNugget(api, ref beAnvil.Voxels);
-            if (ThriftySmithingCompat.ThriftySmithingLoaded)
-                itemStack.AddToCustomWorkData(beAnvil.Voxels.MaterialCount());
         }
         else
         {
@@ -44,11 +42,7 @@ public class ItemXWorkableNugget : ItemWorkableNugget
             }
 
             var bits = AddVoxelsFromNugget(api, ref beAnvil.Voxels, false);
-            if (bits != 0)
-            {
-                if (ThriftySmithingCompat.ThriftySmithingLoaded) beAnvil.WorkItemStack.AddToCustomWorkData(bits);
-                return itemStack;
-            }
+            if (bits != 0) return itemStack;
 
             if (api.Side == EnumAppSide.Client)
                 ((ICoreClientAPI)api).TriggerIngameError(this, "requireshammering",

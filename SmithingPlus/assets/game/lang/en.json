@@ -10,7 +10,7 @@
   "charattribute-sp:smithingQuality-0.2": "Increases smithing projects durability by 20%",
   "charattribute-sp:smithingQuality--0.1": "Decreases smithing projects durability by 10%",
   "Requires any of: ": "Requires any of: ",
-  "with": "with",
+  "requires": "requires",
   "Mold for": "Mold for",
   "Requires for casting": "Requires for casting",
   "Can be cast in": "Can be cast in",

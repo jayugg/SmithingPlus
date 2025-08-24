@@ -1,8 +1,13 @@
 - TODO [Tweak] Config option to disable iron bloom modifications from helve hammers
-- TODO [Compatibility] Stop knapster from autocompleting when hitting in flip tool mode
 - TODO [Minor] Fix edge case if players that try to remove tongs while setting the flip tool mode when they are required
 - TODO Store overall transform for flip tool mode to properly reconstruct recipe outline rotation.
     Current method can have bugs and is harder to maintain.
+- TODO [Minor] Bug in client tweak for anvil ingredient count. The first time the dialog is opened, the tweak doesn't get applied.
 
-v.1.6.5
-- [Fix] Fix rod not being able to be placed in forge
+v.1.6.6-pre.7
+- [Localisation] Add ru localisation (sorry, I forgot who sent them, but if you see this, please let me know so I can credit you)
+- [Update] Updated dotnet version
+- [Update] Implemented voxel count methods for IAnvilWorkable, preventing crashes due to missing methods
+- [Update] Moved traits to config/traits.json instead of patching the vanilla file
+- [Update] Adapt handbook tweaks as vanilla implemented some of them, causing duplicate entries
+- [Tweak] Less spammy log messages

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using SmithingPlus.Compat;
 using SmithingPlus.Metal;
 using SmithingPlus.Util;
 using Vintagestory.API.Client;
@@ -67,8 +66,6 @@ public class ItemWorkableRod : Item, IAnvilWorkable
         {
             if (!Core.Config.SmithWithBits) return null;
             CreateVoxelsFromRod(out beAnvil.Voxels, RecipeVoxels ?? new bool[16, 6, 16]);
-            if (ThriftySmithingCompat.ThriftySmithingLoaded)
-                itemStack.AddToCustomWorkData(beAnvil.Voxels.MaterialCount());
         }
         else
         {
@@ -87,12 +84,7 @@ public class ItemWorkableRod : Item, IAnvilWorkable
             }
 
             var addedVoxelCount = AddVoxelsFromRod(ref beAnvil.Voxels, RecipeVoxels ?? new bool[16, 6, 16]);
-            if (addedVoxelCount != 0)
-            {
-                if (ThriftySmithingCompat.ThriftySmithingLoaded)
-                    beAnvil.WorkItemStack.AddToCustomWorkData(addedVoxelCount);
-                return itemStack;
-            }
+            if (addedVoxelCount != 0) return itemStack;
 
             if (api.Side == EnumAppSide.Client)
                 ((ICoreClientAPI)api).TriggerIngameError(this, "requireshammering",
@@ -121,6 +113,13 @@ public class ItemWorkableRod : Item, IAnvilWorkable
     public EnumHelveWorkableMode GetHelveWorkableMode(ItemStack stack, BlockEntityAnvil beAnvil)
     {
         return EnumHelveWorkableMode.NotWorkable;
+    }
+
+    public int VoxelCountForHandbook(ItemStack stack)
+    {
+        var recipe = stack.GetSingleSmithingRecipe(api);
+        var voxels = recipe.Voxels.ToByteArray();
+        return voxels.MaterialCount();
     }
 
     public override void OnLoaded(ICoreAPI coreApi)

@@ -11,7 +11,7 @@
   "charattribute-sp:smithingQuality--0.1": "Zmniejsza trwałość projektów kowalskich o 10%%",
 
   "Requires any of: ": "Wymaga jednego z: ",
-  "with": "z",
+  "requires": "wymaga",
 
   "Mold for": "Forma do",
   "Requires for casting": "Wymagane do odlewania",
