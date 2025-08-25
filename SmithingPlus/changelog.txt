@@ -4,6 +4,5 @@
     Current method can have bugs and is harder to maintain.
 - TODO [Minor] Bug in client tweak for anvil ingredient count. The first time the dialog is opened, the tweak doesn't get applied.
 
-v1.6.7
-- [Tweaks and Fixes] Parity with 1.6.7-rc.7 version.
-- [NOTICE] Last supported 1.20 version. Will only receive critical bug fixes.
+v1.6.8
+- [Fix] Ore crushing would always only yield 1 bit for workable bits.

@@ -26,6 +26,7 @@ public static class ModRecipeAttributes
 {
     internal const string RepairOnly = "repairOnly";
     internal const string NuggetRecipe = "nuggetRecipe";
+    internal const string RecyclingRecipe = "recyclingRecipe";
 }
 
 public static class ModStats

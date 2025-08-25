@@ -128,7 +128,12 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
     {
         base.OnCreatedByCrafting(allInputslots, outputSlot, byRecipe);
         if (outputSlot.Itemstack == null) return;
-
+        var isRecyclingRecipe = allInputslots.Any(slot =>
+                                    slot.Itemstack?.Collectible is ItemChisel) ||
+                                byRecipe.Ingredients.Any(kvp =>
+                                    kvp.Value?.RecipeAttributes?[ModRecipeAttributes.RecyclingRecipe]?.AsBool() ==
+                                    true);
+        if (!isRecyclingRecipe) return;
         var voxelCount = 0;
 
         var inputWorkItemSlot = allInputslots.FirstOrDefault(slot => slot.Itemstack?.Collectible is ItemWorkItem);
