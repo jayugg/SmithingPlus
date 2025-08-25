@@ -4,6 +4,6 @@
   "name": "SmithingPlus",
   "authors": [ "jayu" ],
   "description": "Metal tool repair, smithing tweaks and QOL improvements.",
-  "version": "1.6.8-rc.7",
+  "version": "1.7.0",
   "dependencies": { "game": "1.21.0-rc.7" }
 }
