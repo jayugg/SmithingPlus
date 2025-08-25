@@ -128,23 +128,22 @@ public class ItemWorkableNugget : ItemNugget, IAnvilWorkable
     {
         base.OnCreatedByCrafting(allInputslots, outputSlot, byRecipe);
         if (outputSlot.Itemstack == null) return;
-        var isRecyclingRecipe = allInputslots.Any(slot =>
-                                    slot.Itemstack?.Collectible is ItemChisel) ||
-                                byRecipe.Ingredients.Any(kvp =>
-                                    kvp.Value?.RecipeAttributes?[ModRecipeAttributes.RecyclingRecipe]?.AsBool() ==
-                                    true);
+        var usesChisel = allInputslots?.Any(slot =>
+            slot.Itemstack?.Collectible is ItemChisel) ?? false;
+        var usesRecyclingRecipe = byRecipe?.Ingredients?.Any(kvp =>
+            kvp.Value?.RecipeAttributes?[ModRecipeAttributes.RecyclingRecipe]?.AsBool() == true) ?? false;
+        var isRecyclingRecipe = usesChisel || usesRecyclingRecipe;
         if (!isRecyclingRecipe) return;
         var voxelCount = 0;
-
-        var inputWorkItemSlot = allInputslots.FirstOrDefault(slot => slot.Itemstack?.Collectible is ItemWorkItem);
+        
+        var inputWorkItemSlot = allInputslots?.FirstOrDefault(slot => slot.Itemstack?.Collectible is ItemWorkItem);
         if (inputWorkItemSlot != null)
         {
             var voxels = BlockEntityAnvil.deserializeVoxels(inputWorkItemSlot.Itemstack.Attributes.GetBytes("voxels"));
             voxelCount = voxels.MaterialCount();
         }
-
-        var inputSmithedItemSlot =
-            allInputslots.FirstOrDefault(slot => slot.Itemstack?.GetLargestSmithingRecipe(api) != null);
+        
+        var inputSmithedItemSlot = allInputslots?.FirstOrDefault(slot => slot.Itemstack?.GetLargestSmithingRecipe(api) != null);
         if (voxelCount == 0 && inputSmithedItemSlot != null)
         {
             var largestRecipe = inputSmithedItemSlot.Itemstack.GetLargestSmithingRecipe(api);
