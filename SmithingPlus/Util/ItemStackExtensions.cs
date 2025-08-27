@@ -1,3 +1,4 @@
+#nullable enable
 using System.Linq;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -29,7 +30,7 @@ public static class ItemStackExtensions
     }
 
     // Note: On server itemstack needs to be resolved!
-    internal static ItemStack GetRepairedToolStack(this ItemStack itemStack)
+    internal static ItemStack? GetRepairedToolStack(this ItemStack itemStack)
     {
         return itemStack.Attributes?.GetItemstack(ModAttributes.RepairedToolStack);
     }
@@ -46,12 +47,12 @@ public static class ItemStackExtensions
     }
 
     internal static void CloneRepairedToolStackOrAttributes(this ItemStack itemStack, ItemStack fromStack,
-        string[] forgettableAttributes = null)
+        string[]? forgettableAttributes = null)
     {
         var repairedStack = fromStack.GetRepairedToolStack();
         if (forgettableAttributes != null)
             foreach (var attributeKey in forgettableAttributes)
-                repairedStack.Attributes?.RemoveAttribute(attributeKey);
+                repairedStack?.Attributes?.RemoveAttribute(attributeKey);
         if (repairedStack == null)
         {
             Core.Logger.VerboseDebug("No repaired tool stack found in {0}", fromStack.Collectible.Code);
@@ -89,22 +90,22 @@ public static class ItemStackExtensions
         return stack.ItemAttributes?["workableTemperature"]?.AsFloat(defaultTemperature) ?? defaultTemperature;
     }
 
-    public static SmithingRecipe GetSmithingRecipe(this ItemStack toolHead, ICoreAPI api)
+    public static SmithingRecipe? GetSmithingRecipe(this ItemStack toolHead, ICoreAPI api)
     {
         var smithingRecipe = api.ModLoader
-            .GetModSystem<RecipeRegistrySystem>()
-            .SmithingRecipes
-            .FirstOrDefault(r => r.Output.ResolvedItemstack.Satisfies(toolHead));
+            .GetModSystem<RecipeRegistrySystem>()?
+            .SmithingRecipes?
+            .FirstOrDefault(r => r?.Output?.ResolvedItemstack?.Satisfies(toolHead) == true);
         return smithingRecipe;
     }
 
     // Gets smithing recipe with the largest output stack that satisfies the tool head
-    public static SmithingRecipe GetLargestSmithingRecipe(this ItemStack toolHead, ICoreAPI api)
+    public static SmithingRecipe? GetLargestSmithingRecipe(this ItemStack toolHead, ICoreAPI api)
     {
         var smithingRecipe = api.ModLoader
-                .GetModSystem<RecipeRegistrySystem>()
-                .SmithingRecipes
-                .Where(r => r.Output.ResolvedItemstack.Satisfies(toolHead))
+                .GetModSystem<RecipeRegistrySystem>()?
+                .SmithingRecipes?
+                .Where(r => r?.Output?.ResolvedItemstack?.Satisfies(toolHead) == true)
                 .OrderByDescending(r => r.Output.ResolvedItemstack.StackSize)
                 .FirstOrDefault()
             ;
@@ -112,13 +113,14 @@ public static class ItemStackExtensions
     }
 
     // Gets smithing recipe only if the ouput itemstack has a single item
-    public static SmithingRecipe GetSingleSmithingRecipe(this ItemStack toolHead, ICoreAPI api)
+    public static SmithingRecipe? GetSingleSmithingRecipe(this ItemStack toolHead, ICoreAPI api)
     {
         var smithingRecipe = api.ModLoader
-            .GetModSystem<RecipeRegistrySystem>()
-            .SmithingRecipes
+            .GetModSystem<RecipeRegistrySystem>()?
+            .SmithingRecipes?
             .FirstOrDefault(r =>
-                r.Output.ResolvedItemstack.Satisfies(toolHead) && r.Output.ResolvedItemstack.StackSize == 1);
+                r?.Output?.ResolvedItemstack?.Satisfies(toolHead) == true
+                && r.Output.ResolvedItemstack.StackSize == 1);
         return smithingRecipe;
     }
 

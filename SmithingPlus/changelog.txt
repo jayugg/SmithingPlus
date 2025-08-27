@@ -4,6 +4,5 @@
     Current method can have bugs and is harder to maintain.
 - TODO [Minor] Bug in client tweak for anvil ingredient count. The first time the dialog is opened, the tweak doesn't get applied.
 
-v1.7.0
-- [Update] First stable 1.21 version
-- [Fix] Fix crash when crushing ores (maybe? afaik happened only in 1.20.12 version 1.6.8, but the code should be safer now)
+v1.7.1
+- [Compatibility] Guard against broken smithing recipes
