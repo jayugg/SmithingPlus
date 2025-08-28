@@ -6,3 +6,4 @@
 
 v1.7.1
 - [Compatibility] Guard against broken smithing recipes
+- [Compatibility] Fix conflict with butchering hook recipe
