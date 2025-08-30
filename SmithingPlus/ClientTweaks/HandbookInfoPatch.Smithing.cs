@@ -1,15 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HarmonyLib;
-using SmithingPlus.Metal;
 using SmithingPlus.SmithWithBits;
-using SmithingPlus.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
 using Vintagestory.GameContent;
-using LinkTextComponent = Vintagestory.API.Client.LinkTextComponent;
 
 namespace SmithingPlus.ClientTweaks;
 

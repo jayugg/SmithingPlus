@@ -4,6 +4,7 @@
     Current method can have bugs and is harder to maintain.
 - TODO [Minor] Bug in client tweak for anvil ingredient count. The first time the dialog is opened, the tweak doesn't get applied.
 
-v1.7.1
-- [Compatibility] Guard against broken smithing recipes
-- [Compatibility] Fix conflict with butchering hook recipe
+v1.7.2
+- [Fix] Crash when looking at the handbook for some people
+- [Fix] Cast tool head crash when trying to smith
+- [Fix] At least two different scraping crashes

@@ -1,6 +1,4 @@
-
 using SmithingPlus.Metal;
-using SmithingPlus.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -31,7 +29,7 @@ public class ItemXWorkableNugget : ItemWorkableNugget
             var nuggetMaterial = stack.GetOrCacheMetalMaterial(api);
             var workItemMaterial = beAnvil.WorkItemStack.GetMetalMaterialProcessed(api);
             Core.Logger.VerboseDebug(
-                "[ItemWorkableNugget#TryPlaceOn] nugget metal material: {0}, workItem metal material: {1}",
+                $"[{nameof(TryPlaceOn)}] nugget metal material: {0}, workItem metal material: {1}",
                 nuggetMaterial?.IngotCode, workItemMaterial?.IngotCode);
             if (!workItemMaterial?.Equals(nuggetMaterial) ?? false)
             {

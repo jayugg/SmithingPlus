@@ -29,7 +29,7 @@ public static class ItemStackExtensions
         itemStack.Attributes.SetItemstack(ModAttributes.RepairedToolStack, fromStack);
     }
 
-    // Note: On server itemstack needs to be resolved!
+    // Note: On server item stack needs to be resolved!
     internal static ItemStack? GetRepairedToolStack(this ItemStack itemStack)
     {
         return itemStack.Attributes?.GetItemstack(ModAttributes.RepairedToolStack);
@@ -99,7 +99,7 @@ public static class ItemStackExtensions
         return smithingRecipe;
     }
 
-    // Gets smithing recipe with the largest output stack that satisfies the tool head
+    // Gets the smithing recipe with the largest output stack that satisfies the tool head
     public static SmithingRecipe? GetLargestSmithingRecipe(this ItemStack toolHead, ICoreAPI api)
     {
         var smithingRecipe = api.ModLoader
@@ -112,7 +112,7 @@ public static class ItemStackExtensions
         return smithingRecipe;
     }
 
-    // Gets smithing recipe only if the ouput itemstack has a single item
+    // Gets a smithing recipe only if the output item stack has a single item
     public static SmithingRecipe? GetSingleSmithingRecipe(this ItemStack toolHead, ICoreAPI api)
     {
         var smithingRecipe = api.ModLoader
