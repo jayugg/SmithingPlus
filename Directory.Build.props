@@ -1,0 +1,6 @@
+<Project>
+    <!-- Set your vs installation here! -->
+    <PropertyGroup>
+        <VINTAGE_STORY>$(VINTAGE_STORY_1_21)</VINTAGE_STORY>
+    </PropertyGroup>
+</Project>
