@@ -5,12 +5,8 @@ using Vintagestory.API.Config;
 
 namespace SmithingPlus.BitsRecovery;
 
-public class CollectibleBehaviorSmeltedContainer : CollectibleBehavior
+public class CollectibleBehaviorSmeltedContainer(CollectibleObject collObj) : CollectibleBehavior(collObj)
 {
-    public CollectibleBehaviorSmeltedContainer(CollectibleObject collObj) : base(collObj)
-    {
-    }
-
     public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
     {
         base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);

@@ -20,6 +20,7 @@ public static class ModAttributes
     internal const string RotationX = $"{Constants.Sp}:rotationX";
     internal const string RotationZ = $"{Constants.Sp}:rotationZ";
     internal const string MinY = $"{Constants.Sp}:minY";
+    internal const string LastScrapeMs = $"{Constants.Sp}:lastScrapeMs";
 }
 
 public static class ModRecipeAttributes

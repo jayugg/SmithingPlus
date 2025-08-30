@@ -1,3 +1,4 @@
+#nullable enable
 using SmithingPlus.Metal;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
@@ -5,15 +6,11 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus.BitsRecovery;
 
-public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
+public class CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : CollectibleBehavior(collObj)
 {
     public const float MaxScrapeTemperature = 50;
 
-    public CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : base(collObj)
-    {
-    }
-
-    public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel,
+    public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection? blockSel,
         EntitySelection entitySel,
         bool firstEvent, ref EnumHandHandling handHandling, ref EnumHandling handling)
     {
@@ -39,15 +36,20 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         return secondsUsed < 1.5;
     }
 
-    public override void OnHeldInteractStop(float secondsUsed, ItemSlot slot, EntityAgent byEntity,
+    public override void OnHeldInteractStop(float secondsUsed,
+        ItemSlot slot,
+        EntityAgent byEntity,
         BlockSelection blockSel,
-        EntitySelection entitySel, ref EnumHandling handling)
+        EntitySelection entitySel,
+        ref EnumHandling handling)
     {
         byEntity.StopAnimation("knifecut");
         if (byEntity.World.Side != EnumAppSide.Server) return;
         if (byEntity is not EntityPlayer entityPlayer) return;
         var groundStorage = TryGetSelectedGroundStorage(entityPlayer, blockSel);
-        if (!TryGetCrucibleStack(entityPlayer, blockSel, out var crucibleStack, out var crucibleSlot)) return;
+        if (!TryGetCrucibleStack(entityPlayer, blockSel, out var crucibleSlot) ||
+            crucibleSlot?.Itemstack is not { } crucibleStack)
+            return;
         var playerInventory = entityPlayer.Player.InventoryManager;
         var activeSlot = playerInventory.ActiveHotbarSlot;
         // Check that player is interacting with a valid crucible
@@ -61,27 +63,31 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         if (metalMaterial == null)
         {
             Core.Logger.VerboseDebug(
-                $"[CollectibleBehaviorScrapeCrucible#OnHeldInteractStop] {outputStack.GetName()} has no valid metal material.");
+                $"[{nameof(OnHeldInteractStop)}] {outputStack.GetName()} has no valid metal material.");
             return;
         }
 
         if (metalBitStack == null)
         {
             Core.Logger.VerboseDebug(
-                $"[CollectibleBehaviorScrapeCrucible#OnHeldInteractStop] {metalMaterial.IngotCode} has no valid metal bit stack.");
+                $"[{nameof(OnHeldInteractStop)}] {metalMaterial.IngotCode} has no valid metal bit stack.");
             return;
         }
 
         var metalTier = metalMaterial.Tier;
         metalBitStack.StackSize = outputBitCount;
         metalBitStack.SetTemperatureFrom(world, crucibleStack);
-        var emptyCrucibleStack =
-            new ItemStack(world.GetBlock(crucibleStack.Collectible.CodeWithVariant("type", "burned")));
+        var firedCrucibleCode = crucibleStack.Collectible.CodeWithVariant("type", "fired");
+        var firedCrucibleItem = world.GetBlock(firedCrucibleCode);
+        if (firedCrucibleItem == null)
+            Core.Logger.Warning(
+                $"[{nameof(OnHeldInteractStop)}] Something went wrong, cannot find fired crucible with code {firedCrucibleCode}");
+        var emptyCrucibleStack = new ItemStack(firedCrucibleItem);
         if (!playerInventory.TryGiveItemstack(metalBitStack, true))
             world.SpawnItemEntity(metalBitStack, blockSel.Position);
         crucibleSlot.Itemstack = emptyCrucibleStack;
         crucibleSlot.MarkDirty();
-        groundStorage.MarkDirty();
+        groundStorage?.MarkDirty();
         var chiselDamage = (2 + metalTier) * outputBitCount;
         activeSlot.Itemstack.Collectible.DamageItem(world, entityPlayer, activeSlot, chiselDamage);
         activeSlot.MarkDirty();
@@ -94,7 +100,7 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         if (output is null ||
             crucibleStack.Attributes.TryGetInt("units") is < 5)
             return false;
-        Core.Logger.Warning("Output: {0}", output.Collectible.Code);
+        Core.Logger.VerboseDebug($"[{nameof(CollectibleBehaviorScrapeCrucible)}] Output: {0}", output.Collectible.Code);
         return true;
     }
 
@@ -106,19 +112,17 @@ public class CollectibleBehaviorScrapeCrucible : CollectibleBehavior
         return itemStack.IsSmeltedContainer() && itemStack.GetTemperature(world) < MaxScrapeTemperature;
     }
 
-    private static bool TryGetCrucibleStack(EntityPlayer entityPlayer, BlockSelection blockSel,
-        out ItemStack crucibleStack, out ItemSlot atSlot)
+    private static bool TryGetCrucibleStack(EntityPlayer entityPlayer, BlockSelection? blockSel, out ItemSlot? atSlot)
     {
-        crucibleStack = null;
         atSlot = null;
+        if (blockSel == null) return false;
         var groundStorage = TryGetSelectedGroundStorage(entityPlayer, blockSel);
-        if (groundStorage?.GetSlotAt(blockSel) is not { Itemstack: { } itemStack } targetSlot) return false;
-        crucibleStack = itemStack;
+        if (groundStorage?.GetSlotAt(blockSel) is not { Itemstack: not null } targetSlot) return false;
         atSlot = targetSlot;
         return true;
     }
 
-    private static BlockEntityGroundStorage TryGetSelectedGroundStorage(EntityPlayer entityPlayer,
+    private static BlockEntityGroundStorage? TryGetSelectedGroundStorage(EntityPlayer entityPlayer,
         BlockSelection blockSel)
     {
         var blockEntity = entityPlayer.World.BlockAccessor.GetBlockEntity(blockSel.Position);

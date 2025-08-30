@@ -27,7 +27,8 @@ public class CollectibleBehaviorCastToolHead : CollectibleBehavior, IAnvilWorkab
 
     public List<SmithingRecipe> GetMatchingRecipes(ItemStack stack)
     {
-        return new List<SmithingRecipe> { stack.GetSmithingRecipe(Api) };
+        var smithingRecipe = stack.GetSmithingRecipe(Api);
+        return smithingRecipe != null ? [smithingRecipe] : [];
     }
 
     public bool CanWork(ItemStack stack)
@@ -46,6 +47,7 @@ public class CollectibleBehaviorCastToolHead : CollectibleBehavior, IAnvilWorkab
         if (beAnvil.WorkItemStack != null || !CanWork(stack))
             return null;
         var recipe = stack.GetSingleSmithingRecipe(Api);
+        if (recipe == null) return null;
         var voxels = recipe.Voxels.ToByteArray();
         var world = beAnvil.Api.World;
         var random = world.Rand;
@@ -77,8 +79,8 @@ public class CollectibleBehaviorCastToolHead : CollectibleBehavior, IAnvilWorkab
     public int VoxelCountForHandbook(ItemStack stack)
     {
         var recipe = stack.GetSingleSmithingRecipe(Api);
-        var voxels = recipe.Voxels.ToByteArray();
-        return voxels.MaterialCount();
+        var voxels = recipe?.Voxels.ToByteArray();
+        return voxels?.MaterialCount() ?? 0;
     }
 
     public override void OnLoaded(ICoreAPI api)
