@@ -11,14 +11,9 @@ using Vintagestory.GameContent;
 
 namespace SmithingPlus.CastingTweaks;
 
-public class CollectibleBehaviorCastToolHead : CollectibleBehavior, IAnvilWorkable
+public class CollectibleBehaviorCastToolHead(CollectibleObject collObj) : CollectibleBehavior(collObj), IAnvilWorkable
 {
-    public CollectibleBehaviorCastToolHead(CollectibleObject collObj) : base(collObj)
-    {
-        Api = collObj.GetField<ICoreAPI>("api");
-    }
-
-    private ICoreAPI Api { get; set; }
+    private ICoreAPI Api => collObj.GetField<ICoreAPI>("api");
 
     public int GetRequiredAnvilTier(ItemStack stack)
     {
@@ -83,12 +78,6 @@ public class CollectibleBehaviorCastToolHead : CollectibleBehavior, IAnvilWorkab
         return voxels?.MaterialCount() ?? 0;
     }
 
-    public override void OnLoaded(ICoreAPI api)
-    {
-        base.OnLoaded(api);
-        Api = api;
-    }
-
     public override void GetHeldItemName(StringBuilder dsc, ItemStack itemStack)
     {
         base.GetHeldItemName(dsc, itemStack);
@@ -117,7 +106,7 @@ public class CollectibleBehaviorCastToolHead : CollectibleBehavior, IAnvilWorkab
                 : Lang.Get($"{Core.ModId}:itemdesc-temp-always")));
     }
 
-    public float GetWorkableTemperature(ItemStack itemStack)
+    private float GetWorkableTemperature(ItemStack itemStack)
     {
         var metalIngot = itemStack.GetOrCacheMetalMaterial(Api)?.IngotItem;
         var querySlot = new DummySlot(itemStack);
