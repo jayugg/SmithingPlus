@@ -1,11 +1,13 @@
 using System;
 using System.IO;
 using Cake.Common;
+using Cake.Common.Diagnostics;
 using Cake.Common.IO;
 using Cake.Common.Tools.DotNet;
 using Cake.Common.Tools.DotNet.Clean;
 using Cake.Common.Tools.DotNet.Publish;
 using Cake.Core;
+using Cake.Core.IO;
 using Cake.Frosting;
 using Cake.Json;
 using Newtonsoft.Json;
@@ -27,10 +29,6 @@ public static class Program
 public class BuildContext : FrostingContext
 {
     public const string ProjectName = "SmithingPlus";
-    public string BuildConfiguration { get; }
-    public string Version { get; }
-    public string Name { get; }
-    public bool SkipJsonValidation { get; }
 
     public BuildContext(ICakeContext context)
         : base(context)
@@ -41,6 +39,11 @@ public class BuildContext : FrostingContext
         Version = modInfo.Version;
         Name = modInfo.ModID;
     }
+
+    public string BuildConfiguration { get; }
+    public string Version { get; }
+    public string Name { get; }
+    public bool SkipJsonValidation { get; }
 }
 
 [TaskName("ValidateJson")]
@@ -48,14 +51,10 @@ public sealed class ValidateJsonTask : FrostingTask<BuildContext>
 {
     public override void Run(BuildContext context)
     {
-        if (context.SkipJsonValidation)
-        {
-            return;
-        }
+        if (context.SkipJsonValidation) return;
 
         var jsonFiles = context.GetFiles($"../{BuildContext.ProjectName}/assets/**/*.json");
         foreach (var file in jsonFiles)
-        {
             try
             {
                 var json = File.ReadAllText(file.FullPath);
@@ -66,7 +65,6 @@ public sealed class ValidateJsonTask : FrostingTask<BuildContext>
                 throw new Exception(
                     $"Validation failed for JSON file: {file.FullPath}{Environment.NewLine}{ex.Message}", ex);
             }
-        }
     }
 }
 
@@ -103,17 +101,57 @@ public sealed class PackageTask : FrostingTask<BuildContext>
         context.CopyFiles($"../{BuildContext.ProjectName}/bin/{context.BuildConfiguration}/Mods/mod/publish/*",
             $"../Releases/{context.Name}");
         if (context.DirectoryExists($"../{BuildContext.ProjectName}/assets"))
-        {
             context.CopyDirectory($"../{BuildContext.ProjectName}/assets", $"../Releases/{context.Name}/assets");
-        }
 
         context.CopyFile($"../{BuildContext.ProjectName}/modinfo.json", $"../Releases/{context.Name}/modinfo.json");
         if (context.FileExists($"../{BuildContext.ProjectName}/modicon.png"))
-        {
             context.CopyFile($"../{BuildContext.ProjectName}/modicon.png", $"../Releases/{context.Name}/modicon.png");
-        }
 
         context.Zip($"../Releases/{context.Name}", $"../Releases/{context.Name}_{context.Version}.zip");
+    }
+}
+
+[TaskName("Release")]
+[IsDependentOn(typeof(PackageTask))]
+public sealed class ReleaseTask : FrostingTask<BuildContext>
+{
+    public override void Run(BuildContext context)
+    {
+        var version = context.Version;
+        var name = context.Name;
+        var tag = $"v{version}";
+        var zipPath = $"../Releases/{name}_{version}.zip";
+
+        if (!context.FileExists(zipPath))
+            throw new Exception($"Release asset not found at {zipPath}");
+
+        var ghExe = context.Tools.Resolve("gh") ?? "gh";
+
+        // create the release (will fail if already exists)
+        var createArgs = new ProcessArgumentBuilder()
+            .Append("release create")
+            .Append(tag)
+            .AppendQuoted(zipPath.Replace('\\', '/'))
+            .AppendSwitch("--title", " ", tag)
+            .Append("--generate-notes");
+
+        var exitCode = context.StartProcess(ghExe, new ProcessSettings { Arguments = createArgs });
+
+        if (exitCode != 0)
+        {
+            // If the release already exists, just upload/replace the asset
+            var uploadArgs = new ProcessArgumentBuilder()
+                .Append("release upload")
+                .Append(tag)
+                .AppendQuoted(zipPath.Replace('\\', '/'))
+                .Append("--clobber");
+
+            var uploadExit = context.StartProcess(ghExe, new ProcessSettings { Arguments = uploadArgs });
+            if (uploadExit != 0)
+                throw new Exception("Failed to upload asset to existing release.");
+        }
+
+        context.Information($"✅ Published GitHub release {tag} with asset {zipPath}");
     }
 }
 
