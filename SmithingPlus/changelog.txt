@@ -6,3 +6,6 @@
 
 v1.7.4
 - [Fix] Wrong output count on some bits recycling recipes because code would try to recycle the chisel instead
+
+v1.8.0
+- Add option to adjust metal unit requirements for casting to be aligned with smithing metal requirements
