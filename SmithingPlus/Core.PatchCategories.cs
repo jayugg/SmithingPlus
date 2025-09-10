@@ -10,6 +10,7 @@ public partial class Core
     internal const string BitsRecoveryCategory = "bitsRecovery";
     internal const string HelveHammerBitsRecoveryCategory = $"{BitsRecoveryCategory}.helveHammer";
     internal const string CastingTweaksCategory = "castingTweaks";
+    internal const string AdjustedCastingMetalRequirementsCategory = "adjustedCastingMetalRequirements";
     internal const string HammerTweaksCategory = "hammerTweaks";
 
     internal static class ClientTweaksCategories

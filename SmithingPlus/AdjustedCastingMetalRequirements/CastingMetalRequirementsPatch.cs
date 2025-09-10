@@ -3,10 +3,10 @@ using HarmonyLib;
 using JetBrains.Annotations;
 using Vintagestory.GameContent;
 
-namespace SmithingPlus.CastingTweaks;
+namespace SmithingPlus.AdjustedCastingMetalRequirements;
 
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-[HarmonyPatchCategory(Core.CastingTweaksCategory)]
+[HarmonyPatchCategory(Core.AdjustedCastingMetalRequirementsCategory)]
 public static class CastingMetalRequirementsPatch
 {
     private static readonly Dictionary<string, int> AdjustedRequiredUnits = new()

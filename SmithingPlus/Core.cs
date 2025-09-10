@@ -132,6 +132,7 @@ public partial class Core : ModSystem
         BitsRecoveryCategory.PatchIfEnabled(Config.RecoverBitsOnSplit);
         HelveHammerBitsRecoveryCategory.PatchIfEnabled(Config.HelveHammerBitsRecovery);
         CastingTweaksCategory.PatchIfEnabled(Config.MetalCastingTweaks);
+        AdjustedCastingMetalRequirementsCategory.PatchIfEnabled(Config.AdjustedCastingMetalRequirements);
         SmithingBitsCategory.PatchIfEnabled(Config.SmithWithBits || Config.BitsTopUp);
         HammerTweaksCategory.PatchIfEnabled(Config.HammerTweaks);
         //StoneSmithingCategory.PatchIfEnabled(true);
