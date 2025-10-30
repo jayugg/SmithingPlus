@@ -121,7 +121,7 @@ public class CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : Coll
 
     private static bool TryGetCrucibleStack(EntityPlayer entityPlayer, BlockSelection? blockSel, out ItemSlot? atSlot)
     {
-          atSlot = null;
+        atSlot = null;
         if (blockSel == null) return false;
         var groundStorage = TryGetSelectedGroundStorage(entityPlayer, blockSel);
         if (groundStorage?.GetSlotAt(blockSel) is not { Itemstack: not null } targetSlot) return false;
