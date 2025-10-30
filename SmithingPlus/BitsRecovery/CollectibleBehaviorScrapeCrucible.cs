@@ -1,6 +1,8 @@
 #nullable enable
+using System;
 using SmithingPlus.Metal;
 using SmithingPlus.Util;
+using Vintagestory;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 
@@ -39,7 +41,7 @@ public class CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : Coll
     public override void OnHeldInteractStop(float secondsUsed,
         ItemSlot slot,
         EntityAgent byEntity,
-        BlockSelection blockSel,
+        BlockSelection? blockSel,
         EntitySelection entitySel,
         ref EnumHandling handling)
     {
@@ -48,6 +50,7 @@ public class CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : Coll
         if (byEntity.World.Side == EnumAppSide.Server)
         {
             if (byEntity is not EntityPlayer entityPlayer) return;
+            if (blockSel?.Position is null) return;
             var groundStorage = TryGetSelectedGroundStorage(entityPlayer, blockSel);
             if (!TryGetCrucibleStack(entityPlayer, blockSel, out var crucibleSlot) ||
                 crucibleSlot?.Itemstack is not { } crucibleStack)
@@ -118,7 +121,7 @@ public class CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : Coll
 
     private static bool TryGetCrucibleStack(EntityPlayer entityPlayer, BlockSelection? blockSel, out ItemSlot? atSlot)
     {
-        atSlot = null;
+          atSlot = null;
         if (blockSel == null) return false;
         var groundStorage = TryGetSelectedGroundStorage(entityPlayer, blockSel);
         if (groundStorage?.GetSlotAt(blockSel) is not { Itemstack: not null } targetSlot) return false;
@@ -128,7 +131,7 @@ public class CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : Coll
 
     private static BlockEntityGroundStorage? TryGetSelectedGroundStorage(EntityPlayer entityPlayer,
         BlockSelection blockSel)
-    {
+    { 
         var blockEntity = entityPlayer.World.BlockAccessor.GetBlockEntity(blockSel.Position);
         return blockEntity as BlockEntityGroundStorage;
     }
