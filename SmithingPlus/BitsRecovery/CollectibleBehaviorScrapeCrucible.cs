@@ -1,8 +1,6 @@
 #nullable enable
-using System;
 using SmithingPlus.Metal;
 using SmithingPlus.Util;
-using Vintagestory;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 
