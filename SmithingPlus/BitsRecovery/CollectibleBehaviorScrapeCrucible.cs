@@ -131,7 +131,7 @@ public class CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : Coll
 
     private static BlockEntityGroundStorage? TryGetSelectedGroundStorage(EntityPlayer entityPlayer,
         BlockSelection blockSel)
-    { 
+    {
         var blockEntity = entityPlayer.World.BlockAccessor.GetBlockEntity(blockSel.Position);
         return blockEntity as BlockEntityGroundStorage;
     }
