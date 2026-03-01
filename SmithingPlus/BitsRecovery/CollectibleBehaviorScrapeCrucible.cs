@@ -39,7 +39,7 @@ public class CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : Coll
     public override void OnHeldInteractStop(float secondsUsed,
         ItemSlot slot,
         EntityAgent byEntity,
-        BlockSelection blockSel,
+        BlockSelection? blockSel,
         EntitySelection entitySel,
         ref EnumHandling handling)
     {
@@ -48,6 +48,7 @@ public class CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : Coll
         if (byEntity.World.Side == EnumAppSide.Server)
         {
             if (byEntity is not EntityPlayer entityPlayer) return;
+            if (blockSel?.Position is null) return;
             var groundStorage = TryGetSelectedGroundStorage(entityPlayer, blockSel);
             if (!TryGetCrucibleStack(entityPlayer, blockSel, out var crucibleSlot) ||
                 crucibleSlot?.Itemstack is not { } crucibleStack)
