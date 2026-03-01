@@ -1,0 +1,16 @@
+{
+    "trait-sp:smith": "<font color=\"#84ff84\">• Каваль </font>",
+    "trait-sp:drosshand": "<font color=\"#ff8484\">• Крыварукі </font>",
+    "traitname-sp:smith": "Каваль",
+    "traitname-sp:drosshand": "Крыварукі",
+    "traitdesc-sp:smith": "Прыроджаны каваль: мае меншыя штрафы пры рамонце інструментаў і больш высокую якасць кавальства",
+    "traitdesc-sp:drosshand": "Кавальства — гэта не ваша: маеце павялічаныя штрафы пры рамонце інструментаў і ніжэйшую якасць кавальства",
+    "charattribute-sp:toolRepairPenalty-0.2": "Зніжае штрафы за рамонт інструментаў на 20%",
+    "charattribute-sp:toolRepairPenalty--0.1": "Павялічвае штрафы за рамонт інструментаў на 10%",
+    "charattribute-sp:smithingQuality-0.2": "Павялічвае трываласць каваных вырабаў на 20%",
+    "charattribute-sp:smithingQuality--0.1": "Зніжае трываласць каваных вырабаў на 10%",
+    "requires": "патрабуе",
+    "Mold for": "Форма для",
+    "Requires for casting": "Патрабуецца для ліцця",
+    "Can be cast in": "Можна адліць у"
+}
