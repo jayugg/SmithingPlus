@@ -1,4 +1,4 @@
-using System;
+#nullable enable
 using System.Text;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
@@ -15,24 +15,22 @@ public class CollectibleBehaviorRepairableTool : CollectibleBehavior
 
     protected virtual string LangKey => "Repaired";
 
-    public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
+    public override void GetHeldItemInfo(ItemSlot? inSlot, StringBuilder dsc, IWorldAccessor world,
+        bool withDebugInfo)
     {
         base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
-        if (inSlot?.Itemstack?.Collectible?.Code == null) return;
-        AssetLocation code;
-        try
+
+        var itemstack = inSlot?.Itemstack;
+        var collectible = itemstack?.Collectible;
+        var code = collectible?.Code;
+
+        if (code == null || inSlot == null)
         {
-            if (inSlot.Itemstack?.Collectible?.Code == null)
-                throw new NullReferenceException("Itemstack or Collectible is null");
-            code = inSlot.Itemstack.Collectible.Code;
-        }
-        catch (Exception e)
-        {
-            Core.Logger.Error("Failed to get code for {0}: {1}", inSlot.Itemstack, e);
+            Core.Logger.Error("Failed to get code for itemstack {0}", itemstack);
             return;
         }
 
-        if (!WildcardUtil.Match(Core.Config.RepairableToolSelector, code?.ToString()))
+        if (!WildcardUtil.Match(Core.Config.RepairableToolSelector, code.ToString()))
             return;
         var brokenCount = inSlot.Itemstack.GetBrokenCount();
         if (brokenCount <= 0) return;

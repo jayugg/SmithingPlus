@@ -61,7 +61,7 @@ public class HammerTweaksNetwork : ModSystem
         {
             ToolMode = flipToolModeIndex
         };
-        capi.Network.GetChannel(ChannelName).SendPacket(response);
+        capi.Network.GetChannel(ChannelName)?.SendPacket(response);
     }
 
     #endregion

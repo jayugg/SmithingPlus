@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SmithingPlus.Common.Metal;
 using SmithingPlus.Metal;
 using SmithingPlus.Util;
 using Vintagestory.API.Client;

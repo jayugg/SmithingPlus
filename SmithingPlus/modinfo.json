@@ -7,7 +7,7 @@
     "jayu"
   ],
   "description": "Metal tool repair, smithing tweaks and quality of life improvements.",
-  "version": "1.8.3",
+  "version": "1.8.4",
   "dependencies": {
     "game": ""
   }

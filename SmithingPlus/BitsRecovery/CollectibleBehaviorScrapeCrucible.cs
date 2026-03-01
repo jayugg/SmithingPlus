@@ -37,7 +37,7 @@ public class CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : Coll
     }
 
     public override void OnHeldInteractStop(float secondsUsed,
-        ItemSlot slot,
+        ItemSlot? slot,
         EntityAgent byEntity,
         BlockSelection? blockSel,
         EntitySelection entitySel,
@@ -94,7 +94,7 @@ public class CollectibleBehaviorScrapeCrucible(CollectibleObject collObj) : Coll
             slot.Itemstack.Collectible.DamageItem(world, entityPlayer, slot, chiselDamage);
         }
 
-        slot.MarkDirty();
+        slot?.MarkDirty();
         handling = EnumHandling.PreventDefault;
     }
 

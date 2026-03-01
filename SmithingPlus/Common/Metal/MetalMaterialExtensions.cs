@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using SmithingPlus.Common.Metal;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;

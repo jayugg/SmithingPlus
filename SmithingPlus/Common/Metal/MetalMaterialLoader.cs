@@ -2,10 +2,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
+using SmithingPlus.Metal;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
 
-namespace SmithingPlus.Metal;
+namespace SmithingPlus.Common.Metal;
 
 #nullable enable
 [UsedImplicitly(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature)]

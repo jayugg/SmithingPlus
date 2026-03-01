@@ -7,6 +7,7 @@ using JetBrains.Annotations;
 using Newtonsoft.Json;
 using SmithingPlus.Util;
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 
 namespace SmithingPlus.CastingTweaks;
@@ -34,6 +35,22 @@ public class ToolMoldUnitsPatch
         if (requiredUnitsRounded == 0)
             return;
         ___requiredUnits = requiredUnitsRounded;
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(BlockEntityToolMold.ToTreeAttributes))]
+    public static void ToTreeAttributes_Postfix(BlockEntityToolMold __instance, int ___requiredUnits,
+        ITreeAttribute tree)
+    {
+        tree.SetInt("requiredUnits", ___requiredUnits);
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(BlockEntityToolMold.FromTreeAttributes))]
+    public static void FromTreeAttributes_Postfix(ITreeAttribute tree, ref int ___requiredUnits,
+        IWorldAccessor worldForResolve)
+    {
+        ___requiredUnits = tree.GetInt("requiredUnits");
     }
 
     public static int GetPatchedRequiredUnits(ICoreAPI api, Block toolMold, ItemStack fromMetal)
@@ -70,7 +87,7 @@ public class ToolMoldUnitsPatch
         var voxelsPerItem = Math.Max(recipeMaterialVoxels / cheapestOutput, 0);
         return voxelsPerItem * stack.StackSize;
     }
-    
+
     private static ItemStack[] GetMoldedStacksStatic(ICoreAPI api, Block toolMold, ItemStack fromMetal)
     {
         // why try catch? vanilla code does this...
@@ -80,7 +97,7 @@ public class ToolMoldUnitsPatch
             {
                 var jStack =
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-                    toolMold.Attributes["drop"].AsObject<JsonItemStack>(defaultValue: null, toolMold.Code.Domain);
+                    toolMold.Attributes["drop"].AsObject<JsonItemStack>(null, toolMold.Code.Domain);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                 if (jStack == null)
                     return [];
@@ -97,6 +114,7 @@ public class ToolMoldUnitsPatch
                 if (itemStack != null)
                     itemStackList.Add(itemStack);
             }
+
             return itemStackList.ToArray();
         }
         catch (JsonReaderException ex)
