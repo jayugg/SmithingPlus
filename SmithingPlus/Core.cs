@@ -26,7 +26,10 @@ public partial class Core : ModSystem
     public static ILogger Logger { get; private set; }
     public static ICoreAPI Api { get; private set; }
     public static Harmony HarmonyInstance { get; private set; }
-    public static ServerConfig Config => ConfigLoader.Config;
+    public static ServerConfig LocalConfig => ConfigLoader.Config;
+    public static ClientConfig CConfig => ConfigLoader.CConfig;
+    public static ServerConfig Config { get; private set; }
+    public static bool OnlyEnableClientside { get; private set; } = false;
 
     public override void StartPre(ICoreAPI api)
     {
@@ -55,6 +58,20 @@ public partial class Core : ModSystem
         api.RegisterItemClass($"{ModId}:ItemStoneHammer", typeof(ItemStoneHammer));
         api.RegisterBlockEntityClass($"{ModId}:StoneAnvil", typeof(BlockEntityStoneAnvil));
 
+        if (api.Side.IsServer())
+        {
+            Config = LocalConfig;
+            TreeAttributeSerializer<ServerConfig>.ToTreeAttributes(LocalConfig,api.World.Config.GetOrAddTreeAttribute("SmithingPlus"));
+        }
+        else
+        {
+            Config = new();
+            var tree = api.World.Config.GetTreeAttribute("SmithingPlus");
+            if(tree is not null)
+            {
+                TreeAttributeSerializer<ServerConfig>.FromTreeAttributes(Config,tree);    
+            }
+        }
         Patch();
     }
 
@@ -66,7 +83,7 @@ public partial class Core : ModSystem
 
     private static void AddEntityBehaviors(Entity entity)
     {
-        if (!Config.ArrowsDropBits || entity is not EntityProjectile projectile) return;
+        if (!LocalConfig.ArrowsDropBits || entity is not EntityProjectile projectile) return;
         if (!RecyclableArrowBehavior.IsRecyclableArrow(projectile)) return;
         Logger.VerboseDebug("Adding RecyclableArrowBehavior to {0}", entity.Code);
         entity.AddBehavior(new RecyclableArrowBehavior(entity));
@@ -75,16 +92,22 @@ public partial class Core : ModSystem
     public override void AssetsFinalize(ICoreAPI api)
     {
         base.AssetsFinalize(api);
-        foreach (var collObj in api.World.Collectibles.Where(c => c?.Code != null))
+        foreach (CollectibleObject collObj in api.World.Collectibles.Where(c => c?.Code != null))
         {
-            collObj.AddBehaviorIf<CollectibleBehaviorDisplayWorkableTemp>(
-                api.Side == EnumAppSide.Client &&
-                Config.ShowWorkableTemperature &&
-                collObj.GetCollectibleInterface<IAnvilWorkable>() is not null);
-            collObj.AddBehaviorIf<CollectibleBehaviorQuenchableInfo>(
-                api.Side == EnumAppSide.Client &&
-                Config.ShowWorkableTemperature &&
-                collObj.HasBehavior<CollectibleBehaviorQuenchable>());
+            if (api.Side.IsClient())
+            {
+                collObj.AddBehaviorIf<CollectibleBehaviorDisplayWorkableTemp>(
+                    CConfig.ShowWorkableTemperature &&
+                    collObj.GetCollectibleInterface<IAnvilWorkable>() is not null);
+                
+                collObj.AddBehaviorIf<CollectibleBehaviorQuenchableInfo>(
+                    CConfig.ShowWorkableTemperature &&
+                    collObj.HasBehavior<CollectibleBehaviorQuenchable>());
+                
+                continue; // These only apply to the client
+            }
+            // The rest apply to the server (which automatically adds them for the client as well)
+            
             collObj.AddBehaviorIf<CollectibleBehaviorScrapeCrucible>(Config.RecoverBitsOnSplit &&
                                                                      collObj is ItemChisel);
             collObj.AddBehaviorIf<CollectibleBehaviorSmeltedContainer>(Config.RecoverBitsOnSplit &&
@@ -113,7 +136,7 @@ public partial class Core : ModSystem
             // { "workableRecipe": true }
             // A better solution would be
             // to define the recipe with code instead of cloning an ingot recipe defined in the assets
-            if (api.Side.IsClient()) continue;
+
             var ingotCode = new AssetLocation("game:ingot-copper");
             var ingotRecipe = api.ModLoader.GetModSystem<RecipeRegistrySystem>().SmithingRecipes
                 .FirstOrDefault(r =>
@@ -154,23 +177,25 @@ public partial class Core : ModSystem
     private static void Patch()
     {
         if (HarmonyInstance != null) return;
+
         HarmonyInstance = new Harmony(ModId);
         Logger.VerboseDebug("Patching...");
         AlwaysPatchCategory.PatchIfEnabled(true);
         ToolRecoveryCategory.PatchIfEnabled(Config.EnableToolRecovery);
         SmithingRecipeAttributesPatch.PatchIfEnabled(
             Config.SmithWithBits || Config.BitsTopUp || Config.EnableToolRecovery, HarmonyInstance);
-        ClientTweaksCategories.RememberHammerToolMode.PatchIfEnabled(Config.RememberHammerToolMode);
-        ClientTweaksCategories.AnvilShowRecipeVoxels.PatchIfEnabled(Config.AnvilShowRecipeVoxels);
-        ClientTweaksCategories.ShowWorkablePatches.PatchIfEnabled(Config.ShowWorkableTemperature);
-        ClientTweaksCategories.HandbookExtraInfo.PatchIfEnabled(Config.HandbookExtraInfo);
+        
+        ClientTweaksCategories.RememberHammerToolMode.PatchIfEnabled(CConfig.RememberHammerToolMode);
+        ClientTweaksCategories.AnvilShowRecipeVoxels.PatchIfEnabled(CConfig.AnvilShowRecipeVoxels);
+        ClientTweaksCategories.ShowWorkablePatches.PatchIfEnabled(CConfig.ShowWorkableTemperature);
+        ClientTweaksCategories.HandbookExtraInfo.PatchIfEnabled(CConfig.HandbookExtraInfo);
+
         BitsRecoveryCategory.PatchIfEnabled(Config.RecoverBitsOnSplit);
         HelveHammerBitsRecoveryCategory.PatchIfEnabled(Config.HelveHammerBitsRecovery);
         CastingTweaksCategory.PatchIfEnabled(Config.MetalCastingTweaks);
         DynamicMoldsCategory.PatchIfEnabled(Config.DynamicMoldUnits);
         BitSmithingCategory.PatchIfEnabled(Config.SmithWithBits || Config.BitsTopUp);
         HammerTweaksCategory.PatchIfEnabled(Config.HammerTweaks);
-        //StoneSmithingCategory.PatchIfEnabled(true);
     }
 
     private static void Unpatch()

@@ -34,8 +34,8 @@ public class CollectibleBehaviorRepairableTool : CollectibleBehavior
             return;
         var brokenCount = inSlot.Itemstack.GetBrokenCount();
         if (brokenCount <= 0) return;
-        if (Core.Config.ShowRepairedCount) dsc.AppendLine(Lang.Get($"{LangKey} {{0}} times", brokenCount));
-        if (Core.Config.ShowRepairSmithName && inSlot.Itemstack.GetRepairSmith() is { } repairSmith)
+        if (Core.CConfig.ShowRepairedCount) dsc.AppendLine(Lang.Get($"{LangKey} {{0}} times", brokenCount));
+        if (Core.CConfig.ShowRepairSmithName && inSlot.Itemstack.GetRepairSmith() is { } repairSmith)
             dsc.AppendLine(Lang.Get("Last repaired by {0}", repairSmith));
     }
 }

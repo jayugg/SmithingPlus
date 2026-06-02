@@ -83,7 +83,7 @@ public static class AnvilRecipeSelectorPatch
     {
         _defaultSkillItemCache = ___skillItems;
         var cellCount = Math.Max(1, ___skillItems.Count);
-        var columns = Math.Min(cellCount, Core.Config?.AnvilRecipeSelectionColumns ?? 8);
+        var columns = Math.Min(cellCount, Core.CConfig?.AnvilRecipeSelectionColumns ?? 8);
         var rows = (int)Math.Ceiling(cellCount / (double)columns);
         var slotSize = GuiElementPassiveItemSlot.unscaledSlotSize + GuiElementItemSlotGridBase.unscaledSlotPadding;
         var fixedWidth = Math.Max(300.0, columns * slotSize);

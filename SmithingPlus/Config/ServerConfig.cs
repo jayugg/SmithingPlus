@@ -25,9 +25,6 @@ public class ServerConfig
     public string WorkItemSelector { get; set; } = "@(.*):workitem-(.*)";
     public bool DontRepairBrokenToolHeads { get; set; } = false;
     public bool CanRepairForlornHopeEstoc { get; set; } = true;
-    public bool ShowRepairedCount { get; set; } = true;
-    public bool ShowBrokenCount { get; set; } = true;
-    public bool ShowRepairSmithName { get; set; } = false;
     public float HelveHammerSmithingQualityModifier { get; set; } = 1;
     public bool ArrowsDropBits { get; set; } = true;
     public string ArrowSelector { get; set; } = "@(.*):arrow-(.*)";
@@ -36,11 +33,6 @@ public class ServerConfig
     public bool DynamicMoldUnits { get; set; } = false;
     public bool HammerTweaks { get; set; } = true;
     public bool RotationRequiresTongs { get; set; } = false;
-    public bool AnvilShowRecipeVoxels { get; set; } = true;
-    public bool RememberHammerToolMode { get; set; } = true;
-    public bool ShowWorkableTemperature { get; set; } = true;
-    public bool HandbookExtraInfo { get; set; } = true;
-    public int AnvilRecipeSelectionColumns { get; set; } = 8;
 
     // public bool StoneSmithing { get; set; } = false;
     [JsonIgnore]

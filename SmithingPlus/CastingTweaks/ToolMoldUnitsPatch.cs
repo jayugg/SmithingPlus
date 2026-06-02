@@ -37,22 +37,6 @@ public class ToolMoldUnitsPatch
         ___requiredUnits = requiredUnitsRounded;
     }
 
-    [HarmonyPostfix]
-    [HarmonyPatch(nameof(BlockEntityToolMold.ToTreeAttributes))]
-    public static void ToTreeAttributes_Postfix(BlockEntityToolMold __instance, int ___requiredUnits,
-        ITreeAttribute tree)
-    {
-        tree.SetInt("requiredUnits", ___requiredUnits);
-    }
-
-    [HarmonyPostfix]
-    [HarmonyPatch(nameof(BlockEntityToolMold.FromTreeAttributes))]
-    public static void FromTreeAttributes_Postfix(ITreeAttribute tree, ref int ___requiredUnits,
-        IWorldAccessor worldForResolve)
-    {
-        ___requiredUnits = tree.GetInt("requiredUnits");
-    }
-
     public static int GetPatchedRequiredUnits(ICoreAPI api, Block toolMold, ItemStack fromMetal)
     {
         var dropStacks = GetMoldedStacksStatic(api, toolMold, fromMetal);
