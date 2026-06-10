@@ -1,8 +1,6 @@
 #nullable enable
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using SmithingPlus.Common.Metal;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
@@ -110,7 +108,7 @@ public static class ItemStackExtensions
     internal static int GetBrokenCount(this ItemStack itemStack)
     {
         var repairedStack = itemStack.GetRepairedToolStack();
-        return repairedStack?.GetBrokenCount() ?? itemStack.Attributes?.GetInt(ModStackAttributes.BrokenCount) ?? 0;
+        return repairedStack?.GetBrokenCount() ?? (itemStack.Attributes?.GetInt(ModStackAttributes.BrokenCount) ?? 0);
     }
 
     public static bool CodeMatches(this ItemStack stack, ItemStack that)
@@ -120,9 +118,7 @@ public static class ItemStackExtensions
 
     public static float GetWorkableTemperature(this ItemStack stack)
     {
-        var meltingPoint = stack.Collectible.CombustibleProps?.MeltingPoint
-                           ?? stack.GetOrCacheMetalMaterial(Core.Api)?.MetalBitItem?.CombustibleProps?.MeltingPoint
-                           ?? 0f;
+        var meltingPoint = stack.Collectible.CombustibleProps?.MeltingPoint ?? 0.0f;
         var defaultTemperature = meltingPoint / 2f;
         return stack.ItemAttributes?["workableTemperature"]?.AsFloat(defaultTemperature) ?? defaultTemperature;
     }
@@ -223,48 +219,5 @@ public static class ItemStackExtensions
     public static bool IsCastTool(this ItemStack stack)
     {
         return stack.Attributes.GetBool(ModStackAttributes.CastTool);
-    }
-
-    /// <summary>
-    ///     Get the metal bits that should be recovered when this broken/shattered item is destroyed.
-    ///     Takes into account the item's durability percentage and metal bit ratio.
-    /// </summary>
-    public static ItemStack? GetShatteredBitsStack(this ItemStack brokenStack, ICoreAPI api)
-    {
-        var metalMaterial = brokenStack.GetOrCacheMetalMaterial(api);
-        if (metalMaterial?.MetalBitStack == null)
-            return null;
-
-        var voxelsInStack = 0;
-        // Work item with serialized voxel field
-        if (brokenStack.Collectible is ItemWorkItem)
-        {
-            var bytes = brokenStack.Attributes.GetBytes("voxels");
-            var voxels = BlockEntityAnvil.deserializeVoxels(bytes);
-            voxelsInStack = voxels.MaterialCount();
-        }
-        // Finished smithed item -> get via cheapest smithing recipe to prevent abuse of the mechanic
-        else
-        {
-            var cheapestRecipe = brokenStack.GetCheapestSmithingRecipe(api);
-            if (cheapestRecipe is { Output.ResolvedItemStack: not null })
-            {
-                var cheapestOutput = Math.Max(cheapestRecipe.Output.ResolvedItemStack.StackSize, 1);
-                var recipeMaterialVoxels = cheapestRecipe.Voxels.VoxelCount();
-                var voxelsPerItem = Math.Max(recipeMaterialVoxels / cheapestOutput, 0);
-                voxelsInStack = voxelsPerItem * brokenStack.StackSize;
-            }
-        }
-
-        var durabilityPercentage = brokenStack.GetDurabilityPercentage() ?? 1f;
-        var reducedVoxels = voxelsInStack * durabilityPercentage;
-        var recoveredBits = (int)MathF.Floor(reducedVoxels / Core.Config.VoxelsPerBit);
-
-        if (recoveredBits <= 0)
-            return null;
-
-        var bitsStack = metalMaterial.MetalBitStack.Clone();
-        bitsStack.StackSize = recoveredBits;
-        return bitsStack;
     }
 }

@@ -45,16 +45,6 @@ public class CollectibleBehaviorRecycledBit(CollectibleObject collObj) : Collect
             var stack = slot.Itemstack;
             if (stack == null) continue;
 
-            var consumedStackSize =
-                0; // Use this NOT stack.StackSize because that could have more items than the recipe requires
-            foreach (var ingredient in byRecipe.RecipeIngredients)
-            {
-                if (!ingredient.SatisfiesAsIngredient(stack) || ingredient.ResolvedItemStack == null)
-                    continue;
-                consumedStackSize = ingredient.ResolvedItemStack.StackSize;
-                break;
-            }
-
             var voxelsForThisStack = 0;
 
             // Work item with serialized voxel field
@@ -73,6 +63,17 @@ public class CollectibleBehaviorRecycledBit(CollectibleObject collObj) : Collect
                     var cheapestOutput = Math.Max(cheapestRecipe.Output.ResolvedItemStack.StackSize, 1);
                     var recipeMaterialVoxels = cheapestRecipe.Voxels.VoxelCount();
                     var voxelsPerItem = Math.Max(recipeMaterialVoxels / cheapestOutput, 0);
+
+                    var consumedStackSize =
+                        0; // Use this NOT stack.StackSize because that could have more items than the recipe requires
+                    foreach (var ingredient in byRecipe.RecipeIngredients)
+                    {
+                        if (!ingredient.SatisfiesAsIngredient(stack) || ingredient.ResolvedItemStack == null)
+                            continue;
+                        consumedStackSize = ingredient.ResolvedItemStack.StackSize;
+                        break;
+                    }
+
                     voxelsForThisStack = voxelsPerItem * consumedStackSize;
                 }
             }

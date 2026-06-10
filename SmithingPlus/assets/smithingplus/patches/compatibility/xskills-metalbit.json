@@ -9,7 +9,7 @@
     "side": "Server",
     "dependsOn": [
       {
-        "modid": "xskills"
+        "modid": "xskillsforked"
       }
     ]
   },
@@ -28,7 +28,7 @@
     "side": "Server",
     "dependsOn": [
       {
-        "modid": "xskills"
+        "modid": "xskillsforked"
       }
     ]
   }

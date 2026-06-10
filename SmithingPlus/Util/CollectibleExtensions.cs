@@ -73,33 +73,52 @@ public static class CollectibleExtensions
 
     public static SmithingRecipe? GetSmithingRecipe(this CollectibleObject collObj, ICoreAPI api)
     {
-        var smithingRecipe = api.ModLoader
+        var cache = Core.SmithingRecipesByOutputCode;
+        if (cache.Count > 0)
+        {
+            cache.TryGetValue(collObj.Code, out var cached);
+            return cached;
+        }
+        return api.ModLoader
             .GetModSystem<RecipeRegistrySystem>()
             .SmithingRecipes
             .FirstOrDefault(r => r.Output.ResolvedItemstack.Collectible.Code.Equals(collObj.Code));
-        return smithingRecipe;
     }
 
     public static IEnumerable<SmithingRecipe> GetSmithingRecipesAsIngredient(this CollectibleObject collObj,
         ICoreAPI api)
     {
-        var smithingRecipes =
+        var cache = Core.SmithingRecipesByIngredientCode;
+        if (cache.Count > 0)
+        {
+            return cache.TryGetValue(collObj.Code, out var cached)
+                ? cached
+                : System.Linq.Enumerable.Empty<SmithingRecipe>();
+        }
+        return
             from recipe in api.ModLoader.GetModSystem<RecipeRegistrySystem>().SmithingRecipes
             from ing in recipe.Ingredients
-            where ing.ResolvedItemStack?.Collectible?.Code?.Equals(collObj.Code) is true
+            where ing.ResolvedItemStack is not null &&
+                  ing.ResolvedItemStack.Collectible.Code.Equals(collObj.Code)
             select recipe;
-        return smithingRecipes;
     }
 
     public static IEnumerable<GridRecipe> GetGridRecipesAsIngredient(this CollectibleObject collObj, ICoreAPI api)
     {
-        var gridRecipes =
+        var cache = Core.GridRecipesByIngredientCode;
+        if (cache.Count > 0)
+        {
+            return cache.TryGetValue(collObj.Code, out var cached)
+                ? cached
+                : System.Linq.Enumerable.Empty<GridRecipe>();
+        }
+        return
             from recipe in api.World.GridRecipes
+            where recipe.RecipeIngredients != null
             from ing in recipe.RecipeIngredients
             where ing is { ResolvedItemStack.Collectible: not null } &&
-                  ing.ResolvedItemStack?.Collectible?.Code?.Equals(collObj.Code) is true
+                  ing.ResolvedItemStack.Collectible.Code.Equals(collObj.Code)
             select recipe;
-        return gridRecipes;
     }
 
     public static CollectibleObject? CollectibleWithVariant(this CollectibleObject collObj, string type, string value)
@@ -130,12 +149,11 @@ public static class CollectibleExtensions
         return (T)collObj.GetCollectibleBehavior(typeof(T), withInheritance);
     }
 
-    /// <summary>
-    ///     Gets the metal properties variant from a CollectibleBehaviorQuenchable behavior.
-    /// </summary>
-    public static CollectibleBehaviorQuenchable.MetalPropertyVariant? GetMetalProps(
-        this CollectibleBehaviorQuenchable behavior)
-    {
-        return behavior?.GetField<CollectibleBehaviorQuenchable.MetalPropertyVariant>("metalProps");
-    }
+    /*
+     Regex matching is slow.
+     Only use when first assigning behaviors.
+     At runtime, check for CollectibleBehaviorRepairableTool instead.
+    */
+
+    // Same as above, check for CollectibleBehaviorRepairableToolHead or CollectibleBehaviorCastToolHead instead
 }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using HarmonyLib;
 using JetBrains.Annotations;
 using SmithingPlus.BitsRecovery;
@@ -27,6 +28,10 @@ public partial class Core : ModSystem
     public static ICoreAPI Api { get; private set; }
     public static Harmony HarmonyInstance { get; private set; }
     public static ServerConfig Config => ConfigLoader.Config;
+
+    public static Dictionary<AssetLocation, SmithingRecipe> SmithingRecipesByOutputCode { get; } = new();
+    public static Dictionary<AssetLocation, List<SmithingRecipe>> SmithingRecipesByIngredientCode { get; } = new();
+    public static Dictionary<AssetLocation, List<GridRecipe>> GridRecipesByIngredientCode { get; } = new();
 
     public override void StartPre(ICoreAPI api)
     {
@@ -75,16 +80,22 @@ public partial class Core : ModSystem
     public override void AssetsFinalize(ICoreAPI api)
     {
         base.AssetsFinalize(api);
+
+        var recipeRegistry = api.ModLoader.GetModSystem<RecipeRegistrySystem>();
+        var recipes = recipeRegistry.SmithingRecipes;
+        var ingotCode = new AssetLocation("game:ingot-copper");
+        var ingotRecipe = api.Side.IsServer()
+            ? recipes.FirstOrDefault(r =>
+                r.Ingredient?.Code?.Equals(ingotCode) == true &&
+                r.Output.ResolvedItemstack?.Collectible.Code.Equals(ingotCode) == true)
+            : null;
+
         foreach (var collObj in api.World.Collectibles.Where(c => c?.Code != null))
         {
             collObj.AddBehaviorIf<CollectibleBehaviorDisplayWorkableTemp>(
                 api.Side == EnumAppSide.Client &&
                 Config.ShowWorkableTemperature &&
                 collObj.GetCollectibleInterface<IAnvilWorkable>() is not null);
-            collObj.AddBehaviorIf<CollectibleBehaviorQuenchableInfo>(
-                api.Side == EnumAppSide.Client &&
-                Config.ShowWorkableTemperature &&
-                collObj.HasBehavior<CollectibleBehaviorQuenchable>());
             collObj.AddBehaviorIf<CollectibleBehaviorScrapeCrucible>(Config.RecoverBitsOnSplit &&
                                                                      collObj is ItemChisel);
             collObj.AddBehaviorIf<CollectibleBehaviorSmeltedContainer>(Config.RecoverBitsOnSplit &&
@@ -104,26 +115,11 @@ public partial class Core : ModSystem
             else if (WildcardUtil.Match(Config.WorkItemSelector, collObj.Code.ToString()))
                 collObj.AddBehavior<CollectibleBehaviorBrokenToolHead>();
 
-            // Adds workable-only smithing recipes to make ingots.
-            // This is a bit hacky as workable crafting uses the original
-            // ingot recipes, so to have these recipes be present we need ingot -> ingot recipes.
-            // These won't show up when smithing with
-            // ingots, however,
-            // since the original ingot recipe (in the smithingplus domain) has "recipeAttributes":
-            // { "workableRecipe": true }
-            // A better solution would be
-            // to define the recipe with code instead of cloning an ingot recipe defined in the assets
             if (api.Side.IsClient()) continue;
-            var ingotCode = new AssetLocation("game:ingot-copper");
-            var ingotRecipe = api.ModLoader.GetModSystem<RecipeRegistrySystem>().SmithingRecipes
-                .FirstOrDefault(r =>
-                    r.Ingredient?.Code?.Equals(ingotCode) == true &&
-                    r.Output.ResolvedItemstack?.Collectible.Code.Equals(ingotCode) == true);
             if (ingotRecipe?.Ingredient == null) continue;
             if (!WildcardUtil.Match(Config.IngotSelector, collObj.Code.ToString())) continue;
-            if (api.ModLoader.GetModSystem<RecipeRegistrySystem>().SmithingRecipes
-                .Any(r => r.Ingredient?.Code?.Equals(collObj.Code) == true &&
-                          r.Output.ResolvedItemstack?.Collectible.Code.Equals(collObj.Code) == true)) continue;
+            if (recipes.Any(r => r.Ingredient?.Code?.Equals(collObj.Code) == true &&
+                                 r.Output.ResolvedItemstack?.Collectible.Code.Equals(collObj.Code) == true)) continue;
             Logger.VerboseDebug($"Adding workable-only ingot recipe for {collObj.Code}");
             var newRecipe = new SmithingRecipe
             {
@@ -143,11 +139,53 @@ public partial class Core : ModSystem
                     Code = collObj.Code,
                     StackSize = 1
                 },
-                RecipeId = api.ModLoader.GetModSystem<RecipeRegistrySystem>().SmithingRecipes.Count + 1
+                RecipeId = recipes.Count + 1
             };
             newRecipe.Ingredient.Resolve(api.World, $"[{ModId}] add ingot smithing recipe");
             newRecipe.Output.Resolve(api.World, $"[{ModId}] add ingot smithing recipe");
-            api.ModLoader.GetModSystem<RecipeRegistrySystem>().SmithingRecipes.Add(newRecipe);
+            recipes.Add(newRecipe);
+        }
+
+        SmithingRecipesByOutputCode.Clear();
+        foreach (var recipe in recipes)
+        {
+            var outputCode = recipe.Output?.ResolvedItemstack?.Collectible?.Code;
+            if (outputCode != null && !SmithingRecipesByOutputCode.ContainsKey(outputCode))
+                SmithingRecipesByOutputCode[outputCode] = recipe;
+        }
+
+        SmithingRecipesByIngredientCode.Clear();
+        foreach (var recipe in recipes)
+        {
+            if (recipe.Ingredients == null) continue;
+            foreach (var ing in recipe.Ingredients)
+            {
+                var ingCode = ing?.ResolvedItemStack?.Collectible?.Code;
+                if (ingCode == null) continue;
+                if (!SmithingRecipesByIngredientCode.TryGetValue(ingCode, out var list))
+                {
+                    list = new List<SmithingRecipe>();
+                    SmithingRecipesByIngredientCode[ingCode] = list;
+                }
+                list.Add(recipe);
+            }
+        }
+
+        GridRecipesByIngredientCode.Clear();
+        foreach (var recipe in api.World.GridRecipes)
+        {
+            if (recipe.RecipeIngredients == null) continue;
+            foreach (var ing in recipe.RecipeIngredients)
+            {
+                var ingCode = ing?.ResolvedItemStack?.Collectible?.Code;
+                if (ingCode == null) continue;
+                if (!GridRecipesByIngredientCode.TryGetValue(ingCode, out var list))
+                {
+                    list = new List<GridRecipe>();
+                    GridRecipesByIngredientCode[ingCode] = list;
+                }
+                list.Add(recipe);
+            }
         }
     }
 

@@ -11,10 +11,7 @@
 - TODO [Fix] Fix nugget recipes etc with better system
 - TODO [Feature] Add better quenching and tempering tooltips
 
-# v1.9.0-rc.1
+# v1.9.0-dev.2
 
-- **Feature**: Items shattered when quenching now drop bits, proportional to durability. Idea: 🐰
-- **Feature**: Now forge tooltips show when an item is ready to quench or temper.
-- **Feature**: Quenchable/temperable temperatures in item tooltips will now be highlighted in cyan when they are ready to
-  quench/temper
-- **Fix**: Native copper nuggets could not be used when smithing anymore  
+- **Fix**: Fix handbook crash with null drop itemstack attribute in certain mold items
+- **Tweak**: Remove tool buffs (sharpening, etc) on repair. Can be adjusted in config "ToolRepairForgettableAttributes".

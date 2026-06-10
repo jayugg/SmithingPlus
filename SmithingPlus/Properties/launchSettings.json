@@ -33,8 +33,7 @@
         "DOTNET_gcServer": "1",
         "DOTNET_GCNoAffinitize": "1",
         "DOTNET_TieredPGO": "1",
-        "DYLD_LIBRARY_PATH": "$(VINTAGE_STORY)/Lib",
-        "DOTNET_HOTRELOAD_ENABLED": "1"
+        "DYLD_LIBRARY_PATH": "$(VINTAGE_STORY)/Lib"
       }
     }
   }
