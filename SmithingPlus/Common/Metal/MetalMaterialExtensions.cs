@@ -15,8 +15,13 @@ public static class MetalMaterialExtensions
 
     public static MetalMaterial? GetOrCacheMetalMaterial(this CollectibleObject collObj, ICoreAPI api)
     {
-        var metalMaterial =
-            CacheHelper.GetOrAdd(Core.MetalMaterialCache, collObj.Code, () => collObj.GetMetalMaterial(api));
+        var cache = Core.MetalMaterialCache;
+        if (cache.TryGetValue(collObj.Code, out var cached)) return cached;
+        var metalMaterial = collObj.GetMetalMaterial(api);
+        // Negative results are only meaningful once the loader has resolved its materials;
+        // before that point every lookup returns null and must not poison the cache.
+        if (metalMaterial != null || api.GetModSystem<MetalMaterialLoader>()?.MaterialsResolved == true)
+            cache[collObj.Code] = metalMaterial;
         return metalMaterial;
     }
 
@@ -144,10 +149,10 @@ public static class MetalMaterialExtensions
     public static MetalMaterial? GetOrCacheMetalMaterial(this ItemStack itemStack, ICoreAPI api)
     {
         var collObj = itemStack.Collectible;
-        if (collObj is not IAnvilWorkable anvilWorkable) return collObj?.GetMetalMaterial(api);
+        if (collObj is not IAnvilWorkable anvilWorkable) return collObj?.GetOrCacheMetalMaterial(api);
         var ingotStack = anvilWorkable.GetBaseMaterial(itemStack);
         var metalMaterial = ingotStack.Collectible.GetOrCacheMetalMaterial(api);
-        return metalMaterial ?? collObj.GetMetalMaterial(api);
+        return metalMaterial ?? collObj.GetOrCacheMetalMaterial(api);
     }
 
     // Use when what matters is the processed result (e.g., iron bloom > iron, blister steel > steel)

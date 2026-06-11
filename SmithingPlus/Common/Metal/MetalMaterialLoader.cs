@@ -14,6 +14,7 @@ public class MetalMaterialLoader : ModSystem
 {
     private readonly Dictionary<AssetLocation, MetalMaterial> _metalMaterials = new();
     public Dictionary<AssetLocation, MetalMaterial> ResolvedMaterials { get; private set; } = new();
+    public bool MaterialsResolved { get; private set; }
 
     public override double ExecuteOrder()
     {
@@ -81,6 +82,7 @@ public class MetalMaterialLoader : ModSystem
         ResolvedMaterials = _metalMaterials
             .Where(kvp => kvp.Value.Resolved)
             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        MaterialsResolved = true;
         Core.Logger.Notification("[MetalMaterial] Done resolving metal materials.");
         Core.Logger.Notification(
             $"[MetalMaterial] Resolved {resolvedCount} out of {_metalMaterials.Count} metal materials.");
