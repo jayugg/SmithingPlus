@@ -24,8 +24,8 @@ public partial class Core
     public static Dictionary<int, int> RecipeVoxelCountCache =>
         ObjectCacheUtil.GetOrCreate(Api, RecipeVoxelCountCacheKey, () => new Dictionary<int, int>());
 
-    public static Dictionary<string, SmithingRecipe> ToolToRecipeCache =>
-        ObjectCacheUtil.GetOrCreate(Api, ToolToRecipeCacheKey, () => new Dictionary<string, SmithingRecipe>());
+    public static Dictionary<string, SmithingRecipe?> ToolToRecipeCache =>
+        ObjectCacheUtil.GetOrCreate(Api, ToolToRecipeCacheKey, () => new Dictionary<string, SmithingRecipe?>());
 
     public static Dictionary<string, MetalMaterial?> MetalMaterialCache =>
         ObjectCacheUtil.GetOrCreate(Api, MetalMaterialCacheKey, () => new Dictionary<string, MetalMaterial?>());
